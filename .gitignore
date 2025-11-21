@@ -1,0 +1,74 @@
+# ==============================================
+# 🧩 MERN STACK PROJECT - GITIGNORE
+# ==============================================
+
+# -----------------------------
+# 🧠 Node.js / Express (Backend)
+# -----------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build outputs
+dist/
+build/
+dist-ssr/
+
+# Logs
+logs/
+*.log
+*.csv
+*.dat
+
+
+# MongoDB dumps
+dump/
+*.bson
+*.mongodump
+*.archive
+
+# -----------------------------
+# ⚛️ React / Vite (Frontend)
+# -----------------------------
+client/node_modules/
+client/dist/
+client/dist-ssr/
+client/.vite/
+client/.eslintcache
+
+
+# -----------------------------
+# 🧰 Editors / IDEs
+# -----------------------------
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Visual Studio / JetBrains configs
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# -----------------------------
+# 🧪 Testing / Coverage
+# -----------------------------
+coverage/
+*.lcov
+__tests__/
+__mocks__/
+
+# -----------------------------
+# 📦 Misc
+# -----------------------------
+*.tgz
+*.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
