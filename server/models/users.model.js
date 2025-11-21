@@ -22,6 +22,13 @@ const userShema = mongoose.Schema(
             type: String,
             required : [true, "La contraseña es obligatoria"],
             minlength: [8, "La contraseña debe tener al menos 8 caracteres"]
+        },
+        role:{
+            type: String,
+            enum: ["user", "admin"],   
+            default: "user",
+            immutable: true    
+
         }
 
     }, {timestamps:true}
