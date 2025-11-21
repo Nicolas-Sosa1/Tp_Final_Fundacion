@@ -12,6 +12,7 @@ const userController = {
         const {firstName, lastName, email, password, passwordConfirmation} = req.body;
         const newArray= {firstName, lastName, email, password, passwordConfirmation}
 
+
         try{
             const newUser = await User.create(newArray);
 
@@ -19,7 +20,8 @@ const userController = {
                 firstName : newUser.firstName,
                 lastName : newUser.lastName,
                 email : newUser.email,
-                id : newUser._id
+                id : newUser._id,
+                role :newUser.role
 
             }
             jwt.sign(saveToken, SECRET, {expiresIn : "15m"}, (err, token)=>{
@@ -70,7 +72,9 @@ const userController = {
             firstName : currentUser.firstName,
             lastName : currentUser.lastName,
             email : currentUser.email,
-            id : currentUser._id
+            id : currentUser._id,
+            role: currentUser.role
+
 
         }
         jwt.sign(saveToken, SECRET, {expiresIn : "15m"}, (err, token)=>{
