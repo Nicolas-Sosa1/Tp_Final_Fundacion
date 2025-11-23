@@ -1,0 +1,127 @@
+import { Animals} from "../models/animals.model";
+
+const animalsController = {
+    createOne: async (req,res)=> {
+        const {nombre, edad, sexo, peso, castrado, vacunado, desparasitado, discapacidad, imagen, tipoIngreso, estadoGeneral} = req.body
+
+        const newArray = {nombre, edad, sexo, peso, castrado, vacunado, desparasitado, discapacidad, imagen, tipoIngreso, estadoGeneral};
+
+        try{
+            const newAnimal = await Animals.create(newArray)
+            res.status(201).json(newAnimal)
+        }catch(e){
+
+            const messages = {};
+
+            if (e.name === "ValidationError") {
+                Object.keys(e.errors).forEach((key) => {
+                    messages[key] = e.errors[key].message;
+                });
+
+            }
+
+            return res.status(400).json({ errors: { ...messages } });
+        }
+
+    },
+    getAdopcionAlta:{
+
+    },
+    getAdopcionBaja:{
+
+    },
+    getTransitoAlta:{
+
+    },
+    getTransitoBaja:{
+
+    },
+    getOne: async (req, res) => {
+        const id = req.params.id;
+
+        try {
+            const animal = await Animals.findById(id);
+
+            if (!animal) {
+                return res.status(404).json({ message: "No hay animal con ese ID" });
+            }
+
+            res.status(200).json({animal});
+
+        } catch (e) {
+            res.status(400).json({ message: "Error al buscar el animal", error: e.message });
+        }
+    },
+    updateOne: async (req, res) => {
+        const { id } = req.params;
+
+        const {nombre, edad, sexo, peso, castrado, vacunado, desparasitado, discapacidad, imagen, tipoIngreso, estadoGeneral} = req.body;
+
+        const dataToBeUpdated = {
+            nombre,
+            edad,
+            sexo,
+            peso, 
+            castrado,
+            vacunado,
+            desparasitado,
+            discapacidad,
+            imagen,
+            tipoIngreso,
+            estadoGeneral
+        };
+
+        try{
+            const animal = await Animals.findById(id);
+
+            if (!animal) {
+                return res.status(404).json({ message: "No hay animal con ese ID" });
+            }
+
+            const oneUpdated = await Animals.findByIdAndUpdate(id, dataToBeUpdated, {new:true, runValidators:true})
+            
+            res.status(200).json(oneUpdated)
+
+        }catch(e){
+            console.error(`Error al editar animal: ${e.message}`);
+            
+            if (e.name === "ValidationError") {
+                const messages = {};
+                Object.keys(e.errors).forEach((key) => {
+                    messages[key] = e.errors[key].message;
+                });
+                
+                return res.status(400).json({ errors: { ...messages } });
+            }
+
+            return res.status(400).json({ message: "Error al actualizar el animal" });
+
+        }
+    },
+    deleteOne: async (req, res) => {
+        const { id } = req.params;
+
+        try {
+            const updatedAnimal = await Animals.findByIdAndUpdate(
+                id,
+                { estadoGeneral: "no_disponible" },
+                { new: true }
+            );
+
+            if (!updatedAnimal) {
+                return res.status(404).json({ message: "Animal no encontrado" });
+            }
+
+            return res.status(200).json({
+                message: "El animal ha sido marcado como no disponible",
+                animal: updatedAnimal
+            });
+
+        } catch (error) {
+            return res.status(500).json({ message: "Error al actualizar el estado del animal" });
+        }
+}
+
+}
+
+export default animalsController
