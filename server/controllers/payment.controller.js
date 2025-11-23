@@ -3,7 +3,7 @@ import Payment from "../models/payment.model.js";
 
 
 const client = new MercadoPagoConfig({
-  accessToken: process.env.MP_ACCESS_TOKEN
+    accessToken: process.env.MP_ACCESS_TOKEN
 });
 
 const paymentController = {

@@ -5,6 +5,7 @@ import cors from 'cors'
 import usersRoutes from './routes/users.routes.js'
 import paymentRoutes from './routes/payment.routes.js'
 import correoRoutes from './routes/Correo.routes.js'
+import animalsRoutes from './routes/animals.routes.js';
 
 dotenv.config()
 
@@ -20,6 +21,7 @@ connectToDb();
 app.use("/api/users", usersRoutes)
 app.use("/api/payment", paymentRoutes)
 app.use("/api/correo", correoRoutes)
+app.use("/api/animals", animalsRoutes)
 
 // Ruta de estado general
 app.get('/estado', (req, res) => {
