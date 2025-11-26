@@ -6,7 +6,7 @@ import isAdmin from "../middleware/validateAdmin.js";
 const vacunasRoutes = Router();
 
 
-vacunasRoutes.get("/", vacunasController.getAll);
+vacunasRoutes.get("/", validateToken, vacunasController.getAll);
 vacunasRoutes.post("/new", validateToken, isAdmin, vacunasController.createOne);
 vacunasRoutes.delete("/:id", validateToken, isAdmin, vacunasController.deleteOne);
 
