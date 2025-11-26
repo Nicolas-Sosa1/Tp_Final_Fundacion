@@ -39,6 +39,7 @@ const validateToken = (req, res, next) => {
             req.userId = decoded.id; // ← Esto viene de tu JWT
             req.userEmail = decoded.email;
             req.userRole = decoded.role;
+
             
             console.log('Usuario autenticado:', {
                 id: req.userId,
@@ -58,16 +59,5 @@ const validateToken = (req, res, next) => {
     }
 }
 
-const isAdmin = (req, res, next) => {
-    const role = req.infoUser?.role;
 
-    if (role !== "admin") {
-        return res.status(403).json({ message: "Solo los administradores pueden realizar esta acción" });
-    }
-
-    next();
-};
-
-
-
-export  {validateToken, isAdmin};
+export default validateToken;

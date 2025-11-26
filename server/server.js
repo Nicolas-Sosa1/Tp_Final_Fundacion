@@ -6,6 +6,8 @@ import usersRoutes from './routes/users.routes.js'
 import paymentRoutes from './routes/payment.routes.js'
 import correoRoutes from './routes/Correo.routes.js'
 import animalsRoutes from './routes/animals.routes.js';
+import solicitudesRoutes from './routes/solicitudes.routes.js';
+import vacunasRoutes from './routes/vacunas.routes.js';
 
 dotenv.config()
 
@@ -22,6 +24,8 @@ app.use("/api/users", usersRoutes)
 app.use("/api/payment", paymentRoutes)
 app.use("/api/correo", correoRoutes)
 app.use("/api/animals", animalsRoutes)
+app.use("/api/solicitudes", solicitudesRoutes)
+app.use("/api/vacunas", vacunasRoutes);
 
 // Ruta de estado general
 app.get('/estado', (req, res) => {

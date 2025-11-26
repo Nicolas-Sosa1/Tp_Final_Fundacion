@@ -1,4 +1,4 @@
-import { Animals} from "../models/animals.model";
+import { Animals} from "../models/animals.model.js";
 
 const animalsController = {
     createOne: async (req,res)=> {
@@ -24,17 +24,61 @@ const animalsController = {
         }
 
     },
-    getAdopcionAlta:{
+    getAdopcionAlta: async (req, res) => {
+        try {
+            const lista = await Animals.find({
+                tipoIngreso: "adopcion",
+                estadoGeneral: true,
+            }).populate("vacunas").sort({ createdAt: -1 });
 
+            return res.status(200).json(lista);
+
+        } catch (e) {
+            console.error("Error al obtener adopción alta:", e.message);
+            return res.status(500).json({ message: "Error al obtener animales en adopción alta" });
+        }
     },
-    getAdopcionBaja:{
+    getAdopcionBaja: async (req, res) => {
+        try {
+            const lista = await Animals.find({
+                tipoIngreso: "adopcion",
+                estadoGeneral: false,
+            }).populate("vacunas").sort({ createdAt: -1 });
 
+            return res.status(200).json(lista);
+
+        } catch (e) {
+            console.error("Error al obtener adopción baja:", e.message);
+            return res.status(500).json({ message: "Error al obtener animales en adopción baja" });
+        }
     },
-    getTransitoAlta:{
+    getTransitoAlta: async (req, res) => {
+        try {
+            const lista = await Animals.find({
+                tipoIngreso: "transito",
+                estadoGeneral: true,
+            }).populate("vacunas").sort({ createdAt: -1 });
 
+            return res.status(200).json(lista);
+
+        } catch (e) {
+            console.error("Error al obtener tránsito alta:", e.message);
+            return res.status(500).json({ message: "Error al obtener animales en tránsito alta" });
+        }
     },
-    getTransitoBaja:{
+    getTransitoBaja: async (req, res) => {
+        try {
+            const lista = await Animals.find({
+                tipoIngreso: "transito",
+                estadoGeneral: false,
+            }).populate("vacunas").sort({ createdAt: -1 });
 
+            return res.status(200).json(lista);
+
+        } catch (e) {
+            console.error("Error al obtener tránsito baja:", e.message);
+            return res.status(500).json({ message: "Error al obtener animales en tránsito baja" });
+        }
     },
     getOne: async (req, res) => {
         const id = req.params.id;
