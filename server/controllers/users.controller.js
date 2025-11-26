@@ -24,7 +24,7 @@ const userController = {
                 role :newUser.role
 
             }
-            jwt.sign(saveToken, SECRET, {expiresIn : "15m"}, (err, token)=>{
+            jwt.sign(saveToken, SECRET, {expiresIn : "59m"}, (err, token)=>{
                 return res.status(201).json({token})
             })
 
@@ -77,7 +77,7 @@ const userController = {
 
 
         }
-        jwt.sign(saveToken, SECRET, {expiresIn : "15m"}, (err, token)=>{
+        jwt.sign(saveToken, SECRET, {expiresIn : "59m"}, (err, token)=>{
             return res.status(201).json({token})
         })
     }
