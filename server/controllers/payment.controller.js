@@ -1,7 +1,6 @@
 import mercadopago from "mercadopago";
 import Payment from "../models/payment.model.js";
 
-
 mercadopago.configure({
     access_token: process.env.MP_ACCESS_TOKEN
 });
@@ -11,7 +10,7 @@ const paymentController = {
         try {
             console.log("TOKEN MP:", process.env.MP_ACCESS_TOKEN);
 
-            const preference = {
+            const preferenceData = {
                 items: [
                     {
                         title: "Donación",
@@ -21,19 +20,19 @@ const paymentController = {
                     }
                 ],
                 back_urls: {
-                        success: "https://www.google.com",
-                        failure: "https://www.google.com",
-                        pending: "https://www.google.com"
+                    success: "https://www.google.com",
+                    failure: "https://www.google.com",
+                    pending: "https://www.google.com"
                 },
                 auto_return: "approved",
                 notification_url: "https://unarbitrary-franklin-unperforable.ngrok-free.dev/api/payment/webhook"
             };
 
-            const result = await mercadopago.preferences.create(preference);
+            const result = await mercadopago.preferences.create(preferenceData);
 
-            console.log("RESULT MP:", result.body);
+            console.log("RESULT:", result.body);
 
-            res.json({ id: result.body.id });
+            return res.json({ id: result.body.id });
 
         } catch (error) {
             console.error("ERROR MERCADO PAGO:", error);
@@ -49,7 +48,7 @@ const paymentController = {
                 req.query["data.id"] ||
                 req.body?.data?.id ||
                 req.body["data.id"] ||
-                req.query.id; 
+                req.query.id;
 
             const status =
                 req.query.type ||
@@ -77,8 +76,6 @@ const paymentController = {
             res.sendStatus(500);
         }
     }
-
 };
 
 export default paymentController;
-

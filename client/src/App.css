@@ -1,0 +1,46 @@
+#root {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+    background-color: white;
+}
+
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+}
+
+.navbar__title {
+    font-size: 5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.navbar__links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.navbar__link {
+    text-decoration: none;
+    color: black;
+    font-weight: 400;
+}
+
+
+.navbar__button {
+    background: none;
+    border: none;
+    color: black;
+    font-size: 1rem;
+}
+
+.welcome-msg {
+    text-align: start;
+    margin: 20px 0;
+}
