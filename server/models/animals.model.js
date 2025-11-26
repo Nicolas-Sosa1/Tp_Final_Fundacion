@@ -21,19 +21,16 @@ const animalsShema = mongoose.Schema(
             required : [true, "El peso del animal es obligatorio"],
         },
         castrado:{
-            type: String,
+            type: Boolean,
             required : [true, "Debes indicar si el animal está castrado"],
-            enum: ["si", "no"],
         },
-        vacunado:{
-            type: String,
-            required : [true, "Debes indicar si el animal está vacunado"],
-            enum: ["si", "no"],
-        },
+        vacunas: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "vacunas"
+        }],
         desparasitado:{
-            type: String,
+            type: Boolean,
             required : [true, "Debes indicar si el animal está desparasitado"],
-            enum: ["si", "no"],
         },
         discapacidad:{
             type: String,
@@ -49,15 +46,14 @@ const animalsShema = mongoose.Schema(
             required: [true, "Debes especificar si el animal ingresa por adopción o por tránsito"]
         },
         estadoGeneral: {
-            type: String,
-            enum: ["disponible", "no_disponible"],
-            default: "disponible"
+            type: Boolean,
+            default: true
         },
 
     }, {timestamps:true}
 )
 
 
-const Animals = mongoose.model("users", animalsShema);
+const Animals = mongoose.model("animals", animalsShema);
 
 export {Animals, animalsShema};

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import animalsController from '../controllers/animals.controller.js'
-import { validateToken, isAdmin } from "../middleware/validateToken.js";
+import validateToken from "../middleware/validateToken.js";
+import isAdmin from "../middleware/validateAdmin.js";
 
 const animalsRoutes  = Router();
 

@@ -1,0 +1,46 @@
+
+.formContainer {
+    width: 100%;           
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 40px; 
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 40px;
+}
+
+.buttonRegistrar{
+    background-color: blue;
+    color: white;
+    border-radius: 10px;
+    width: 320px;
+    height: 60px;
+}
+
+.inputField{
+    width: 320px;
+    padding: 12px;
+    margin-top: 6px;
+    border-radius: 8px;
+    border: 1px solid #cfcfcfd4;
+    background-color: #fafafa;
+    font-size: 15px;
+}
+
+.titulo{
+    font-size: 62px;
+    color: #3a3939d4;
+    margin-bottom: 10px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+
+.errorText{
+    color: red;
+    font-size: 16px;
+}

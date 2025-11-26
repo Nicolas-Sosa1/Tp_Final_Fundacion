@@ -1,9 +1,8 @@
-import { MercadoPagoConfig, Preference } from 'mercadopago';
+import mercadopago from "mercadopago";
 import Payment from "../models/payment.model.js";
 
-
-const client = new MercadoPagoConfig({
-    accessToken: process.env.MP_ACCESS_TOKEN
+mercadopago.configure({
+    access_token: process.env.MP_ACCESS_TOKEN
 });
 
 const paymentController = {
@@ -12,31 +11,28 @@ const paymentController = {
             console.log("TOKEN MP:", process.env.MP_ACCESS_TOKEN);
 
             const preferenceData = {
-                body: {
-                    items: [
-                        {
-                            title: "Donación",
-                            quantity: 1,
-                            unit_price: 1000,
-                            currency_id: "ARS"
-                        }
-                    ],
-                    back_urls: {
-                        success: "https://www.google.com",
-                        failure: "https://www.google.com", 
-                        pending: "https://www.google.com"
-                    },
-                    auto_return: "approved",
-                    notification_url: "https://unarbitrary-franklin-unperforable.ngrok-free.dev/api/payment/webhook"
-                }
+                items: [
+                    {
+                        title: "Donación",
+                        quantity: 1,
+                        unit_price: 1000,
+                        currency_id: "ARS"
+                    }
+                ],
+                back_urls: {
+                    success: "https://www.google.com",
+                    failure: "https://www.google.com",
+                    pending: "https://www.google.com"
+                },
+                auto_return: "approved",
+                notification_url: "https://unarbitrary-franklin-unperforable.ngrok-free.dev/api/payment/webhook"
             };
 
-            const preference = new Preference(client);
-            const result = await preference.create(preferenceData);
+            const result = await mercadopago.preferences.create(preferenceData);
 
-            console.log("RESULT MP:", result);
+            console.log("RESULT:", result.body);
 
-            res.json({ id: result.id });
+            return res.json({ id: result.body.id });
 
         } catch (error) {
             console.error("ERROR MERCADO PAGO:", error);
@@ -52,7 +48,7 @@ const paymentController = {
                 req.query["data.id"] ||
                 req.body?.data?.id ||
                 req.body["data.id"] ||
-                req.query.id; 
+                req.query.id;
 
             const status =
                 req.query.type ||
