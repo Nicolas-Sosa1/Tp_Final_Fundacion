@@ -2,9 +2,9 @@ import { Animals} from "../models/animals.model.js";
 
 const animalsController = {
     createOne: async (req,res)=> {
-        const {nombre, edad, sexo, peso, castrado, vacunado, desparasitado, discapacidad, imagen, tipoIngreso, estadoGeneral} = req.body
+        const {nombre, edad, sexo, peso, castrado, vacunas, desparasitado, discapacidad, imagen, tipoIngreso, estadoGeneral} = req.body
 
-        const newArray = {nombre, edad, sexo, peso, castrado, vacunado, desparasitado, discapacidad, imagen, tipoIngreso, estadoGeneral};
+        const newArray = {nombre, edad, sexo, peso, castrado, vacunas, desparasitado, discapacidad, imagen, tipoIngreso, estadoGeneral};
 
         try{
             const newAnimal = await Animals.create(newArray)
@@ -99,7 +99,7 @@ const animalsController = {
     updateOne: async (req, res) => {
         const { id } = req.params;
 
-        const {nombre, edad, sexo, peso, castrado, vacunado, desparasitado, discapacidad, imagen, tipoIngreso, estadoGeneral} = req.body;
+        const {nombre, edad, sexo, peso, castrado, vacunas, desparasitado, discapacidad, imagen, tipoIngreso, estadoGeneral} = req.body;
 
         const dataToBeUpdated = {
             nombre,
@@ -107,7 +107,7 @@ const animalsController = {
             sexo,
             peso, 
             castrado,
-            vacunado,
+            vacunas,
             desparasitado,
             discapacidad,
             imagen,

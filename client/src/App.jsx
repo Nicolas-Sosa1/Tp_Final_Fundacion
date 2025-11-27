@@ -4,11 +4,12 @@ import './App.css'
 import Login from './views/Login'
 import Register from './views/Register'
 import Home from './views/Home'
+import NewAnimal from './views/NewAnimal'
 
 
 
 function App() {
-    const [listaDestinos, setListaDestinos] = useState([])
+    const [listaPerros, setListaPerros] = useState([])
     const [login, setLogin] = useState(false)
     const [me,setMe] = useState({})
     const navigate = useNavigate();
@@ -32,6 +33,7 @@ function App() {
             <Link to="/home" className="navbar__link">Ser hogar de tránsito</Link>
             <Link to="/home" className="navbar__link">Adoptar</Link>
             <Link to="/home" className="navbar__link">Donar</Link>
+            <Link to="/agregarPerro" className="navbar__link">Agregar Animal</Link>
             <button onClick={logOut} className="navbar__button">Logout</button>
           </>
         ) : (
@@ -51,6 +53,7 @@ function App() {
         <Route path='/login' element={<Login setLogin={setLogin} />}/>
         <Route path='/register' element={<Register setLogin={setLogin} />}/>
         <Route path='/home' element={<Home/>}/>
+        <Route path='/agregarPerro' element={<NewAnimal listaPerros={listaPerros} setListaPerros={setListaPerros}/>}/>
       </Routes>
     </main>
 
