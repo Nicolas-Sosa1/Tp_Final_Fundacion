@@ -1,8 +1,9 @@
-import mercadopago from "mercadopago";
 import Payment from "../models/payment.model.js";
 
-mercadopago.configure({
-    access_token: process.env.MP_ACCESS_TOKEN
+import { MercadoPagoConfig, Preference } from "mercadopago";
+
+const client = new MercadoPagoConfig({
+    accessToken: process.env.MP_ACCESS_TOKEN
 });
 
 const paymentController = {

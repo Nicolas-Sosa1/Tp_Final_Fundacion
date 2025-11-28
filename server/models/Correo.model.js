@@ -8,7 +8,6 @@ const envioSchema = new mongoose.Schema({
     required: true
   },
   
-
   idCliente: {
     type: String,
     required: true
@@ -16,7 +15,6 @@ const envioSchema = new mongoose.Schema({
   idEnvioCorreo: {
     type: String
   },
-  
 
   idPedidoExterno: {
     type: String,
@@ -101,14 +99,13 @@ const envioSchema = new mongoose.Schema({
     }
   },
   
-  // Estado
+  
   estado: {
     type: String,
     enum: ['pendiente', 'importado', 'enviado', 'entregado', 'cancelado'],
     default: 'pendiente'
   },
   
-  // Seguimiento
   seguimiento: {
     numeroSeguimiento: String,
     eventos: [{
@@ -121,7 +118,6 @@ const envioSchema = new mongoose.Schema({
     ultimaActualizacion: Date
   },
   
-  // Cotización
   cotizacion: {
     precio: Number,
     tiempoEntregaMin: Number,
@@ -133,7 +129,7 @@ const envioSchema = new mongoose.Schema({
   timestamps: true 
 });
 
-// Índices
+
 envioSchema.index({ usuarioId: 1 });
 envioSchema.index({ idPedidoExterno: 1 });
 envioSchema.index({ estado: 1 });
