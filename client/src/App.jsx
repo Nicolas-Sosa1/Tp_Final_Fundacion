@@ -9,6 +9,7 @@ import Home from './views/Home'
 import NewAnimal from './views/NewAnimal'
 import CorreoArgentino from './views/CorreoArgentino'
 import UpdateAnimal from './views/UpdateAnimal'
+import Donar from './views/Donar';
 
 function App() {
     const [listaPerros, setListaPerros] = useState([])
@@ -44,7 +45,7 @@ function App() {
                             <>
                                 <Link to="/home" className="navbar__link">Ser hogar de tránsito</Link>
                                 <Link to="/home" className="navbar__link">Adoptar</Link>
-                                <Link to="/home" className="navbar__link">Donar</Link>
+                                <Link to="/donar" className="navbar__link">Donar</Link>
                                 <Link to="/correo" className="navbar__link">Correo Argentino</Link>
                             </>
                         )}
@@ -72,15 +73,14 @@ function App() {
                 <Route path='/login' element={<Login setLogin={setLogin} />} />
                 <Route path='/register' element={<Register setLogin={setLogin} />} />
                 <Route path='/home' element={<Home />} />
-                <Route path='/correo'element={login ? <CorreoArgentino me={me} /> : <Navigate to="/login" />
-                
-            }/>
-            <Route path='/agregarPerro'element={login && me.role === "admin"? ( 
-                <NewAnimal listaPerros={listaPerros} setListaPerros={setListaPerros}me={me}logOut={logOut}/>
-                )     : <Navigate to="/home" />}/>
-            <Route path='/perro/update/:id'element={login && me.role === "admin"? ( 
-                <UpdateAnimal listaPerros={listaPerros} setListaPerros={setListaPerros}me={me}logOut={logOut}/>
-                )     : <Navigate to="/home" />}/>
+                <Route path='/donar' element={<Donar />} />
+                <Route path='/correo'element={login ? <CorreoArgentino me={me} /> : <Navigate to="/login" />}/>
+                <Route path='/agregarPerro'element={login && me.role === "admin"? ( 
+                    <NewAnimal listaPerros={listaPerros} setListaPerros={setListaPerros}me={me}logOut={logOut}/>
+                    )     : <Navigate to="/home" />}/>
+                <Route path='/perro/update/:id'element={login && me.role === "admin"? ( 
+                    <UpdateAnimal listaPerros={listaPerros} setListaPerros={setListaPerros} setLogin={setLogin} logOut={logOut}/>
+                    )     : <Navigate to="/home" />}/>
             </Routes>
         </main>
         </>
