@@ -5,6 +5,7 @@ import Login from './views/Login'
 import Register from './views/Register'
 import Home from './views/Home'
 import NewAnimal from './views/NewAnimal'
+import UpdateAnimal from './views/UpdateAnimal'
 
 
 
@@ -54,6 +55,7 @@ function App() {
         <Route path='/register' element={<Register setLogin={setLogin} />}/>
         <Route path='/home' element={<Home/>}/>
         <Route path='/agregarPerro' element={<NewAnimal listaPerros={listaPerros} setListaPerros={setListaPerros}/>}/>
+        <Route path='/perro/update/:id' element={<UpdateAnimal listaPerros={listaPerros} setListaPerros={setListaPerros} logOut={logOut} setLogin={setLogin}/>}/>
       </Routes>
     </main>
 
