@@ -1,64 +1,85 @@
-import { useState } from 'react'
-import {Routes, Route, Link, useNavigate} from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Routes, Route, Link, useNavigate, Navigate } from 'react-router-dom'
+import { jwtDecode } from "jwt-decode";
 import './App.css'
+
 import Login from './views/Login'
 import Register from './views/Register'
 import Home from './views/Home'
 import NewAnimal from './views/NewAnimal'
-
-
+import CorreoArgentino from './views/CorreoArgentino'   // ⭐ IMPORTANTE
 
 function App() {
     const [listaPerros, setListaPerros] = useState([])
     const [login, setLogin] = useState(false)
-    const [me,setMe] = useState({})
+    const [me, setMe] = useState({})
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const token = localStorage.getItem("token_user");
+        if (token) {
+            const decoded = jwtDecode(token);
+            setMe(decoded);
+            setLogin(true);
+        }
+    }, []);
+
     const logOut = () => {
-      localStorage.removeItem("token_user")
-      setLogin(false)
-      navigate('/login');
+        localStorage.removeItem("token_user")
+        setLogin(false)
+        setMe({})
+        navigate('/login');
     }
 
+    return (
+        <>
+        <header className="navbar">
+            <h1 className="navbar__title">Patitas al rescate</h1>
 
-  return (
+            <nav className="navbar__links">
+                {login ? (
+                    <>
+                        {me.role === "user" && (
+                            <>
+                                <Link to="/home" className="navbar__link">Ser hogar de tránsito</Link>
+                                <Link to="/home" className="navbar__link">Adoptar</Link>
+                                <Link to="/home" className="navbar__link">Donar</Link>
+                                <Link to="/correo" className="navbar__link">Correo Argentino</Link>
+                            </>
+                        )}
 
-    <>
-    <header className="navbar">
-      <h1 className="navbar__title">Patitas al rescate</h1>
+                        {me.role === "admin" && (
+                            <>
+                                <Link to="/agregarPerro" className="navbar__link">Agregar Animal</Link>
+                                <Link to="/correo" className="navbar__link">Correo Argentino</Link>
+                            </>
+                        )}
 
-      <nav className="navbar__links">
-        {login ? (
-          <>
-            <Link to="/home" className="navbar__link">Ser hogar de tránsito</Link>
-            <Link to="/home" className="navbar__link">Adoptar</Link>
-            <Link to="/home" className="navbar__link">Donar</Link>
-            <Link to="/agregarPerro" className="navbar__link">Agregar Animal</Link>
-            <button onClick={logOut} className="navbar__button">Logout</button>
-          </>
-        ) : (
-          <>
-            <Link to="/login" className="navbar__link">Login</Link>
-            <Link to="/register" className="navbar__link">Registro</Link>
-          </>
-        )}
-      </nav>
-    </header>
+                        <button onClick={logOut} className="navbar__button">Logout</button>
+                    </>
+                ) : (
+                    <>
+                        <Link to="/login" className="navbar__link">Login</Link>
+                        <Link to="/register" className="navbar__link">Registro</Link>
+                    </>
+                )}
+            </nav>
+        </header>
 
-
-    
-
-    <main>
-      <Routes>
-        <Route path='/login' element={<Login setLogin={setLogin} />}/>
-        <Route path='/register' element={<Register setLogin={setLogin} />}/>
-        <Route path='/home' element={<Home/>}/>
-        <Route path='/agregarPerro' element={<NewAnimal listaPerros={listaPerros} setListaPerros={setListaPerros}/>}/>
-      </Routes>
-    </main>
-
-    </>
-  )
+        <main>
+            <Routes>
+                <Route path='/login' element={<Login setLogin={setLogin} />} />
+                <Route path='/register' element={<Register setLogin={setLogin} />} />
+                <Route path='/home' element={<Home />} />
+                <Route path='/correo'element={login ? <CorreoArgentino me={me} /> : <Navigate to="/login" />
+            }/>
+             <Route path='/agregarPerro'element={login && me.role === "admin"? ( 
+                <NewAnimal listaPerros={listaPerros} setListaPerros={setListaPerros}me={me}logOut={logOut}/>
+                )     : <Navigate to="/home" />}/>
+            </Routes>
+        </main>
+        </>
+    )
 }
 
 export default App
