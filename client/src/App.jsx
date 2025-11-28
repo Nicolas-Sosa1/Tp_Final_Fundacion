@@ -7,13 +7,8 @@ import Login from './views/Login'
 import Register from './views/Register'
 import Home from './views/Home'
 import NewAnimal from './views/NewAnimal'
-<<<<<<< HEAD
+import CorreoArgentino from './views/CorreoArgentino'
 import UpdateAnimal from './views/UpdateAnimal'
-
-
-=======
-import CorreoArgentino from './views/CorreoArgentino'   // ⭐ IMPORTANTE
->>>>>>> origin/main
 
 function App() {
     const [listaPerros, setListaPerros] = useState([])
