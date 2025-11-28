@@ -7,7 +7,8 @@ import Login from './views/Login'
 import Register from './views/Register'
 import Home from './views/Home'
 import NewAnimal from './views/NewAnimal'
-import CorreoArgentino from './views/CorreoArgentino'   // ⭐ IMPORTANTE
+import CorreoArgentino from './views/CorreoArgentino'
+import UpdateAnimal from './views/UpdateAnimal'
 
 function App() {
     const [listaPerros, setListaPerros] = useState([])
@@ -72,9 +73,13 @@ function App() {
                 <Route path='/register' element={<Register setLogin={setLogin} />} />
                 <Route path='/home' element={<Home />} />
                 <Route path='/correo'element={login ? <CorreoArgentino me={me} /> : <Navigate to="/login" />
+                
             }/>
-             <Route path='/agregarPerro'element={login && me.role === "admin"? ( 
+            <Route path='/agregarPerro'element={login && me.role === "admin"? ( 
                 <NewAnimal listaPerros={listaPerros} setListaPerros={setListaPerros}me={me}logOut={logOut}/>
+                )     : <Navigate to="/home" />}/>
+            <Route path='/perro/update/:id'element={login && me.role === "admin"? ( 
+                <UpdateAnimal listaPerros={listaPerros} setListaPerros={setListaPerros}me={me}logOut={logOut}/>
                 )     : <Navigate to="/home" />}/>
             </Routes>
         </main>
