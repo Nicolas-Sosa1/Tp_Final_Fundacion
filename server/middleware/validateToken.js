@@ -6,7 +6,6 @@ const validateToken = (req, res, next) => {
     try {
         const { token_user } = req.headers;
         
-        // Verificar que el token existe
         if (!token_user) {
             return res.status(401).json({
                 success: false,
@@ -14,8 +13,7 @@ const validateToken = (req, res, next) => {
                 instructions: "Incluye el token en el header: token_user: tu_token_jwt"
             });
         }
-
-        // Verificar el token
+       
         jwt.verify(token_user, SECRET, (err, decoded) => {
             if (err) {
                 console.error('Error verificando token:', err.message);
@@ -34,9 +32,8 @@ const validateToken = (req, res, next) => {
                 });
             }
             
-            // Token válido - agregar información del usuario (compatible con tu sistema)
             req.infoUser = decoded;
-            req.userId = decoded.id; // ← Esto viene de tu JWT
+            req.userId = decoded.id; 
             req.userEmail = decoded.email;
             req.userRole = decoded.role;
 
