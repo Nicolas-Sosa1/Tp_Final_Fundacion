@@ -27,11 +27,10 @@ const paymentController = {
                     }
                 ],
                 back_urls: {
-                    success: "http://localhost:5173/home?status=approved",
+                    success: "http://localhost:5173/donar?status=approved",
                     failure: "http://localhost:5173/donar?status=failure",
                     pending: "http://localhost:5173/donar?status=pending"
                 },
-
                 
                 notification_url:
                     "https://unarbitrary-franklin-unperforable.ngrok-free.dev/api/payment/webhook"
@@ -68,14 +67,21 @@ const paymentController = {
 
             const paymentInfo = await mercadopago.payment.findById(paymentId);
 
-            await Payment.create({
-                payment_id: paymentInfo.body.id,
-                status: paymentInfo.body.status,
-                transaction_amount: paymentInfo.body.transaction_amount,
-                payment_method: paymentInfo.body.payment_method_id,
-                payer_email: paymentInfo.body.payer?.email,
-                detail: paymentInfo.body
-            });
+            await Payment.updateOne(
+                { payment_id: paymentInfo.body.id }, 
+                {
+                    $set: {
+                        status: paymentInfo.body.status,
+                        transaction_amount: paymentInfo.body.transaction_amount,
+                        payment_method: paymentInfo.body.payment_method_id,
+                        payer_email: paymentInfo.body.payer?.email,
+                        detail: paymentInfo.body,
+                        date: new Date(),
+                    }
+                },
+                { upsert: true }
+            );
+
 
             res.sendStatus(200);
 
@@ -83,7 +89,26 @@ const paymentController = {
             console.error("Error en webhook:", error);
             res.sendStatus(500);
         }
+    },
+    getAll: async (req, res) => {
+    try {
+        const pagos = await Payment.find().sort({ date: -1 });
+
+        return res.status(200).json({
+            success: true,
+            total: pagos.length,
+            pagos
+        });
+
+    } catch (error) {
+        console.error("Error al obtener los pagos:", error);
+        return res.status(500).json({
+            success: false,
+            error: "Error al obtener los pagos"
+        });
     }
+},
+
 };
 
 export default paymentController;

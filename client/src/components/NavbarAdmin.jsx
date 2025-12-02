@@ -16,6 +16,8 @@ const NavbarAdmin = ({ logOut }) =>{
           <NavLink to="/postulaciones"className={({ isActive }) => isActive ? "text-decoration-none text-black-title font_sm navlink navlink_active": "text-decoration-none text-black-title font_sm navlink"}>Postulaciones</NavLink>
           <NavLink to="/donaciones"className={({ isActive }) => isActive ? "text-decoration-none text-black-title font_sm navlink navlink_active": "text-decoration-none text-black-title font_sm navlink"}>Donaciones</NavLink>
           <NavLink to="/adoptados"className={({ isActive }) => isActive ? "text-decoration-none text-black-title font_sm navlink navlink_active": "text-decoration-none text-black-title font_sm navlink"}>Adoptados</NavLink>
+          <NavLink to="/pagos" className={({ isActive }) => isActive ? "text-decoration-none text-black-title font_sm navlink navlink_active": "text-decoration-none text-black-title font_sm navlink"}>Pagos</NavLink>
+
           <Link to="/home" onClick={logOut}><i className="fa-solid fa-arrow-right-from-bracket icon_20 text-black-title"></i></Link>
         </div>
       </nav>

@@ -13,6 +13,8 @@ import NewAnimal from './views/NewAnimal'
 import CorreoArgentino from './views/CorreoArgentino'
 import UpdateAnimal from './views/UpdateAnimal'
 import Donar from './views/Donar';
+import PagosAdmin from "./views/PagosAdmin";
+
 
 import NavbarAdmin from './components/NavbarAdmin'
 import NavbarPublic from './components/NavbarPublic'
@@ -75,6 +77,7 @@ function App() {
                 <Route path='/perro/update/:id'element={login && me.role === "admin"? ( 
                     <UpdateAnimal listaPerros={listaPerros} setListaPerros={setListaPerros} setLogin={setLogin} logOut={logOut}/>
                     )     : <Navigate to="/home" />}/>
+                <Route path="/pagos" element={login && me.role === "admin"? <PagosAdmin />: <Navigate to="/home" />}/>
             </Routes>
         </main>
         </>
