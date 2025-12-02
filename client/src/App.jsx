@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react'
 import { Routes, Route, Link, useNavigate, Navigate } from 'react-router-dom'
 import { jwtDecode } from "jwt-decode";
 import './App.css'
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+
 
 import Login from './views/Login'
 import Register from './views/Register'
