@@ -9,6 +9,11 @@ import Home from './views/Home'
 import NewAnimal from './views/NewAnimal'
 import CorreoArgentino from './views/CorreoArgentino'
 import UpdateAnimal from './views/UpdateAnimal'
+import Donar from './views/Donar';
+
+import NavbarAdmin from './components/NavbarAdmin'
+import NavbarPublic from './components/NavbarPublic'
+import NavbarUser from './components/NavbarUser'
 
 function App() {
     const [listaPerros, setListaPerros] = useState([])
@@ -34,53 +39,39 @@ function App() {
 
     return (
         <>
-        <header className="navbar">
-            <h1 className="navbar__title">Patitas al rescate</h1>
+        {login ? (
+            <>
+            {me.role === "user" && (
+                <>
+                <NavbarUser logOut={logOut}/>
+                </>
+            )}
 
-            <nav className="navbar__links">
-                {login ? (
-                    <>
-                        {me.role === "user" && (
-                            <>
-                                <Link to="/home" className="navbar__link">Ser hogar de tránsito</Link>
-                                <Link to="/home" className="navbar__link">Adoptar</Link>
-                                <Link to="/home" className="navbar__link">Donar</Link>
-                                <Link to="/correo" className="navbar__link">Correo Argentino</Link>
-                            </>
-                        )}
-
-                        {me.role === "admin" && (
-                            <>
-                                <Link to="/agregarPerro" className="navbar__link">Agregar Animal</Link>
-                                <Link to="/correo" className="navbar__link">Correo Argentino</Link>
-                            </>
-                        )}
-
-                        <button onClick={logOut} className="navbar__button">Logout</button>
-                    </>
-                ) : (
-                    <>
-                        <Link to="/login" className="navbar__link">Login</Link>
-                        <Link to="/register" className="navbar__link">Registro</Link>
-                    </>
-                )}
-            </nav>
-        </header>
+            {me.role === "admin" && (
+                <>
+                <NavbarAdmin logOut={logOut}/>
+                </>
+            )}
+            </>
+        ) : (
+            <>
+            <NavbarPublic />
+            </>
+        )}
 
         <main>
             <Routes>
                 <Route path='/login' element={<Login setLogin={setLogin} />} />
                 <Route path='/register' element={<Register setLogin={setLogin} />} />
                 <Route path='/home' element={<Home />} />
-                <Route path='/correo'element={login ? <CorreoArgentino me={me} /> : <Navigate to="/login" />
-                
-            }/>
-            <Route path='/agregarPerro'element={login && me.role === "admin"? ( 
-                <NewAnimal listaPerros={listaPerros} setListaPerros={setListaPerros}me={me}logOut={logOut}/>
-                )     : <Navigate to="/home" />}/>
-            <Route path='/perro/update/:id'element={login && me.role === "admin"? ( 
-                <UpdateAnimal listaPerros={listaPerros} setListaPerros={setListaPerros}me={me}logOut={logOut}/>
-                )     : <Navigate to="/home" />}/>
+                <Route path='/donar' element={<Donar />} />
+                <Route path='/correo'element={login ? <CorreoArgentino me={me} /> : <Navigate to="/login" />}/>
+                <Route path='/agregarPerro'element={login && me.role === "admin"? ( 
+                    <NewAnimal listaPerros={listaPerros} setListaPerros={setListaPerros}me={me}logOut={logOut}/>
+                    )     : <Navigate to="/home" />}/>
+                <Route path='/perro/update/:id'element={login && me.role === "admin"? ( 
+                    <UpdateAnimal listaPerros={listaPerros} setListaPerros={setListaPerros} setLogin={setLogin} logOut={logOut}/>
+                    )     : <Navigate to="/home" />}/>
             </Routes>
         </main>
         </>
