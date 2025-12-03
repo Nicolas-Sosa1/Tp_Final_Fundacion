@@ -15,6 +15,9 @@ import NavbarAdmin from './components/NavbarAdmin'
 import NavbarPublic from './components/NavbarPublic'
 import NavbarUser from './components/NavbarUser'
 
+
+import VerPerrito from './views/VerPerrito';
+
 function App() {
     const [listaPerros, setListaPerros] = useState([])
     const [login, setLogin] = useState(false)
@@ -59,11 +62,13 @@ function App() {
             </>
         )}
 
-        <main>
+        <main className='d-flex justify-content-center align-items-center'>
+
             <Routes>
-                <Route path='/login' element={<Login setLogin={setLogin} />} />
+                <Route path='/login' element={<Login setLogin={setLogin} setMe={setMe} />} />
                 <Route path='/register' element={<Register setLogin={setLogin} />} />
-                <Route path='/home' element={<Home />} />
+                <Route path='/home' element={<Home login={login} me={me} />} />
+
                 <Route path='/donar' element={<Donar />} />
                 <Route path='/correo'element={login ? <CorreoArgentino me={me} /> : <Navigate to="/login" />}/>
                 <Route path='/agregarPerro'element={login && me.role === "admin"? ( 
@@ -72,6 +77,8 @@ function App() {
                 <Route path='/perro/update/:id'element={login && me.role === "admin"? ( 
                     <UpdateAnimal listaPerros={listaPerros} setListaPerros={setListaPerros} setLogin={setLogin} logOut={logOut}/>
                     )     : <Navigate to="/home" />}/>
+                
+                <Route path='/verPerrito' element={<VerPerrito />} />
             </Routes>
         </main>
         </>

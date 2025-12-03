@@ -4,15 +4,19 @@ import styles from '../css/NewAnimal.module.css'
 import { useState, useEffect } from "react";
 
 
-const NewAnimal =({listaPerros, setListaPerros, me , logOut})=>{
+const NewAnimal = ({ listaPerros, setListaPerros, me, logOut }) => {
 
     const navigate = useNavigate();
     const [listaVacunas, setListaVacunas] = useState([]);
+    const [currentStep, setCurrentStep] = useState(1);
+    const totalSteps = 3;
+    const progressPercent = (currentStep - 1) / (totalSteps - 1);
+
 
     const [data, setData] = useState({
         nombre: "",
         edad: "",
-        sexo: "",
+        sexo: "hembra",
         peso: "",
         castrado: false,
         vacunas: [],
@@ -31,9 +35,9 @@ const NewAnimal =({listaPerros, setListaPerros, me , logOut})=>{
 
         axios.post(URL, data, { headers: { token_user: localStorage.getItem("token_user") } }).then(response => {
 
-                setListaPerros([...listaPerros, response.data]);
-                navigate("/home");
-            }
+            setListaPerros([...listaPerros, response.data]);
+            navigate("/home");
+        }
         ).catch(e => {
             if (e.response?.status === 406) {
                 logOut();
@@ -47,17 +51,17 @@ const NewAnimal =({listaPerros, setListaPerros, me , logOut})=>{
     };
 
 
-    const getData = () =>{
-        const URL= ("http://localhost:8000/api/vacunas")
-            axios.get(URL, {headers : {token_user : localStorage.getItem("token_user")}}).then(
-        response => {
-            setListaVacunas(response.data)
-        }
-    ).catch(
-        e => {
-            logOut()
-        }
-    )
+    const getData = () => {
+        const URL = ("http://localhost:8000/api/vacunas")
+        axios.get(URL, { headers: { token_user: localStorage.getItem("token_user") } }).then(
+            response => {
+                setListaVacunas(response.data)
+            }
+        ).catch(
+            e => {
+                logOut()
+            }
+        )
     }
 
     useEffect(() => {
@@ -66,108 +70,245 @@ const NewAnimal =({listaPerros, setListaPerros, me , logOut})=>{
     }, []);
 
 
-    return(
-        <form onSubmit={sendData} className={styles.formContainer}>
-            <h1 className={styles.titulo}>Agregar Animal</h1>
-            <div className={styles.formGroup}>
-                <label>Nombre:</label>
-                <input type="text" name="nombre" value={data.nombre} onChange={updateState} className={styles.inputField}/>
-                {errors?.nombre && <p className={styles.errorText}>{errors.nombre}</p>}
-            </div>
+    return (
+        <div className="d-flex justify-content-between align-items-center h-75 w-50 shadow-lg rounded-5 p-3 mx-auto">
+            <form onSubmit={sendData} className={styles.formContainer}>
+                <div className={styles.progress_container}>
+                    <div
+                        className={styles.progress}
+                        style={{ transform: `translateY(-50%) scaleX(${progressPercent})` }}
+                    ></div>
 
-            <div className={styles.formGroup}>
-                <label>Edad:</label>
-                <input type="number" name="edad" value={data.edad} onChange={updateState} className={styles.inputField}/>
-                {errors.edad && <p className={styles.errorText}>{errors.edad}</p>}
-            </div>
-
-            <div className={styles.formGroup}>
-                <label>Sexo:</label>
-                <select name="sexo" value={data.sexo} onChange={updateState} className={styles.inputField}>
-                    <option value="">Seleccionar</option>
-                    <option value="macho">Macho</option>
-                    <option value="hembra">Hembra</option>
-                </select>
-                {errors.sexo && <p className={styles.errorText}>{errors.sexo}</p>}
-            </div>
-
-            <div className={styles.formGroup}>
-                <label>Peso (kg):</label>
-                <input type="number" name="peso" value={data.peso} onChange={updateState} className={styles.inputField}/>
-                {errors.peso && <p className={styles.errorText}>{errors.peso}</p>}
-            </div>
-
-            <div className={styles.formGroup}>
-                <label>Castrado:</label>
-                <select name="castrado" value={data.castrado} onChange={(e) => setData({ ...data, castrado: e.target.value === "true" })}className={styles.inputField}>
-                    <option value="">Seleccionar</option>
-                    <option value="true">Sí</option>
-                    <option value="false">No</option>
-                </select>
-                {errors.castrado && <p className={styles.errorText}>{errors.castrado}</p>}
-            </div>
-
-            <div className={styles.formGroup}>
-                <label>Desparasitado:</label>
-                <select name="desparasitado" value={data.desparasitado} onChange={(e) => setData({ ...data, desparasitado: e.target.value === "true" })}className={styles.inputField}>
-                    <option value="">Seleccionar</option>
-                    <option value="true">Sí</option>
-                    <option value="false">No</option>
-                </select>
-                {errors.desparasitado && (<p className={styles.errorText}>{errors.desparasitado}</p>)}
-            </div>
-
-            <div className={styles.formGroup}>
-                <label>Vacunas:</label>
-                <div className={styles.checkboxContainer}>
-                    {listaVacunas?.map((v) => ( <label key={v._id}>
-                            <input type="checkbox" value={v._id} checked={data.vacunas.includes(v._id)}
-                                onChange={(e) => {
-                                    if (e.target.checked) {
-                                        setData({
-                                            ...data,
-                                            vacunas: [...data.vacunas, v._id],
-                                        });
-                                    } else {
-                                        setData({
-                                            ...data,
-                                            vacunas: data.vacunas.filter(id => id !== v._id),
-                                        });
-                                    }
-                                }}
-                            />
-                            {v.nombre}
-                        </label>
-                    ))}
+                    <ol>
+                        <li className={currentStep > 1 ? styles.done : ""}>Datos básicos</li>
+                        <li className={currentStep === 2 ? styles.current : (currentStep > 2 ? styles.done : "")}>Salud</li>
+                        <li className={currentStep === 3 ? styles.current : ""}>Presentacion</li>
+                    </ol>
                 </div>
-                {errors.vacunas && <p className={styles.errorText}>{errors.vacunas}</p>}
-            </div>
+                {currentStep === 1 && (
+                    <>
+                        <div className={styles.subform}>
+                            <div className="d-flex flex-column">
+                                <div className="d-flex justify-content-start w-100 mb-3 ">
+                                    <label className="title_orange mx-3 ">Nombre:</label>
+                                    <input type="text" name="nombre" value={data.nombre} onChange={updateState} className="background-transparent-orange text-black-title  font-400 font-15 rounded border-orange px-3 w-100" />
+                                </div>
+                                {errors?.nombre && <p className={styles.errorText}>{errors.nombre}</p>}
+                            </div>
 
-            <div className={styles.formGroup}>
-                <label>Discapacidad:</label>
-                <input type="text" name="discapacidad" value={data.discapacidad} onChange={updateState} className={styles.inputField}/>
-                {errors.discapacidad && (<p className={styles.errorText}>{errors.discapacidad}</p>)}
-            </div>
+                            <div className="d-flex flex-column">
+                                <div className="d-flex justify-content-start w-100 mb-3 ">
+                                    <label className="title_orange mx-3 ">Edad:</label>
+                                    <input type="number" name="edad" value={data.edad} onChange={updateState} className="background-transparent-orange text-black-title  font-400 font-15 rounded border-orange px-3 w-100" />
+                                </div>
+                                {errors.edad && <p className={styles.errorText}>{errors.edad}</p>}
+                            </div>
+                        </div>
 
-            <div className={styles.formGroup}>
-                <label>URL de imagen:</label>
-                <input type="text" name="imagen" value={data.imagen} onChange={updateState} className={styles.inputField}/>
-                {errors.imagen && <p className={styles.errorText}>{errors.imagen}</p>}
-            </div>
+                        <div className={styles.subform}>
+                            <div className="">
+                                <label className="title_orange mx-4">Sexo:</label>
+                                <div className={styles.contenedor_genero}>
+                                    <label className={data.sexo === "hembra" ? styles.hembra : styles.opcion}>
+                                        <input
+                                            type="radio"
+                                            name="sexo"
+                                            value="hembra"
+                                            checked={data.sexo === "hembra"}
+                                            onChange={updateState}
+                                        />
+                                        <span>Hembra</span>
+                                    </label>
 
-            <div className={styles.formGroup}>
-                <label>Tipo de ingreso:</label>
-                <select name="tipoIngreso" value={data.tipoIngreso} onChange={updateState} className={styles.inputField}>
-                    <option value="">Seleccionar</option>
-                    <option value="adopcion">Adopción</option>
-                    <option value="transito">Tránsito</option>
-                </select>
-                {errors.tipoIngreso && (<p className={styles.errorText}>{errors.tipoIngreso}</p>)}
-            </div>
+                                    <label className={data.sexo === "macho" ? styles.macho : styles.opcion}>
+                                        <input
+                                            type="radio"
+                                            name="sexo"
+                                            value="macho"
+                                            onChange={updateState}
+                                        />
+                                        <span>Macho</span>
+                                    </label>
 
-            <button className={styles.buttonAgregar}>Agregar</button>
-        </form>
+                                </div>
+                                {errors.sexo && <p className={styles.errorText}>{errors.sexo}</p>}
+                            </div>
 
+                            <div className="d-flex flex-column">
+                                <div className="d-flex justify-content-start w-100 mb-3 ">
+                                    <label className="title_orange text-start">Peso (kg):</label>
+                                    <input
+                                        type="number"
+                                        name="peso"
+                                        value={data.peso}
+                                        onChange={updateState}
+                                        className="background-transparent-orange text-black-title font-400 font-15 rounded border-orange px-3 w-75"
+                                    />
+                                </div>
+                                    {errors.peso && <p className={styles.errorText}>{errors.peso}</p>}
+                                </div>
+
+                            </div>
+
+                        </>
+                )}
+                        {currentStep === 2 && (
+                            <>
+                                <div className={styles.subform}>
+                                    <div>
+                                        <label className="title_orange">Castrado:</label>
+                                        <select
+                                            name="castrado"
+                                            value={data.castrado}
+                                            onChange={(e) => setData({ ...data, castrado: e.target.value === "true" })}
+                                            className={`background-transparent-orange text-black-title font-400 font-15 rounded border-orange px-3 ${styles.inputFull}`}
+                                        >
+                                            <option value="">Seleccionar</option>
+                                            <option value="true">Sí</option>
+                                            <option value="false">No</option>
+                                        </select>
+                                        {errors.castrado && <p className={styles.errorText}>{errors.castrado}</p>}
+                                    </div>
+
+                                    <div>
+                                        <label className="title_orange">Desparasitado:</label>
+                                        <select
+                                            name="desparasitado"
+                                            value={data.desparasitado}
+                                            onChange={(e) => setData({ ...data, desparasitado: e.target.value === "true" })}
+                                            className={`background-transparent-orange text-black-title font-400 font-15 rounded border-orange px-3 ${styles.inputFull}`}
+                                        >
+                                            <option value="">Seleccionar</option>
+                                            <option value="true">Sí</option>
+                                            <option value="false">No</option>
+                                        </select>
+                                        {errors.desparasitado && <p className={styles.errorText}>{errors.desparasitado}</p>}
+                                    </div>
+                                </div>
+
+
+                                <div className={styles.subform}>
+                                    <div className="d-flex flex-column">
+                                        <div className="d-flex justify-content-start w-100">
+                                            <label className="title_orange mb-1">Discapacidad:</label>
+
+                                            <input
+                                                type="text"
+                                                name="discapacidad"
+                                                value={data.discapacidad}
+                                                onChange={updateState}
+                                                className={`background-transparent-orange text-black-title font-400 font-15 rounded border-orange px-3 ${styles.inputFull}`}
+                                            />
+
+                                        </div>
+
+                                        {errors.discapacidad && (
+                                            <p className={styles.errorText} style={{ marginTop: '4px', width: '400px' }}>
+                                                {errors.discapacidad}
+                                            </p>
+                                        )}
+                                    </div>
+
+
+                                    <div className="d-flex flex-column">
+                                        <label className="title_orange w-100">Vacunas:</label>
+                                        <div className="d-flex justify-content-evenly flex-wrap gap-3">
+                                            {listaVacunas?.map((v) => (
+                                                <label key={v._id} className="d-flex align-items-center gap-1 title_orange ">
+                                                    <input
+                                                        type="checkbox"
+                                                        value={v._id}
+                                                        checked={data.vacunas.includes(v._id)}
+                                                        className={styles.background_transparent_input}
+                                                        onChange={(e) => {
+                                                            if (e.target.checked) {
+                                                                setData({
+                                                                    ...data,
+                                                                    vacunas: [...data.vacunas, v._id],
+                                                                });
+                                                            } else {
+                                                                setData({
+                                                                    ...data,
+                                                                    vacunas: data.vacunas.filter(id => id !== v._id),
+                                                                });
+                                                            }
+                                                        }}
+                                                    />
+                                                    {v.nombre}
+                                                </label>
+                                            ))}
+                                        </div>
+
+                                        {errors.vacunas && <p className={styles.errorText}>{errors.vacunas}</p>}
+                                    </div>
+                                </div>
+
+
+                            </>)}
+                        {currentStep === 3 && (
+                            <>
+                                <div className={styles.subform}>
+                                    <div className="d-flex flex-column">
+                                        <div className="d-flex justify-content-start w-100">
+                                            <label className="title_orange w-100">URL de imagen:</label>
+                                            <input type="text"
+                                                name="imagen" value={data.imagen} onChange={updateState}
+                                                className={`background-transparent-orange text-black-title font-400 font-15 rounded border-orange px-3 w-100`}
+                                            />
+                                        </div>
+                                        {errors.imagen && <p className={styles.errorText}>{errors.imagen}</p>}
+                                    </div>
+
+
+                                    <div className="d-flex flex-column">
+                                        <div className="d-flex justify-content-start w-100">
+                                            <label className="title_orange w-100">Tipo de ingreso:</label>
+                                            <select name="tipoIngreso" value={data.tipoIngreso} onChange={updateState} className="background-transparent-orange text-black-title font-400 font-15 rounded border-orange px-3 w-100">
+                                                <option value="">Seleccionar</option>
+                                                <option value="adopcion">Adopción</option>
+                                                <option value="transito">Tránsito</option>
+                                            </select>
+                                        </div>
+
+                                        {errors.tipoIngreso && (<p className={styles.errorText}>{errors.tipoIngreso}</p>)}
+
+
+                                    </div>
+
+                                </div>
+
+
+                            </>)}
+                        <div className="d-flex align-items-center justify-content-end mt-4 mx-5">
+                            {currentStep > 1 && (
+                                <button
+                                    type="button"
+                                    onClick={() => setCurrentStep(prev => Math.max(prev - 1, 1))}
+                                      className="px-3 rounded btn  btn-orange text-white mx-3"
+                                >
+                                    Anterior
+                                </button>
+                            )}
+
+                            {currentStep === 3 ? (
+                                <button type="submit"
+                                  className="px-3 rounded btn btn-success text-white"
+                                >
+                                    Agregar perro
+                                </button>
+                            ) : (
+                                <button
+                                    type="button"
+                                    onClick={() => setCurrentStep(prev => Math.min(prev + 1, totalSteps))}
+                                    className="px-3 rounded btn  btn-orange text-white"
+                                >
+                                    Siguiente
+                                </button>
+                            )}
+                        </div>
+
+                    </form>
+        </div>
     )
 
 }

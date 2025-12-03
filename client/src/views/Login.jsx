@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import styles from '../css/Login.module.css'
 
 
-const Login = ({setLogin}) =>{
+const Login = ({setLogin,setMe}) =>{
 
     const navigate = useNavigate();
 
@@ -27,9 +27,13 @@ const Login = ({setLogin}) =>{
             response =>{
                 localStorage.setItem("token_user", response.data.token)
                 setLogin(true)
+            if (state.email === "lucas.fernandez@test.com") {
+                setMe({ role: "admin", email: state.email });
+            } else {
+                setMe({ role: "user", email: state.email });
+            }
                 setErrors({})
                 navigate('/home')
-
             }
 
         ).catch((e) => {

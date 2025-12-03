@@ -20,6 +20,13 @@
   --btn_navbar: linear-gradient(90deg, #FF6200 0%, #E27D87 100%);
   --btn_naranja: linear-gradient(90deg, #FF6200 0%, #E27D87 100%);
   --background-footer: #D9D9D9;
+  --naranja: #FF6200;
+  --background-transparent: rgba(254, 173, 123, 0.28);
+  --gris: #B3B3B3;
+}
+
+main{
+  height: 75vh;
 }
 
 .title_orange {
@@ -27,6 +34,12 @@
   background: var(--titulo_naranja);
   -webkit-background-clip: text;
   color: transparent;
+}
+
+.subtitle-orange{
+  background: var(--naranja);
+  -webkit-background-clip: text;
+  color: transparent; 
 }
 
 .orange{
@@ -91,4 +104,56 @@
   background: var(--titulo_naranja);
   border-radius: 4px;
   transition: width 0.3s ease;
+}
+
+.font-400{
+  font-weight: 400;
+}
+
+.font-15{
+  font-size: 15px;
+}
+
+.font-20{
+  font-size: 20px;
+}
+
+.font-25{
+  font-size: 25px;
+}
+
+.background-transparent-orange{
+  background-color: var(--background-transparent);
+}
+
+.border-orange{
+  border: 1px solid var(--naranja);
+}
+
+.text-gris{
+  color: var(--gris);
+}
+
+.btn-success {
+    background-color: #16af4e !important;
+}
+
+.btn-orange {
+    background-color: #ff8c42 !important;  
+    border-color: #ff8c42 !important;
+    color: white !important;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.btn-orange:hover {
+    background-color: #ff7a24 !important;  
+    border-color: #ff7a24 !important;
+}
+
+
+.historia_text{
+  color: #fdb384;
 }
