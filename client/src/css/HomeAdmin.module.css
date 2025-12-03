@@ -3,7 +3,6 @@
   width: 90%;
   margin: 0 auto;
 }
-/* Header */
 .homeheader {
   display: flex;
   justify-content: space-between;
@@ -34,11 +33,11 @@
 }
 .postulacionesWrapper {
   position: relative;
-  padding-top: 20px; /* solo para que no se pise contenido */
+  padding-top: 20px;
 }
-/* Tabs */
+
 .tabs {
-  left: 40px; /* alineación visual */
+  left: 40px;
   display: inline-flex;
   gap: 12px;
   margin-bottom: -1px;
@@ -55,6 +54,6 @@
 }
 
 .tab.active {
-  background: #ffb17f; /* se “fusiona” */
+  background: #ffb17f;
   font-weight: 600;
 }

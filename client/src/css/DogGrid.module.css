@@ -1,7 +1,7 @@
 .doggrid {
   display: grid;
   width: 90%;
-  grid-template-columns: repeat(4, 1fr); /* ✅ máximo 4 */
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   margin: 0 auto;
   padding-top: 2em;
