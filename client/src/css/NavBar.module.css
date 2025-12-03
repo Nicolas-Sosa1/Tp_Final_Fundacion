@@ -1,0 +1,16 @@
+.height_navbar{
+    height: 20%;
+    width: 100%;
+}
+
+.contenedor_img{
+    width: 100px;
+    height: 5vh;
+}
+
+img{
+    width: 100%;
+    height: 100%;
+    object-fit:contain;
+}
+

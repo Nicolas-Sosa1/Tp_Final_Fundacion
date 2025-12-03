@@ -13,18 +13,33 @@ const solicitudAdopcionSchema = mongoose.Schema(
             ref: "animals",
             required: [true, "Debes seleccionar un animal para adoptar"]
         },
-
+        nombre: {
+            type: String,
+            required : [true, "El nombre del usuario es obligatorio"],
+            minlength:[3, "El nombre debe tener al menos 3 caracteres"]
+        },
+        apellido: {
+            type: String,
+            required : [true, "El apellido del usuario es obligatorio"],
+            minlength:[3, "El apellido debe tener al menos 3 caracteres"]
+        },
         direccion: {
             type: String,
             required: [true, "La dirección es obligatoria"],
             minlength: [5, "La dirección debe tener al menos 5 caracteres"]
         },
-
+        edad:{
+            type:Number,
+            required: [true, "La edad es obligatoria"]
+        },
+        zona:{
+            type:String,
+            required: [true, "La zona es obligatoria"]
+        },
         telefono: {
             type: String,
             required: [true, "El teléfono es obligatorio"]
         },
-
         convivientes: {
             type: String,
             required: [true, "Debes indicar con quién vivís"]

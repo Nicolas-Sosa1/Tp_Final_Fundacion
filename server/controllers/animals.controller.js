@@ -84,7 +84,7 @@ const animalsController = {
         const id = req.params.id;
 
         try {
-            const animal = await Animals.findById(id);
+            const animal = await Animals.findById(id).populate("vacunas");
 
             if (!animal) {
                 return res.status(404).json({ message: "No hay animal con ese ID" });
