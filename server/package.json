@@ -19,7 +19,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mercadopago": "^1.5.14",
+    "mercadopago": "^2.11.0",
     "mongodb": "^7.0.0",
     "mongoose": "^8.20.1"
   },
