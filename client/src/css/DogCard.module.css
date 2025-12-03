@@ -1,0 +1,106 @@
+.dogcard {
+  position: relative;
+  background: white;
+  border-radius: 20px;
+  padding: 12px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+  border: 2px solid black;
+}
+
+.imageWrapper {
+  position: relative;
+}
+
+/* Foto */
+.dogphoto {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 16px;
+  border: 1px solid black;
+}
+
+/* Género */
+.doggender {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 26px;
+  height: 26px;
+}
+
+/* Estructura */
+.doginfo {
+  margin-top: 10px;
+}
+
+.dogrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Izquierda */
+.dogleft {
+  display: flex;
+  flex-direction: column;
+}
+
+.dogname {
+  font-family: "Otomanopee One", sans-serif;
+  color: #f26b5b;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.dogage {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Derecha */
+.dogright {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Tamaños */
+.dogsizes {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.sizeIcon {
+  display: block; /* evita inline weirdness */
+  filter: grayscale(100%);
+  opacity: 0.3;
+}
+/* Escalas */
+.chico {
+  width: 10px;
+}
+
+.mediano {
+  width: 13px;
+}
+
+.grande {
+  width: 16px;
+}
+
+/* Activo */
+.active {
+  filter: none;
+  opacity: 1;
+}
+
+/* Peso */
+.dogweight {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+}

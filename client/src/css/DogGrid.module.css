@@ -1,0 +1,12 @@
+.doggrid {
+  display: grid;
+  width: 90%;
+  grid-template-columns: repeat(4, 1fr); /* ✅ máximo 4 */
+  gap: 24px;
+  margin: 0 auto;
+  padding-top: 2em;
+  justify-content: flex-start;
+
+  background: linear-gradient(135deg, #ffb07a, #f4c2c2);
+  border-radius: 20px;
+}
