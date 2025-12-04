@@ -5,6 +5,8 @@ import DogInfoPanel from "../../components/DogInfoPanel";
 import PostulantesTabla from "../../components/PostulantesTabla";
 import styles from "../../css/admin/DogPostulacionesPage.module.css";
 
+import Breadcrumbs from "../../components/BreadcrumbsAdmin";
+
 const DogPostulacionesPage = () => {
   const { perroId } = useParams();
 
@@ -17,8 +19,11 @@ const DogPostulacionesPage = () => {
 
   return (
     <main className={styles.page}>
-      <DogInfoPanel perro={perro} />
-      <PostulantesTabla postulaciones={postulaciones} />
+      <Breadcrumbs perro={perro} />
+      <div className={styles.body}>
+        <DogInfoPanel perro={perro} />
+        <PostulantesTabla postulaciones={postulaciones} />
+      </div>
     </main>
   );
 };

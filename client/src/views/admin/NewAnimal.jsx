@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "../../css/admin/NewAnimal.module.css";
 import { useState, useEffect } from "react";
 
-const NewAnimal = ({ listaPerros, setListaPerros, me, logOut }) => {
+const NewAnimal = ({ listaPerros, setListaPerros, logOut }) => {
   const navigate = useNavigate();
   const [listaVacunas, setListaVacunas] = useState([]);
 
@@ -53,7 +53,7 @@ const NewAnimal = ({ listaPerros, setListaPerros, me, logOut }) => {
       .then((response) => {
         setListaVacunas(response.data);
       })
-      .catch((e) => {
+      .catch(() => {
         logOut();
       });
   };

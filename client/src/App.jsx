@@ -14,6 +14,7 @@ import CorreoArgentino from "./views/user/CorreoArgentino";
 
 import HomeAdmin from "./views/admin/HomeAdmin";
 import DogPostulacionesPage from "./views/admin/DogPostulacionesPage";
+import PostulacionDetallePage from "./views/admin/PostulacionDetallePage";
 import NewAnimal from "./views/admin/NewAnimal";
 import UpdateAnimal from "./views/admin/UpdateAnimal";
 import PagosAdmin from "./views/admin/PagosAdmin";
@@ -119,9 +120,15 @@ function App() {
             }
           />
           <Route path="/homeadmin" element={<HomeAdmin />} />
+
           <Route
             path="/homeadmin/:perroId"
             element={<DogPostulacionesPage />}
+          />
+
+          <Route
+            path="/homeadmin/:perroId/postulacion/:postulacionId"
+            element={<PostulacionDetallePage />}
           />
 
           <Route

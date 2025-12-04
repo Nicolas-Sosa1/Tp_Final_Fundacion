@@ -1,15 +1,23 @@
 import { useState } from "react";
+import { Link, useParams } from "react-router-dom";
+
 import styles from "../css/admin/PostulantesTabla.module.css";
 
 const PostulantesTabla = ({ postulaciones = [] }) => {
   const [activeTab, setActiveTab] = useState("todos");
-  const listaBase = Array.isArray(postulaciones) ? postulaciones : [];
+  const { perroId } = useParams();
 
   const filtradas =
-    activeTab === "no-vistos" ? listaBase.filter((p) => !p.vista) : listaBase;
+    activeTab === "no-vistos"
+      ? postulaciones.filter((p) => !p.vista)
+      : postulaciones;
 
-  console.log("postulaciones:", postulaciones);
-  console.log("es array?", Array.isArray(postulaciones));
+  const estadoClase = {
+    Aceptada: styles.aceptada,
+    Pendiente: styles.pendiente,
+    Rechazada: styles.rechazada,
+    "No leída": styles.novisto,
+  };
 
   return (
     <section className={styles.panel}>
@@ -46,18 +54,30 @@ const PostulantesTabla = ({ postulaciones = [] }) => {
             <th>Ver</th>
           </tr>
         </thead>
+
         <tbody>
           {filtradas.map((p, index) => (
             <tr key={p.id}>
               <td>{index + 1}</td>
-              <td>{p.estado}</td>
-              <td>{p.nombre}</td>
-              <td>{p.edad}</td>
-              <td>{p.zona}</td>
               <td>
-                <a href={`/postulacion/${p.id}`} className={styles.viewLink}>
+                <span
+                  className={`${styles.estado} ${
+                    estadoClase[p.estado] || styles.novisto
+                  }`}
+                >
+                  {p.estado || "No leído"}
+                </span>
+              </td>
+              <td>{p.respuestas?.[3]}</td> {/* Nombre */}
+              <td>{p.respuestas?.[4]}</td> {/* Edad */}
+              <td>{p.respuestas?.[5]}</td> {/* Zona */}
+              <td>
+                <Link
+                  to={`/homeadmin/${perroId}/postulacion/${p.id}`}
+                  className={styles.viewLink}
+                >
                   📝
-                </a>
+                </Link>
               </td>
             </tr>
           ))}

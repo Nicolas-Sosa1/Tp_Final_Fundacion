@@ -45,3 +45,30 @@
   text-decoration: none;
   font-size: 18px;
 }
+
+.estado {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.aceptada {
+  background: #e9f7ef;
+  color: #1e8449;
+}
+
+.pendiente {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.rechazada {
+  background: #fdecea;
+  color: #922b21;
+}
+
+.novisto {
+  background: #e3f2fd;
+  color: #1565c0;
+}
