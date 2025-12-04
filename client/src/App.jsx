@@ -7,17 +7,20 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 import Login from "./views/Login";
 import Register from "./views/Register";
-import Home from "./views/Home";
+import HomePublic from "./views/HomePublic";
 import NewAnimal from "./views/NewAnimal";
 import CorreoArgentino from "./views/CorreoArgentino";
 import UpdateAnimal from "./views/UpdateAnimal";
 import Donar from "./views/Donar";
 import PagosAdmin from "./views/PagosAdmin";
 import HomeAdmin from "./views/HomeAdmin";
+import HomeUser from "./views/HomeUser";
+
 
 import NavbarAdmin from "./components/NavbarAdmin";
 import NavbarPublic from "./components/NavbarPublic";
 import NavbarUser from "./components/NavbarUser";
+import Footer from "./components/Footer";
 
 function App() {
   const [listaPerros, setListaPerros] = useState([]);
@@ -65,9 +68,16 @@ function App() {
 
       <main>
         <Routes>
-          <Route path="/login" element={<Login setLogin={setLogin} />} />
+          <Route path="/login" element={<Login setLogin={setLogin} setMe={setMe} />} />
           <Route path="/register" element={<Register setLogin={setLogin} />} />
-          <Route path="/home" element={<Home />} />
+          <Route 
+            path="/home" 
+            element={
+              me.role === "admin" ? <HomeAdmin /> :
+              me.role === "user" ? <HomeUser /> :
+              <HomePublic />
+            }
+          />
           <Route path="/donar" element={<Donar />} />
           <Route
             path="/correo"
@@ -106,7 +116,7 @@ function App() {
             }
           />
           <Route
-            path="/pagos"
+            path="/donaciones"
             element={
               login && me.role === "admin" ? (
                 <PagosAdmin />
@@ -115,9 +125,10 @@ function App() {
               )
             }
           />
-          <Route path="/homeadmin" element={<HomeAdmin />} />
         </Routes>
       </main>
+        <Footer />  
+      
     </>
   );
 }
