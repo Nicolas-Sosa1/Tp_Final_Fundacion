@@ -7,7 +7,7 @@ import { perros } from "../../data/perros";
 
 import Breadcrumbs from "../../components/BreadcrumbsAdmin";
 
-import styles from "../../css/admin/PostulacionDetallePage.module.css";
+import styles from "../../css/admin/PostulacionDetail.module.css";
 
 const PostulacionDetallePage = () => {
   const { postulacionId } = useParams();

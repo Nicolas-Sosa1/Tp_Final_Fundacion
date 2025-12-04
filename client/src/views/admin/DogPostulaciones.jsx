@@ -3,7 +3,7 @@ import { perros } from "../../data/perros";
 import { postulacionesPorPerro } from "../../data/postulaciones";
 import DogInfoPanel from "../../components/DogInfoPanel";
 import PostulantesTabla from "../../components/PostulantesTabla";
-import styles from "../../css/admin/DogPostulacionesPage.module.css";
+import styles from "../../css/admin/DogPostulaciones.module.css";
 
 import Breadcrumbs from "../../components/BreadcrumbsAdmin";
 

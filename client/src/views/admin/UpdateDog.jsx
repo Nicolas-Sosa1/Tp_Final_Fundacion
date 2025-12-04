@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import styles from "../../css/admin/UpdateAnimal.module.css";
+import styles from "../../css/admin/UpdateDog.module.css";
 import { useState, useEffect } from "react";
 
 const UpdateAnimal = ({ listaPerros, setListaPerros, logOut, setLogin }) => {

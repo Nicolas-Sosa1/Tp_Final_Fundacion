@@ -13,10 +13,10 @@ import Donar from "./views/user/Donar";
 import CorreoArgentino from "./views/user/CorreoArgentino";
 
 import HomeAdmin from "./views/admin/HomeAdmin";
-import DogPostulacionesPage from "./views/admin/DogPostulacionesPage";
-import PostulacionDetallePage from "./views/admin/PostulacionDetallePage";
-import NewAnimal from "./views/admin/NewAnimal";
-import UpdateAnimal from "./views/admin/UpdateAnimal";
+import DogPostulaciones from "./views/admin/DogPostulaciones.jsx";
+import PostulacionDetail from "./views/admin/PostulacionDetail.jsx";
+import AddDog from "./views/admin/AddDog.jsx";
+import UpdateDog from "./views/admin/UpdateDog.jsx";
 import PagosAdmin from "./views/admin/PagosAdmin";
 
 import NavbarAdmin from "./components/NavbarAdmin";
@@ -83,7 +83,7 @@ function App() {
             path="/agregarPerro"
             element={
               login && me.role === "admin" ? (
-                <NewAnimal
+                <AddDog
                   listaPerros={listaPerros}
                   setListaPerros={setListaPerros}
                   me={me}
@@ -98,7 +98,7 @@ function App() {
             path="/perro/update/:id"
             element={
               login && me.role === "admin" ? (
-                <UpdateAnimal
+                <UpdateDog
                   listaPerros={listaPerros}
                   setListaPerros={setListaPerros}
                   setLogin={setLogin}
@@ -121,14 +121,11 @@ function App() {
           />
           <Route path="/homeadmin" element={<HomeAdmin />} />
 
-          <Route
-            path="/homeadmin/:perroId"
-            element={<DogPostulacionesPage />}
-          />
+          <Route path="/homeadmin/:perroId" element={<DogPostulaciones />} />
 
           <Route
             path="/homeadmin/:perroId/postulacion/:postulacionId"
-            element={<PostulacionDetallePage />}
+            element={<PostulacionDetail />}
           />
 
           <Route
