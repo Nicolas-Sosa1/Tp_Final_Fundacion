@@ -1,48 +1,55 @@
 import Payment from "../models/payment.model.js";
-import pkg from "mercadopago";
-
 import mercadopago from "mercadopago";
-
 
 mercadopago.configure({
     access_token: process.env.MP_ACCESS_TOKEN
 });
 
 const paymentController = {
+
     createOrden: async (req, res) => {
         try {
             console.log("TOKEN MP:", process.env.MP_ACCESS_TOKEN);
+
+            const { amount } = req.body;
+
+            if (!amount || isNaN(amount) || Number(amount) <= 0) {
+                return res.status(400).json({ error: "Monto inválido" });
+            }
 
             const preferenceData = {
                 items: [
                     {
                         title: "Donación",
                         quantity: 1,
-                        unit_price: 1000,
+                        unit_price: Number(amount),
                         currency_id: "ARS"
                     }
                 ],
                 back_urls: {
-                    success: "https://www.google.com",
-                    failure: "https://www.google.com",
-                    pending: "https://www.google.com"
+                    success: "http://localhost:5173/donar?status=approved",
+                    failure: "http://localhost:5173/donar?status=failure",
+                    pending: "http://localhost:5173/donar?status=pending"
                 },
-                auto_return: "approved",
-                notification_url: "https://unarbitrary-franklin-unperforable.ngrok-free.dev/api/payment/webhook"
+                
+                notification_url:
+                    "https://unarbitrary-franklin-unperforable.ngrok-free.dev/api/payment/webhook"
             };
 
             const result = await mercadopago.preferences.create(preferenceData);
 
-            console.log("RESULT:", result.body);
+            console.log("PREFERENCE RESULT:", result.body);
 
-            return res.json({ id: result.body.id });
+            return res.json({
+                id: result.body.id,
+                init_point: result.body.init_point
+            });
 
         } catch (error) {
-            console.error("ERROR MERCADO PAGO:", error);
+            console.error("ERROR MP:", error);
             res.status(500).json({ error: "No se pudo crear la orden" });
         }
     },
-
     webhook: async (req, res) => {
         try {
             console.log("Webhook recibido:", req.query, req.body);
@@ -53,32 +60,55 @@ const paymentController = {
                 req.body["data.id"] ||
                 req.query.id;
 
-            const status =
-                req.query.type ||
-                req.query.topic ||
-                req.body?.type ||
-                req.body?.topic ||
-                "unknown";
-
             if (!paymentId) {
-                console.log("No se encontró paymentId, evento ignorado");
                 return res.sendStatus(200);
             }
 
-            await Payment.create({
-                payment_id: paymentId,
-                status: status,
-                detail: { query: req.query, body: req.body }
-            });
 
-            console.log("Pago guardado correctamente");
+            const paymentInfo = await mercadopago.payment.findById(paymentId);
+
+            await Payment.updateOne(
+                { payment_id: paymentInfo.body.id }, 
+                {
+                    $set: {
+                        status: paymentInfo.body.status,
+                        transaction_amount: paymentInfo.body.transaction_amount,
+                        payment_method: paymentInfo.body.payment_method_id,
+                        payer_email: paymentInfo.body.payer?.email,
+                        detail: paymentInfo.body,
+                        date: new Date(),
+                    }
+                },
+                { upsert: true }
+            );
+
+
             res.sendStatus(200);
 
         } catch (error) {
             console.error("Error en webhook:", error);
             res.sendStatus(500);
         }
+    },
+    getAll: async (req, res) => {
+    try {
+        const pagos = await Payment.find().sort({ date: -1 });
+
+        return res.status(200).json({
+            success: true,
+            total: pagos.length,
+            pagos
+        });
+
+    } catch (error) {
+        console.error("Error al obtener los pagos:", error);
+        return res.status(500).json({
+            success: false,
+            error: "Error al obtener los pagos"
+        });
     }
+},
+
 };
 
 export default paymentController;

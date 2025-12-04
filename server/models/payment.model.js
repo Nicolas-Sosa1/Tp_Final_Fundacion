@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const paymentSchema = new mongoose.Schema({
-    payment_id: { type: String, required: true },
+    payment_id: { type: String, required: true, unique: true },
     status: { type: String, required: true },
     transaction_amount: Number,
     payment_method: String,
