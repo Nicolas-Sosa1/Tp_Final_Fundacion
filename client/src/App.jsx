@@ -14,6 +14,7 @@ import UpdateAnimal from "./views/UpdateAnimal";
 import Donar from "./views/Donar";
 import PagosAdmin from "./views/PagosAdmin";
 import HomeAdmin from "./views/HomeAdmin";
+import DogPostulacionesPage from "./views/DogPostulacionesPage";
 
 import NavbarAdmin from "./components/NavbarAdmin";
 import NavbarPublic from "./components/NavbarPublic";
@@ -116,6 +117,21 @@ function App() {
             }
           />
           <Route path="/homeadmin" element={<HomeAdmin />} />
+          <Route
+            path="/homeadmin/:perroId"
+            element={<DogPostulacionesPage />}
+          />
+
+          <Route
+            path="/pagos"
+            element={
+              login && me.role === "admin" ? (
+                <PagosAdmin />
+              ) : (
+                <Navigate to="/home" />
+              )
+            }
+          />
         </Routes>
       </main>
     </>
