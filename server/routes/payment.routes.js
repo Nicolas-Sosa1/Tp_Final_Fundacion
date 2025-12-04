@@ -15,6 +15,8 @@ paymentRoutes.get("/failure", (req, res) => res.send("FAILED PAYMENT"));
 paymentRoutes.get("/pending", (req, res) => res.send("PENDING PAYMENT"));
 
 paymentRoutes.get('/all', validateToken, isAdmin, paymentController.getAll);
+paymentRoutes.get('/mine', validateToken, paymentController.getMine);
+
 
 
 export default paymentRoutes

@@ -2,9 +2,10 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styles from '../css/Login.module.css'
+import { jwtDecode } from "jwt-decode"; 
 
 
-const Login = ({setLogin}) =>{
+const Login = ({setLogin, setMe}) =>{
 
     const navigate = useNavigate();
 
@@ -28,8 +29,9 @@ const Login = ({setLogin}) =>{
                 localStorage.setItem("token_user", response.data.token)
                 setLogin(true)
                 setErrors({})
-                navigate('/home')
-
+                const decoded = jwtDecode(response.data.token);
+                setMe(decoded);
+                navigate("/home");
             }
 
         ).catch((e) => {
@@ -41,30 +43,27 @@ const Login = ({setLogin}) =>{
         });
     }
     return (
-        <form onSubmit={e => loginProcess(e)} className={styles.formContainer}>
+        <div className={styles.loginWrapper}>
+            <form onSubmit={loginProcess} className={styles.loginCard}>
+
+                <h1 className={styles.title}>Iniciar sesión</h1>
 
                 <div className={styles.formGroup}>
-                    <h1 className={styles.titulo}>Login</h1>
-                </div>
-
-                <div className={styles.formGroup}>
-                    <label htmlFor="email">Correo:</label>
-                    <input type="email" name="email" id="email" value={state.email} onChange={(e)=> updateState(e)} className={styles.inputField}/>
+                    <label>Correo</label>
+                    <input type="email" name="email" value={state.email} onChange={updateState} className={styles.inputField}/>
                     {errors.email && <p className={styles.errorText}>{errors.email}</p>}
                 </div>
 
                 <div className={styles.formGroup}>
-                    <label htmlFor="password">Contraseña:</label>
-                    <input type="password" name="password" id="password" value={state.password} onChange={(e)=> updateState(e)} className={styles.inputField}/>
+                    <label>Contraseña</label>
+                    <input type="password" name="password" value={state.password} onChange={updateState} className={styles.inputField}/>
                     {errors.password && <p className={styles.errorText}>{errors.password}</p>}
                 </div>
-                
-                <div className={styles.formGroup}>
-                    <button className={styles.buttonLogin}>Login</button>
-                </div>
-        </form>
 
-    )
-}
+                <button className={styles.buttonLogin}>Ingresar</button>
+        </form>
+    </div>
+    );
+};
 
 export default Login;
