@@ -1,4 +1,4 @@
-import styles from "../css/DogInfoPanel.module.css";
+import styles from "../css/admin/DogInfoPanel.module.css";
 import sizeIcon from "../assets/icons/tamanio.svg";
 
 const DogInfoPanel = ({ perro }) => {

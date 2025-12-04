@@ -7,14 +7,16 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 import Login from "./views/Login";
 import Register from "./views/Register";
-import Home from "./views/Home";
-import NewAnimal from "./views/NewAnimal";
-import CorreoArgentino from "./views/CorreoArgentino";
-import UpdateAnimal from "./views/UpdateAnimal";
-import Donar from "./views/Donar";
-import PagosAdmin from "./views/PagosAdmin";
-import HomeAdmin from "./views/HomeAdmin";
-import DogPostulacionesPage from "./views/DogPostulacionesPage";
+
+import Home from "./views/user/Home";
+import Donar from "./views/user/Donar";
+import CorreoArgentino from "./views/user/CorreoArgentino";
+
+import HomeAdmin from "./views/admin/HomeAdmin";
+import DogPostulacionesPage from "./views/admin/DogPostulacionesPage";
+import NewAnimal from "./views/admin/NewAnimal";
+import UpdateAnimal from "./views/admin/UpdateAnimal";
+import PagosAdmin from "./views/admin/PagosAdmin";
 
 import NavbarAdmin from "./components/NavbarAdmin";
 import NavbarPublic from "./components/NavbarPublic";

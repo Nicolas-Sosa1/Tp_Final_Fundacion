@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "../css/PostulantesTabla.module.css";
+import styles from "../css/admin/PostulantesTabla.module.css";
 
 const PostulantesTabla = ({ postulaciones = [] }) => {
   const [activeTab, setActiveTab] = useState("todos");

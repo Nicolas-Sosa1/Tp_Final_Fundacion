@@ -1,12 +1,16 @@
-import styles from "../css/HomeAdmin.module.css";
-import DogGrid from "../components/DogGrid";
 import { useState } from "react";
-import { perros } from "../data/perros";
+import styles from "../../css/admin/HomeAdmin.module.css";
+import DogGrid from "../../components/DogGrid";
+import { perros } from "../../data/perros";
 
 const HomeAdmin = () => {
   const [activeTab, setActiveTab] = useState("adopcion");
 
-  const perrosFiltrados = perros.filter((perro) => perro.tipo === activeTab);
+  const perrosFiltrados = perros.filter(
+    (perro) =>
+      (activeTab === "adopcion" && perro.estado === "En adopción") ||
+      (activeTab === "transito" && perro.estado === "En tránsito")
+  );
   return (
     <main className={styles.homeadmin}>
       <header className={styles.homeheader}>

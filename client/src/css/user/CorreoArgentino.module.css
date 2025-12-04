@@ -1,0 +1,116 @@
+
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 25px;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0px 4px 14px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
+}
+
+.title {
+    text-align: center;
+    font-size: 28px;
+    color: #005bb5;
+    margin-bottom: 20px;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.tabs button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: #eaeaea;
+    cursor: pointer;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.tabs button:hover {
+    background: #d4d4d4;
+}
+
+.active {
+    background: #005bb5 !important;
+    color: white !important;
+}
+
+/* ====== SECCIONES ====== */
+.section {
+    margin-top: 10px;
+}
+
+/* ====== ELEMENTOS ====== */
+.input {
+    width: 100%;
+    padding: 13px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #005bb5;
+}
+
+/* SELECT igual que input */
+.select {
+    width: 100%;
+    padding: 13px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+.btn {
+    width: 100%;
+    padding: 14px;
+    background: #005bb5;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    margin-top: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.btn:hover {
+    background: #004a90;
+}
+
+.response {
+    margin-top: 20px;
+    background: #f6f6f6;
+    padding: 15px;
+    border-left: 4px solid #005bb5;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    overflow-x: auto;
+    font-family: monospace;
+    font-size: 14px;
+}
+
+.card {
+    background: #fafafa;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #dedede;
+    margin-bottom: 12px;
+}
+
+.card h3 {
+    margin: 0 0 8px 0;
+    color: #005bb5;
+}
