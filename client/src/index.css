@@ -135,7 +135,7 @@ main{
 }
 
 .btn-success {
-    background-color: #16af4e !important;
+  background-color: #16af4e !important;
 }
 
 .btn-orange {
@@ -156,4 +156,8 @@ main{
 
 .historia_text{
   color: #fdb384;
+}
+
+.text-orange{
+  color: #ff7a24;
 }

@@ -20,6 +20,8 @@ import NavbarPublic from "./components/NavbarPublic";
 import NavbarUser from "./components/NavbarUser";
 
 import VerPerrito from "./views/VerPerrito";
+import Login_Registro from "./views/Login_Registro";
+import OneDog from "./views/OneDog";
 
 function App() {
   const [listaPerros, setListaPerros] = useState([]);
@@ -54,10 +56,12 @@ function App() {
         <NavbarPublic />
       )}
 
-      <main>
+      <main className="d-flex justify-content-center align-items-center">
         <Routes>
-          <Route path="/login" element={<Login setLogin={setLogin} setMe={setMe} />} />
-          <Route path="/register" element={<Register setLogin={setLogin} />} />
+          <Route path="/login" element={<Login_Registro setLogin={setLogin} setMe={setMe} />} />
+
+          {/* <Route path="/login" element={<Login setLogin={setLogin} setMe={setMe} />} />
+          <Route path="/register" element={<Register setLogin={setLogin} />} /> */}
 
           <Route path="/home" element={<Home login={login} me={me} />} />
 
@@ -83,7 +87,7 @@ function App() {
               )
             }
           />
-
+          <Route path="/oneDog" element={<OneDog />} />
           <Route
             path="/perro/update/:id"
             element={

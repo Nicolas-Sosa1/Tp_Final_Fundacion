@@ -22,14 +22,20 @@ const VerPerrito = () => {
     const [tempData, setTempData] = useState(data);
     const [numeroEdad, unidadEdad] = data.edad.split(" ");
 
+    const handleImageChange = (e) => {
+        const files = Array.from(e.target.files);
 
+        if (files.length > 5) {
+            alert("Solo puedes seleccionar hasta 5 imágenes");
+            return;
+        }
 
-    const handleEdit = () => {
-        setEditando(true);
-    };
+        const imageURLs = files.map((file) => URL.createObjectURL(file));
 
-    const handleSave = () => {
-        setEditando(false);
+        setData((prevData) => ({
+            ...prevData,
+            imagen: imageURLs,
+        }));
     };
 
     console.log(numeroEdad)
@@ -52,13 +58,42 @@ const VerPerrito = () => {
                     </Carousel.Item>
 
                 </Carousel>
-                <div className='mt-3 d-flex gap-3 align-items-start  w-75'>
-                    <div className={styles.contenedor_img_prev}>
-                        <img className="d-block w-100 rounded-4" src="../img/perro.png" alt="Perrito 1" />
-                    </div>
-                    <div className={styles.contenedor_img_prev}>
-                        <img className="d-block w-100 rounded-4" src="../img/perro_2.png" alt="Perrito 1" />
-                    </div>
+
+                <div className='d-flex w-100 align-items-center justify-content-center'>
+                    {editando ? (
+                        <div className='mt-3 d-flex gap-3 align-items-center justify-content-center  w-100 '>
+                            <div className={styles.contenedor_img_prev}>
+                                <img className="d-block w-100 rounded-4" src="../img/perro.png" alt="Perrito 1" />
+                            </div>
+                            <div className={styles.contenedor_img_prev}>
+                                <img className="d-block w-100 rounded-4" src="../img/perro_2.png" alt="Perrito 1" />
+                            </div>
+
+                            <div className={styles.contenedor_img_prev}>
+                                <label htmlFor="upload" className={styles.btn_subir}>
+                                    <i class="fa-solid fa-plus"></i>
+                                </label>
+
+                                <input
+                                    id="upload"
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={handleImageChange}
+                                    style={{ display: "none" }}
+                                />
+                            </div>
+                        </div>
+                    ) : (
+                        <div className='mt-3 d-flex gap-3 align-items-start justify-content-center w-100'>
+                            <div className={styles.contenedor_img_prev}>
+                                <img className="d-block w-100 rounded-4" src="../img/perro.png" alt="Perrito 1" />
+                            </div>
+                            <div className={styles.contenedor_img_prev}>
+                                <img className="d-block w-100 rounded-4" src="../img/perro_2.png" alt="Perrito 1" />
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -185,7 +220,7 @@ const VerPerrito = () => {
                         </div>
                     )}
                     {editando ? (
-                        <div className="d-flex align-items-center">     
+                        <div className="d-flex align-items-center">
                             <h3 className="font-20 mb-1 pe-3">Ubicación:</h3>
                             <select className='background-transparent-orange text-black-title font-400 font-15 rounded border-orange px-3 w-50'
                                 value={data.ubicacion}
@@ -207,29 +242,27 @@ const VerPerrito = () => {
                 </div>
                 <div className='container'>
                     {!editando ? (
-                        <button 
-                            className='btn btn-primary float-end' 
+                        <button
+                            className='btn btn-primary float-end'
                             onClick={() => {
-                                setTempData(data);   
-                                setEditando(true);   
+                                setTempData(data);
+                                setEditando(true);
                             }}
                         >
                             Editar
                         </button>
                     ) : (
                         <div className="d-flex justify-content-end gap-2">
-                            <button className='btn btn-secondary' onClick={() => {setData(tempData);setEditando(false);}}>
+                            <button className='btn btn-secondary' onClick={() => { setData(tempData); setEditando(false); }}>
                                 Cancelar
                             </button>
-                            <button 
-                                className='btn btn-success' onClick={() => { setTempData(data); setEditando(false);}}>
+                            <button
+                                className='btn btn-success' onClick={() => { setTempData(data); setEditando(false); }}>
                                 Guardar cambios
                             </button>
                         </div>
                     )}
-</div>
-
-
+                </div>
             </div>
 
         </div>

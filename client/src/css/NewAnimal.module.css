@@ -9,7 +9,6 @@
     gap: 20px;
     align-items: center; 
     justify-items: center;
-    margin-top: 20px;
 }
 
 .subform > div {
@@ -46,7 +45,7 @@
 
 .progress_container{
     position: relative;
-    top: -23px;
+    top: -63px;
     z-index: 0;
     overflow: hidden;
 }
@@ -209,4 +208,26 @@
     top: -5px;
     left: 2px;
     font-weight: bold;
+}
+
+.fila_imagen {
+  display: flex;
+  align-items: center;
+  gap: 10px; 
+  background-color: antiquewhite;
+}
+
+.btn_subir {
+  background: var(--background-transparent);
+  color: var(--naranja);
+  padding: 6px 12px;
+  border: 1px solid var(--naranja);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+
+}
+
+.btn_subir:hover {
+  opacity: 0.8;
 }
