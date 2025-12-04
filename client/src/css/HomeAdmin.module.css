@@ -1,0 +1,59 @@
+.homeadmin {
+  padding: 32px 64px;
+  width: 90%;
+  margin: 0 auto;
+}
+.homeheader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.homeheader h1 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.searchinput {
+  padding: 10px 18px;
+  border-radius: 30px;
+  color: black;
+  border: none;
+  background-color: #eee;
+  outline: none;
+  font-size: 0.95rem;
+}
+.postulaciones {
+  background: linear-gradient(135deg, #ffb07a, #f4c2c2);
+  border-radius: 0 28px 28px 28px;
+  padding: 10px 32px 40px;
+  margin: 0 auto;
+  border: 2px solid black;
+}
+.postulacionesWrapper {
+  position: relative;
+  padding-top: 20px;
+}
+
+.tabs {
+  left: 40px;
+  display: inline-flex;
+  gap: 12px;
+  margin-bottom: -1px;
+}
+.tab {
+  padding: 12px 28px;
+  color: black;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  background-color: white;
+  border-radius: 16px 16px 0 0;
+  border: 2px solid black;
+}
+
+.tab.active {
+  background: #ffb17f;
+  font-weight: 600;
+}
