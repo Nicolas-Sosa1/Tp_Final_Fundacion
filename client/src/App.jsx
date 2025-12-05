@@ -12,10 +12,13 @@ import Home from "./views/user/Home";
 import Donar from "./views/user/Donar";
 import CorreoArgentino from "./views/user/CorreoArgentino";
 
-import HomeAdmin from "./views/admin/HomeAdmin";
-import DogPostulaciones from "./views/admin/DogPostulaciones.jsx";
-import PostulacionDetail from "./views/admin/PostulacionDetail.jsx";
 import AllDogs from "./views/admin/AllDogs.jsx";
+import OneDogAdmin from "./views/admin/OneDogAdmin.jsx";
+import AllDogsAdoptados from "./views/admin/AllDogsAdoptados.jsx";
+import AllDogsPostulaciones from "./views/admin/AllDogsPostulaciones.jsx";
+import OneDogPostulaciones from "./views/admin/OneDogPostulaciones.jsx";
+import OnePostulacion from "./views/admin/OnePostulacion.jsx";
+
 import AddDog from "./views/admin/AddDog.jsx";
 import UpdateDog from "./views/admin/UpdateDog.jsx";
 import PagosAdmin from "./views/admin/PagosAdmin";
@@ -120,17 +123,90 @@ function App() {
               )
             }
           />
-          <Route path="/homeadmin" element={<HomeAdmin />} />
-
-          <Route path="/homeadmin/:perroId" element={<DogPostulaciones />} />
 
           <Route
-            path="/homeadmin/:perroId/postulacion/:postulacionId"
-            element={<PostulacionDetail />}
+            path="/homeadmin"
+            element={
+              // login && me.role === "admin" ? (
+              <AllDogs />
+              // ) : (
+              //   <Navigate to="/home" />
+              // )
+            }
           />
 
-          <Route path="/homeadmin/perros" element={<AllDogs />} />
-          {/* <Route path="/admin/perros/:perroId" element={<OneDog />} /> */}
+          {/* Todos los perritos */}
+          <Route
+            path="/homeadmin/todos"
+            element={
+              // login && me.role === "admin" ? (
+              <AllDogs />
+              // ) : (
+              //   <Navigate to="/home" />
+              // )
+            }
+          />
+
+          {/* Perritos con postulaciones */}
+          <Route
+            path="/homeadmin/postulaciones"
+            element={
+              // login && me.role === "admin" ? (
+              <AllDogsPostulaciones />
+              // ) : (
+              //   <Navigate to="/home" />
+              // )
+            }
+          />
+
+          {/* Perritos adoptados */}
+          <Route
+            path="/homeadmin/adoptados"
+            element={
+              // login && me.role === "admin" ? (
+              <AllDogsAdoptados />
+              // ) : (
+              //   <Navigate to="/home" />
+              // )
+            }
+          />
+
+          {/* Pantalla de un perro individual */}
+          <Route
+            path="/homeadmin/perro/:id"
+            element={
+              // login && me.role === "admin" ? (
+              <OneDogAdmin />
+              // ) : (
+              //   <Navigate to="/home" />
+              // )
+            }
+          />
+
+          {/* OneDogPostulaciones: SOLO para perros con postulaciones */}
+          <Route
+            path="/homeadmin/perro/:id/postulaciones"
+            element={
+              // login && me.role === "admin" ? (
+              <OneDogPostulaciones />
+              // ) : (
+              //   <Navigate to="/home" />
+              // )
+            }
+          />
+
+          {/* Detalle de una postulación */}
+          <Route
+            path="/homeadmin/perro/:id/postulacion/:postulacionId"
+            element={
+              // login && me.role === "admin" ? (
+              <OnePostulacion />
+              // ) : (
+              //   <Navigate to="/home" />
+              // )
+            }
+          />
+
           <Route
             path="/pagos"
             element={

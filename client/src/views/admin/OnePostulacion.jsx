@@ -7,9 +7,9 @@ import { perros } from "../../data/perros";
 
 import Breadcrumbs from "../../components/BreadcrumbsAdmin";
 
-import styles from "../../css/admin/PostulacionDetail.module.css";
+import styles from "../../css/admin/OnePostulacion.module.css";
 
-const PostulacionDetallePage = () => {
+const OnePostulacion = () => {
   const { postulacionId } = useParams();
   const navigate = useNavigate();
 
@@ -147,4 +147,4 @@ const PostulacionDetallePage = () => {
   );
 };
 
-export default PostulacionDetallePage;
+export default OnePostulacion;

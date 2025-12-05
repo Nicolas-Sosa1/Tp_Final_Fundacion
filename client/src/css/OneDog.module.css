@@ -1,0 +1,192 @@
+.card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  padding: 28px;
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  max-width: 1000px;
+  margin: auto;
+}
+
+/* --- FOTOS --- */
+
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mainImg {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 18px;
+}
+
+.thumbRow {
+  display: flex;
+  gap: 10px;
+}
+
+.thumbnail {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid #fcd5c2;
+}
+
+/* --- INFO --- */
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.name {
+  font-family: "Otomanopee One", sans-serif;
+  font-size: 32px;
+  background: linear-gradient(135deg, #ff9853, #dc7c7c);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.sectionTitle {
+  margin-top: 6px;
+  font-weight: 700;
+  color: #ff6f61;
+  font-size: 20px;
+}
+
+.text {
+  font-size: 15px;
+  color: #444;
+  line-height: 1.5;
+}
+
+.textarea,
+.input {
+  width: 100%;
+  border: 1px solid #ffb199;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+/* --- DETALLES --- */
+
+.detailsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detailItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.detailLabel {
+  font-weight: 600;
+  color: black;
+}
+
+.detailIcon {
+  width: 18px;
+  height: 18px;
+}
+
+.select,
+.number {
+  border: 1px solid #ffb199;
+  border-radius: 6px;
+  padding: 4px 6px;
+}
+
+/* Tamaño icons */
+.sizes {
+  display: flex;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.sizeIcon {
+  filter: grayscale(100%);
+  opacity: 0.3;
+  width: 15px;
+}
+
+.active {
+  filter: none;
+  opacity: 1;
+}
+
+/* --- BOTONES --- */
+
+.buttons {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.userBtns {
+  display: flex;
+  gap: 18px;
+}
+
+.btnPrimary {
+  flex: 1;
+  background: linear-gradient(135deg, #ff6f61, #ff9f80);
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnSecondary {
+  flex: 1;
+  border: 2px solid #ff6f61;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  color: #ff6f61;
+  background: #fff;
+  cursor: pointer;
+}
+
+.btnEdit {
+  align-self: flex-end;
+  background: #ff6f61;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+}
+
+.adminBtns {
+  display: flex;
+  gap: 10px;
+}
+
+.btnCancel {
+  background: #ddd;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+}
+
+.btnSave {
+  background: #28a745;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  color: white;
+}

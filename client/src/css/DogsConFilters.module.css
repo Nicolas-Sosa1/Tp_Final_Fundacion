@@ -21,10 +21,13 @@
 
 .title {
   font-size: 2rem;
-  font-weight: 700;
+  font-weight: bold;
   color: #2b2b2b;
 }
 
+.highlight {
+  color: #ff914d;
+}
 .search {
   width: 260px;
   padding: 8px 12px;
