@@ -15,6 +15,7 @@ import CorreoArgentino from "./views/user/CorreoArgentino";
 import HomeAdmin from "./views/admin/HomeAdmin";
 import DogPostulaciones from "./views/admin/DogPostulaciones.jsx";
 import PostulacionDetail from "./views/admin/PostulacionDetail.jsx";
+import AllDogs from "./views/admin/AllDogs.jsx";
 import AddDog from "./views/admin/AddDog.jsx";
 import UpdateDog from "./views/admin/UpdateDog.jsx";
 import PagosAdmin from "./views/admin/PagosAdmin";
@@ -128,6 +129,8 @@ function App() {
             element={<PostulacionDetail />}
           />
 
+          <Route path="/homeadmin/perros" element={<AllDogs />} />
+          {/* <Route path="/admin/perros/:perroId" element={<OneDog />} /> */}
           <Route
             path="/pagos"
             element={

@@ -5,7 +5,7 @@ import { perros } from "../../data/perros";
 
 const HomeAdmin = () => {
   const [activeTab, setActiveTab] = useState("adopcion");
-
+  const getDogLink = (perro) => `/homeadmin/${perro.id}`;
   const perrosFiltrados = perros.filter(
     (perro) =>
       (activeTab === "adopcion" && perro.estado === "En adopción") ||
@@ -44,7 +44,7 @@ const HomeAdmin = () => {
         </nav>
 
         <section className={styles.postulaciones}>
-          <DogGrid perros={perrosFiltrados} />
+          <DogGrid perros={perrosFiltrados} getLink={getDogLink} />
         </section>
       </div>
     </main>

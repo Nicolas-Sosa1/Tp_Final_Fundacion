@@ -1,0 +1,156 @@
+/* ======================
+   CONTENEDOR GENERAL
+====================== */
+.page {
+  padding: 24px 32px;
+  min-height: 100vh;
+  background-color: #fafafa;
+}
+
+/* ======================
+   HEADER
+====================== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1em;
+  width: 90%;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2b2b2b;
+}
+
+.search {
+  width: 260px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 0.9rem;
+}
+
+.search:focus {
+  outline: none;
+  border-color: #999;
+}
+
+/* ======================
+   BODY
+====================== */
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* ======================
+   FILTROS
+====================== */
+.filters {
+  background-color: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  position: sticky;
+  top: 24px;
+}
+
+.filtersTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+/* Grupo de filtros */
+.filterGroup {
+  margin-bottom: 20px;
+}
+
+.filterLabel {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+/* Checkboxes / radios */
+.filterOption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #444;
+  margin-bottom: 6px;
+}
+
+.filterOption input {
+  cursor: pointer;
+}
+
+/* ======================
+   GRID
+====================== */
+.gridWrapper {
+  width: 90%;
+  background: linear-gradient(135deg, #ffb07a, #f4c2c2);
+  border-radius: 28px;
+  padding: 1rem 0 3rem;
+  border: 2px solid black;
+  margin: 0 auto;
+}
+
+/* OVERRIDE solo para AllDogs */
+.gridWrapper :global(.doggrid) {
+  width: 100%;
+  margin: 0;
+  padding-top: 0;
+}
+
+/* ======================
+   FILTROS – BARRA SUPERIOR
+====================== */
+.filtersBar {
+  width: 30%;
+  margin-left: auto;
+  display: flex;
+  justify-content: right !important;
+  gap: 12px;
+  padding: 14px 18px;
+}
+
+/* Reutiliza look de inputs */
+.filtersBar select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 0.85rem;
+  color: #444;
+  background-color: white;
+  cursor: pointer;
+}
+
+.filtersBar select:focus {
+  outline: none;
+  border-color: #999;
+}
+
+/* Botón limpiar */
+.clear {
+  margin-left: 1em;
+  background: none;
+  border: none;
+  font-size: 0.8rem;
+  color: #666;
+  cursor: pointer;
+}
+
+.clear:hover {
+  text-decoration: underline;
+}
