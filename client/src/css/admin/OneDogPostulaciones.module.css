@@ -1,0 +1,11 @@
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.body {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 32px;
+}

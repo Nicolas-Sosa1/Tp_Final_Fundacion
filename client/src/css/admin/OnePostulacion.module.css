@@ -1,0 +1,173 @@
+/* Layout general */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+.title {
+  font-size: 28px;
+  margin-bottom: 24px;
+}
+
+.applicant {
+  font-weight: 600;
+}
+
+.dogName {
+  color: #ff7518; /* mismo tono que usás en admin */
+  font-weight: 700;
+}
+
+/* ===== HEADER ===== */
+.header {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 10;
+  padding: 16px 0 20px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid #eaeaea;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+.accept,
+.pending,
+.reject {
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.accept {
+  background: #e6f7ed;
+  color: #1a7f4b;
+}
+
+.pending {
+  background: #fff4e5;
+  color: #a86800;
+}
+
+.reject {
+  background: #fdecea;
+  color: #c0392b;
+}
+
+.accept:hover,
+.pending:hover,
+.reject:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== RESUMEN ===== */
+.summary {
+  display: flex;
+  gap: 18px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.green {
+  color: #1a7f4b;
+}
+
+.orange {
+  color: #a86800;
+}
+
+.red {
+  color: #c0392b;
+}
+
+/* ===== FORM ===== */
+.form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px 24px;
+}
+
+/* ===== CARD ===== */
+.questionCard {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px 22px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0f0f0;
+}
+
+/* Header pregunta */
+.questionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.questionHeader h4 {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 600;
+  color: #222;
+}
+
+/* ===== RESPUESTA ===== */
+.answer {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #444;
+  background: #fafafa;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border-left: 4px solid #e0e0e0;
+  white-space: pre-wrap;
+}
+
+/* ===== RATING ===== */
+.rating {
+  display: flex;
+  gap: 8px;
+}
+
+.dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: all 0.2s ease;
+}
+
+.dot:hover,
+.dot.active {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+/* Colores dots */
+.dot.red {
+  background: #e74c3c;
+}
+
+.dot.orange {
+  background: #f39c12;
+}
+
+.dot.green {
+  background: #2ecc71;
+}

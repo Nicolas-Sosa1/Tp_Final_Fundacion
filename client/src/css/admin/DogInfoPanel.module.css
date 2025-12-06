@@ -1,0 +1,101 @@
+.card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.name {
+  font-family: "Otomanopee One", sans-serif;
+  font-size: 22px;
+  color: #ff6f61;
+}
+
+.status {
+  font-size: 13px;
+  color: #666;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 16px;
+}
+
+.photo {
+  width: 100%;
+  height: 360px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  object-fit: cover;
+}
+
+.description {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 16px;
+  color: black;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.metaItem img:not(.sizeIcon) {
+  width: 16px;
+  height: 16px;
+}
+
+.genderIcon {
+  width: 18px;
+  height: 18px;
+}
+.sizes {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.sizeIcon {
+  display: block;
+  filter: grayscale(100%);
+  opacity: 0.3;
+}
+
+.chico {
+  width: 10px;
+}
+
+.mediano {
+  width: 13px;
+}
+
+.grande {
+  width: 16px;
+}
+
+.active {
+  filter: none;
+  opacity: 1;
+}

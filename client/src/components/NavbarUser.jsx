@@ -7,7 +7,7 @@ const NavbarUser = ({ logOut }) => {
       
       <div className="d-flex align-items-center">
         <div className={styles.contenedor_img}>
-          <img src="../img/logo.png" alt="logo" />
+          <img src="../../img/logo.png" alt="logo" />
         </div>
         <p className="title_orange font_title mr-5 mb-0">Huellas Sin Techo</p>
       </div>

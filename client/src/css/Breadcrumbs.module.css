@@ -1,0 +1,20 @@
+.breadcrumbs {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.link {
+  color: #ff7518;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.current {
+  font-weight: 600;
+  color: #333;
+}

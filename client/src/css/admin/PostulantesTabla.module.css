@@ -1,0 +1,74 @@
+.panel {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.tab {
+  background: #eee;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  color: rgb(94, 94, 94);
+  font-weight: light;
+}
+
+.active {
+  background: linear-gradient(135deg, #ff7518, #f4c2c2);
+  font-weight: 600;
+  color: white;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table th,
+.table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.viewLink {
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.estado {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.aceptada {
+  background: #e9f7ef;
+  color: #1e8449;
+}
+
+.pendiente {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.rechazada {
+  background: #fdecea;
+  color: #922b21;
+}
+
+.novisto {
+  background: #e3f2fd;
+  color: #1565c0;
+}
