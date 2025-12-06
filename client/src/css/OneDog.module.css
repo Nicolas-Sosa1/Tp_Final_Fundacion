@@ -1,0 +1,296 @@
+.card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  padding: 28px;
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  max-width: 1000px;
+  margin: auto;
+}
+/* --- FOTOS --- */
+
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mainImg {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 18px;
+}
+
+.thumbRow {
+  display: flex;
+  gap: 10px;
+}
+
+.thumbnail {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid #fcd5c2;
+}
+
+/* --- INFO --- */
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.name {
+  font-family: "Otomanopee One", sans-serif;
+  font-size: 32px;
+  background: linear-gradient(135deg, #ff9853, #dc7c7c);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.bread {
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  max-width: 1000px;
+}
+
+.sectionTitle {
+  margin-top: 6px;
+  font-weight: 700;
+  color: #ff6f61;
+  font-size: 20px;
+}
+
+.text {
+  font-size: 15px;
+  color: #444;
+  line-height: 1.5;
+}
+
+.textarea,
+.input {
+  width: 100%;
+  border: 1px solid #ffb199;
+  border-radius: 8px;
+  padding: 8px;
+  background-color: white;
+  color: black;
+}
+
+/* --- DETALLES --- */
+
+.detailsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detailItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.detailLabel {
+  font-weight: 600;
+  color: black;
+}
+
+.detailIcon {
+  width: 18px;
+  height: 18px;
+  background-color: white;
+  color: black;
+}
+
+.select,
+.number {
+  border: 1px solid #ffb199;
+  border-radius: 6px;
+  padding: 4px 6px;
+  background-color: white;
+  color: black;
+}
+
+/* Tamaño icons */
+.sizes {
+  display: flex;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.sizeIcon {
+  filter: grayscale(100%);
+  opacity: 0.3;
+  width: 15px;
+}
+
+.active {
+  filter: none;
+  opacity: 1;
+}
+
+/* --- BOTONES --- */
+
+.buttons {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.userBtns {
+  display: flex;
+  gap: 18px;
+}
+
+.btnPrimary {
+  flex: 1;
+  background: linear-gradient(135deg, #ff6f61, #ff9f80);
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnSecondary {
+  flex: 1;
+  border: 2px solid #ff6f61;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  color: #ff6f61;
+  background: #fff;
+  cursor: pointer;
+}
+
+.btnEdit {
+  align-self: flex-start;
+  background: #ff6f61;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  color: white;
+  margin-top: 2em;
+  font-weight: 600;
+}
+.btnEdit:hover {
+  background: #b54b41;
+}
+
+.editBtns {
+  display: flex;
+  gap: 10px;
+}
+
+.adminBtns {
+  display: flex;
+  gap: 10px;
+}
+
+.btnCancel {
+  background: #979696;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+}
+.btnCancel:hover {
+  background: #6b6b6b;
+}
+
+.btnSave {
+  background: #28a745;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  color: white;
+}
+.btnSave:hover {
+  background: #1f8236;
+}
+
+.sizeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sizeIcon {
+  width: 14px;
+  opacity: 0.4;
+  transition: 0.2s;
+}
+
+/* Tamaños específicos (igual que DogInfoPanel) */
+.chico {
+  transform: scale(1.1);
+}
+
+.mediano {
+  transform: scale(1.2);
+}
+
+.grande {
+  transform: scale(1.3);
+}
+.adminActions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.btnAdopted {
+  border: 2px solid #6d4aff;
+  background: transparent;
+  color: #6d4aff;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.btnAdopted:hover {
+  background-color: #6d4aff;
+  color: white;
+}
+
+.btnDelete {
+  border: 2px solid #ff3b3b;
+  background: transparent;
+  color: #ff3b3b;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.btnDelete:hover {
+  background-color: #ff3b3b;
+  color: white;
+}
+
+.btnPostulaciones {
+  border: 2px solid #06ab50;
+  background: transparent;
+  color: #06ab50;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.btnPostulaciones:hover {
+  background-color: #06ab50;
+  color: white;
+}
+
+.btnPrimary {
+  background-color: #1e88e5;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
