@@ -5,7 +5,7 @@ import styles from "../css/admin/PostulantesTabla.module.css";
 
 const PostulantesTabla = ({ postulaciones = [] }) => {
   const [activeTab, setActiveTab] = useState("todos");
-  const { perroId } = useParams();
+  const { id } = useParams();
 
   const filtradas =
     activeTab === "no-vistos"
@@ -73,7 +73,7 @@ const PostulantesTabla = ({ postulaciones = [] }) => {
               <td>{p.respuestas?.[5]}</td> {/* Zona */}
               <td>
                 <Link
-                  to={`/homeadmin/${perroId}/postulacion/${p.id}`}
+                  to={`/homeadmin/perro/${id}/postulacion/${p.id}`}
                   className={styles.viewLink}
                 >
                   📝

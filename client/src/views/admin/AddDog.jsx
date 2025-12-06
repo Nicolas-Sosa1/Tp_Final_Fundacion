@@ -16,7 +16,7 @@ const NewAnimal = ({ listaPerros, setListaPerros, logOut }) => {
     vacunas: [],
     desparasitado: false,
     discapacidad: "",
-    imagen: "",
+    imagen: [],
     tipoIngreso: "",
   });
 
@@ -26,9 +26,36 @@ const NewAnimal = ({ listaPerros, setListaPerros, logOut }) => {
     e.preventDefault();
     const URL = "http://localhost:8000/api/animals/new";
 
+    const formData = new FormData();
+
+    // Campos simples
+    formData.append("nombre", data.nombre);
+    formData.append("edad", data.edad);
+    formData.append("sexo", data.sexo);
+    formData.append("peso", data.peso);
+    formData.append("discapacidad", data.discapacidad);
+    formData.append("tipoIngreso", data.tipoIngreso);
+
+    // Booleanos como strings (si tu backend los espera así)
+    formData.append("castrado", data.castrado ? "true" : "false");
+    formData.append("desparasitado", data.desparasitado ? "true" : "false");
+
+    // Vacunas (array)
+    data.vacunas.forEach((id) => {
+      formData.append("vacunas[]", id);
+    });
+
+    // Imágenes (archivos)
+    data.imagen.forEach((file) => {
+      formData.append("imagen[]", file);
+    });
+
     axios
-      .post(URL, data, {
-        headers: { token_user: localStorage.getItem("token_user") },
+      .post(URL, formData, {
+        headers: {
+          token_user: localStorage.getItem("token_user"),
+          "Content-Type": "multipart/form-data",
+        },
       })
       .then((response) => {
         setListaPerros([...listaPerros, response.data]);
@@ -199,14 +226,19 @@ const NewAnimal = ({ listaPerros, setListaPerros, logOut }) => {
       </div>
 
       <div className={styles.formGroup}>
-        <label>URL de imagen:</label>
+        <label>Imágenes:</label>
         <input
-          type="text"
-          name="imagen"
-          value={data.imagen}
-          onChange={updateState}
-          className={styles.inputField}
+          type="file"
+          multiple
+          onChange={(e) => {
+            const files = Array.from(e.target.files);
+            setData((prev) => ({
+              ...prev,
+              imagen: files, // GUARDA ARCHIVOS, NO URLS TEMPORALES
+            }));
+          }}
         />
+
         {errors.imagen && <p className={styles.errorText}>{errors.imagen}</p>}
       </div>
 

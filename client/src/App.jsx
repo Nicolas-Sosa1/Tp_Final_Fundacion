@@ -15,12 +15,11 @@ import CorreoArgentino from "./views/user/CorreoArgentino";
 import AllDogs from "./views/admin/AllDogs.jsx";
 import OneDogAdmin from "./views/admin/OneDogAdmin.jsx";
 import AllDogsAdoptados from "./views/admin/AllDogsAdoptados.jsx";
+import AddDog from "./views/admin/AddDog.jsx";
 import AllDogsPostulaciones from "./views/admin/AllDogsPostulaciones.jsx";
 import OneDogPostulaciones from "./views/admin/OneDogPostulaciones.jsx";
 import OnePostulacion from "./views/admin/OnePostulacion.jsx";
 
-import AddDog from "./views/admin/AddDog.jsx";
-import UpdateDog from "./views/admin/UpdateDog.jsx";
 import PagosAdmin from "./views/admin/PagosAdmin";
 
 import NavbarAdmin from "./components/NavbarAdmin";
@@ -91,21 +90,6 @@ function App() {
                   listaPerros={listaPerros}
                   setListaPerros={setListaPerros}
                   me={me}
-                  logOut={logOut}
-                />
-              ) : (
-                <Navigate to="/home" />
-              )
-            }
-          />
-          <Route
-            path="/perro/update/:id"
-            element={
-              login && me.role === "admin" ? (
-                <UpdateDog
-                  listaPerros={listaPerros}
-                  setListaPerros={setListaPerros}
-                  setLogin={setLogin}
                   logOut={logOut}
                 />
               ) : (

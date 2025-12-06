@@ -12,27 +12,17 @@ const DogsConFilters = ({ defaultFilters = {}, context = "todos" }) => {
   });
 
   const getDogLink = (perro) => {
-    // 1) Si el FILTRO seleccionado es "conPostulaciones", siempre ir a postulaciones
-    if (filters.estado === "conPostulaciones") {
-      return `/homeadmin/perro/${perro.id}/postulaciones`;
-    }
-
-    // 2) Si el contexto general es "postulaciones" (vista dedicada)
+    // Si estoy en la vista dedicada de postulaciones → siempre ir a postulaciones
     if (context === "postulaciones") {
       return `/homeadmin/perro/${perro.id}/postulaciones`;
     }
 
-    // 3) Adoptado → no tiene postulaciones relevantes
-    if (perro.isAdopted) {
-      return `/homeadmin/perro/${perro.id}`;
-    }
-
-    // 4) Si tiene postulaciones → ir a las postulaciones
-    if (perro.postulaciones && perro.postulaciones.length > 0) {
+    // Si el filtro actual es "conPostulaciones" → ir a postulaciones
+    if (filters.estado === "conPostulaciones") {
       return `/homeadmin/perro/${perro.id}/postulaciones`;
     }
 
-    // 5) Default
+    // Si estamos en AllDogs (todos) o filtros distintos, siempre ir a admin
     return `/homeadmin/perro/${perro.id}`;
   };
 

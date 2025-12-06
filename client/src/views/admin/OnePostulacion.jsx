@@ -47,11 +47,13 @@ const OnePostulacion = () => {
   };
 
   const handleFinalizar = (nuevoEstado) => {
+    // Actualizar la postulación
     postulacion.estado = nuevoEstado;
     postulacion.vista = true;
     postulacion.evaluacion = evaluacion;
 
-    navigate(`/homeadmin/${perroId}`);
+    // Redirigir a la lista de postulaciones del perro
+    navigate(`/homeadmin/perro/${perroId}/postulaciones`);
   };
 
   return (
