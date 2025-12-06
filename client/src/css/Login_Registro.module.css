@@ -1,15 +1,19 @@
-
-.container{
-    background-color: #fff;
-    position: relative;
-    overflow: hidden;
-    width: 100vw;
-    min-height: 75vh ;
-    margin-top: 6px;
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    min-height: 75vh;
 }
+
 
 .container span{
     font-size: 12px;
+}
+
+input::placeholder {
+    color: rgb(129, 129, 129)!important;   
+    opacity: 1;  
 }
 
 .container a{

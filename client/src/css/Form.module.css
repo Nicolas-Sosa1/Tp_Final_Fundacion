@@ -4,21 +4,26 @@
     align-items: center;
     flex-direction: column;
     height: 75vh;
-    
+    margin-top: 60px;
 }
 
 .cardForm {
-    width: 90%;
-    max-width: 900px;
+    min-width: 80vw;
     margin: auto;
     background: white;
-    border: 1px solid gainsboro; 
-    border-radius: 15px;
-    padding: 30px;
-    box-shadow: 0 4px 12px rgba(255, 136, 0, 0.35);
+    border: none; 
+    border-radius: 18px;
+    padding: 35px;
+    box-shadow: 0 10px 25px rgba(255, 136, 0, 0.25);
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 30px;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 
@@ -30,7 +35,7 @@
 }
 .subform {
     display: grid;
-    grid-template-columns: 1fr 1fr; 
+    grid-template-columns: 1fr 1fr 1fr; 
     gap: 20px;
     align-items: center; 
     justify-items: center;
@@ -74,28 +79,33 @@
     z-index: 0;
     overflow: hidden;
 }
+input::placeholder,
+select::placeholder {
+    color: #9b9b9b !important;
+    opacity: 1 !important;
+}
 
 
 .progress_container::before {
     content: '';
     height: 4px;
-    width: 65%;
+    width: 84%;
     background-color: var(--background-transparent);
     position: absolute;
     top: 20%;
     transform: translate(-50%, -50%);
-    left: 50%;
+    left: 51%;
     z-index: -1;
 }
 
 .progress_container .progress {
     height: 4px;
-    width: 65%;
+    width: 100%;
     background-color: var(--naranja);
     position: absolute;
     top: 20%;
     transform: translateY(-50%) scaleX(0);
-    left: 18%;
+    left: 8%;
     transform-origin: left; 
     transition: 0.3s;
     z-index: 1;
@@ -111,7 +121,7 @@
     justify-content: center;
     border-radius: 50%;
     color: white;
-    width: 32px;
+    width: 30px;
     height: 32px;
     border: 1px solid var(--naranja);
     transition: 0.3s linear 0.3s;
@@ -135,22 +145,71 @@
     font-weight:700;
     font-size: 16px;
 }
-
-.progress_container li:where(.done,.current){
-    color: var(--naranja);
-    font-weight: 400;
+.progress_container {
+    position: relative;
+    top: -47px;
+    width: 100%;
+    overflow: visible;
 }
 
-.progress_container li.done::before{
+
+.progress_container::before {
+    content: "";
+    position: absolute;
+    top: 20%;
+    right: -10px;
+    width: 87%;     
+    height: 4px;
+    background-color: var(--background-transparent);
+    z-index: -1;
+}
+
+
+.progress_container .progress {
+    position: absolute;
+    top: 20%;
+    left: 100px;
+    height: 4px;
+    width: 87%;  
     background-color: var(--naranja);
-    color: white;
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: 0.3s ease;
+    z-index: 1;
 }
 
-.progress_container li.current::before{
-    background-color: var(--naranja);
-    color: white;
-    box-shadow: 0 0 3px rgba(167, 21, 84, 0.25);
+.progress_container ol {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    counter-reset: step-number;
+    padding: 0;
+    margin: 0;
 }
+
+.progress_container li {
+    list-style: none;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.progress_container li::before {
+    counter-increment: step-number;
+    content: counter(step-number);
+    width: 32px;
+    height: 32px;
+    background: var(--naranja);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
 
 .contenedor_genero,.contenedor_edad {
     display: flex;
@@ -255,4 +314,72 @@
 
 .btn_subir:hover {
   opacity: 0.8;
+}
+
+.border_2{
+    border: 2px solid #ff7a00;
+    border-radius: 12px;
+}
+
+.inputGroup {
+    position: relative;
+    width: 100%;
+    margin-bottom: 40px;
+}
+
+.inputGroup input {
+    width: 100%;
+    padding: 10px 15px;
+    background: transparent;
+    border: 2px solid #ff7a00;
+    border-radius: 12px;
+    outline: none;
+    font-size: 16px;
+    color: #000;
+    transition: 0.2s;
+}
+
+.inputGroup label {
+    position: absolute;
+    top: -10px;          
+    left: 20px;
+    background: white;    
+    padding: 0 5px;
+    color: #ff7a00;
+    font-size: 15px;
+    pointer-events: none;
+}
+
+
+.inputGroup input:focus + label,
+.inputGroup input:not(:placeholder-shown) + label {
+    top: -12px;
+    font-size: 13px;
+}
+.dropdownList {
+    position: absolute;
+    top: 72px; 
+    left: 0;
+    width: 100%;
+    background: #fff4e6;
+    border: 1px solid var(--naranja);
+    border-radius: 12px;
+    max-height: 180px;
+    overflow-y: auto;
+    z-index: 2;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.dropdownItem {
+    padding: 10px 14px;
+    cursor: pointer;
+    background-color: #ffe8cc; 
+    border-bottom: 1px solid #ffcf99;
+    font-weight: 500;
+}
+
+.dropdownItem:hover {
+    background-color: #ffd8a8;
 }

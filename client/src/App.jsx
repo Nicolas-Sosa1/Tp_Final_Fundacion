@@ -1,20 +1,16 @@
 import { useState, useEffect } from "react";
-import { Routes, Route, Link, useNavigate, Navigate } from "react-router-dom";
+import { Routes, Route, Link, useNavigate, Navigate, useLocation } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
-import Login from "./views/Login";
-import Register from "./views/Register";
-import HomePublic from "./views/HomePublic";
 import NewAnimal from "./views/NewAnimal";
 import CorreoArgentino from "./views/CorreoArgentino";
 import UpdateAnimal from "./views/UpdateAnimal";
 import Donar from "./views/Donar";
 import PagosAdmin from "./views/PagosAdmin";
 import HomeAdmin from "./views/HomeAdmin";
-import HomeUser from "./views/HomeUser";
 
 
 import NavbarAdmin from "./components/NavbarAdmin";
@@ -26,12 +22,16 @@ import VerPerrito from "./views/VerPerrito";
 import Login_Registro from "./views/Login_Registro";
 import OneDog from "./views/OneDog";
 
+import Donaciones from "./views/Donaciones";
+import Form from "./views/Form";
+
 function App() {
   const [listaPerros, setListaPerros] = useState([]);
   const [login, setLogin] = useState(false);
   const [me, setMe] = useState({});
   const navigate = useNavigate();
-
+  const location = useLocation();
+  const isLoginPage = location.pathname === "/login";
   useEffect(() => {
     const token = localStorage.getItem("token_user");
     if (token) {
@@ -50,30 +50,29 @@ function App() {
 
   return (
     <>
-      {login ? (
+      {!isLoginPage && (
         <>
-          {me.role === "user" && <NavbarUser logOut={logOut} />}
-          {me.role === "admin" && <NavbarAdmin logOut={logOut} />}
+          {login ? (
+            <>
+              {me.role === "user" && <NavbarUser logOut={logOut} />}
+              {me.role === "admin" && <NavbarAdmin logOut={logOut} />}
+            </>
+          ) : (
+            <NavbarPublic />
+          )}
         </>
-      ) : (
-        <NavbarPublic />
       )}
+      <main>
 
-      <main className="d-flex justify-content-center align-items-center">
         <Routes>
-
+          <Route path="formulario" element={<Form/>}/>
           <Route path="/login" element={<Login_Registro setLogin={setLogin} setMe={setMe} />} />
-
           {/* <Route path="/login" element={<Login setLogin={setLogin} setMe={setMe} />} />
           <Route path="/register" element={<Register setLogin={setLogin} />} /> */}
-
-          <Route path="/home" element={<Home login={login} me={me} />} />
-
-          <Route path="/donar" element={<Donar />} />
-
+          <Route path="/donaciones" element={<Donaciones />} />
           <Route
             path="/correo"
-            element={login ? <CorreoArgentino me={me} /> : <Navigate to="/login" />}
+            element={ <CorreoArgentino />}
           />
 
           <Route
@@ -122,8 +121,7 @@ function App() {
           <Route path="/homeadmin" element={<HomeAdmin />} />
         </Routes>
       </main>
-        <Footer />  
-      
+      {!isLoginPage && <Footer />}  
     </>
   );
 }

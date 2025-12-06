@@ -26,9 +26,6 @@
   --gris: #B3B3B3;
 }
 
-main{
-  height: 75vh;
-}
 
 .title_orange {
   font-family: "Otomanopee One", sans-serif;
@@ -37,49 +34,49 @@ main{
   color: transparent;
 }
 
-.subtitle-orange{
+.subtitle-orange {
   background: var(--naranja);
   -webkit-background-clip: text;
-  color: transparent; 
+  color: transparent;
 }
 
-.orange{
+.orange {
   background: var(--titulo_naranja);
   -webkit-background-clip: text;
   color: transparent;
 }
 
-.btn_navbar{
-  background: var(--btn_navbar) ;
+.btn_navbar {
+  background: var(--btn_navbar);
   color: white;
 }
 
-.footer{
+.footer {
   background-color: var(--background-footer);
 }
 
-.pad-10{
+.pad-10 {
   padding: 10px;
 }
 
-.font_title{
+.font_title {
   font-size: 25px;
 }
 
-.font_sm{
+.font_sm {
   font-size: 18px;
 }
 
-.text-black-title{
+.text-black-title {
   color: black;
   font-weight: 600;
 }
 
 .shadow-bottom {
-  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
-.icon_20{
+.icon_20 {
   font-size: 20px;
 }
 
@@ -107,31 +104,31 @@ main{
   transition: width 0.3s ease;
 }
 
-.font-400{
+.font-400 {
   font-weight: 400;
 }
 
-.font-15{
+.font-15 {
   font-size: 15px;
 }
 
-.font-20{
+.font-20 {
   font-size: 20px;
 }
 
-.font-25{
+.font-25 {
   font-size: 25px;
 }
 
-.background-transparent-orange{
+.background-transparent-orange {
   background-color: var(--background-transparent);
 }
 
-.border-orange{
+.border-orange {
   border: 1px solid var(--naranja);
 }
 
-.text-gris{
+.text-gris {
   color: var(--gris);
 }
 
@@ -140,25 +137,25 @@ main{
 }
 
 .btn-orange {
-    background-color: #ff8c42 !important;  
-    border-color: #ff8c42 !important;
-    color: white !important;
-    font-weight: 600;
-    padding: 8px 20px;
-    border-radius: 8px;
-    transition: 0.2s;
+  background-color: #ff8c42 !important;
+  border-color: #ff8c42 !important;
+  color: white !important;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 8px;
+  transition: 0.2s;
 }
 
 .btn-orange:hover {
-    background-color: #ff7a24 !important;  
-    border-color: #ff7a24 !important;
+  background-color: #ff7a24 !important;
+  border-color: #ff7a24 !important;
 }
 
 
-.historia_text{
+.historia_text {
   color: #fdb384;
 }
 
-.text-orange{
+.text-orange {
   color: #ff7a24;
 }

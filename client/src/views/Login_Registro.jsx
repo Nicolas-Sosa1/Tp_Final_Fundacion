@@ -200,7 +200,7 @@ const Login = ({ setLogin, setMe }) => {
                 <div className={styles.toggle}>
                     <div className={`${styles.toggle_panel} ${styles.toggle_left}`}>
                         <h1 className="text-white title_orange ">Bienvenido a Huellas Sin Techo</h1>
-                        <p className="font-20 mt-3 ">Tus amigos peludos te extrañan, conéctate y sigue cambiando vidas.</p>
+                        <p className="font-20 mt-3 text-white ">Tus amigos peludos te extrañan, conéctate y sigue cambiando vidas.</p>
                         <button
                             className={styles.hidden}
                             onClick={() => setIsRegistering(false)}
@@ -212,7 +212,7 @@ const Login = ({ setLogin, setMe }) => {
 
                     <div className={`${styles.toggle_panel} ${styles.toggle_right}`}>
                         <h1 className="text-white title_orange ">¡Bienvenido de vuelta!</h1>
-                        <p className="font-20 mt-3 ">Tu mejor amigo peludo te espera. ¡Solo tenes que registrarte!</p>
+                        <p className="font-20 mt-3 text-white ">Tu mejor amigo peludo te espera. ¡Solo tenes que registrarte!</p>
                         <button
                             className={styles.hidden}
                             onClick={() => setIsRegistering(true)}
