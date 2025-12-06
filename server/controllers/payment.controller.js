@@ -108,6 +108,28 @@ const paymentController = {
         });
     }
 },
+    getMine: async (req, res) => {
+    try {
+        const userEmail = req.user.email;
+
+        const pagos = await Payment.find({ payer_email: userEmail })
+            .sort({ date: -1 });
+
+        return res.status(200).json({
+            success: true,
+            total: pagos.length,
+            pagos
+        });
+
+    } catch (error) {
+        console.error("Error al obtener los pagos del usuario:", error);
+        return res.status(500).json({
+            success: false,
+            error: "Error al obtener pagos del usuario"
+        });
+    }
+}
+
 
 };
 

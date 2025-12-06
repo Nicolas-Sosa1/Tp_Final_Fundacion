@@ -25,6 +25,7 @@ import PagosAdmin from "./views/admin/PagosAdmin";
 import NavbarAdmin from "./components/NavbarAdmin";
 import NavbarPublic from "./components/NavbarPublic";
 import NavbarUser from "./components/NavbarUser";
+import Footer from "./components/Footer";
 
 function App() {
   const [listaPerros, setListaPerros] = useState([]);
@@ -72,9 +73,16 @@ function App() {
 
       <main>
         <Routes>
-          <Route path="/login" element={<Login setLogin={setLogin} />} />
+          <Route path="/login" element={<Login setLogin={setLogin} setMe={setMe} />} />
           <Route path="/register" element={<Register setLogin={setLogin} />} />
-          <Route path="/home" element={<Home />} />
+          <Route 
+            path="/home" 
+            element={
+              me.role === "admin" ? <HomeAdmin /> :
+              me.role === "user" ? <HomeUser /> :
+              <HomePublic />
+            }
+          />
           <Route path="/donar" element={<Donar />} />
           <Route
             path="/correo"
@@ -203,6 +211,8 @@ function App() {
           />
         </Routes>
       </main>
+        <Footer />  
+      
     </>
   );
 }
