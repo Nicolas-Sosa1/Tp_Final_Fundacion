@@ -14,7 +14,7 @@ const animalsShema = mongoose.Schema(
         sexo:{
             type:String,
             required : [true, "El sexo del animal es obligatorio"],
-            enum: ["macho", "hembra"], 
+            enum: ["Macho", "Hembra"]
         },
         peso:{
             type: Number,
@@ -39,6 +39,22 @@ const animalsShema = mongoose.Schema(
         imagen: {
             type: String,
             required: [true, "Debes subir una imagen del animal"],
+        },
+        historia: {
+            type: String,
+            required: [true, "Debes agregar una historia"],
+        },
+        tamaño: {
+            type: String,
+            required: [true, "Debes agregar selecionar un tamañp"],
+            enum: ["Pequeño", "Mediano", "Grande"],
+            default: "Mediano"
+        },
+        ubicacion: {
+            type: String,
+            required: [true, "Debes agregar una ubicación"],
+            enum: ["Garin", "Jose C. Paz", "Pilar", "Escobar", "Tigre", "San Miguel", "Malvinas Argentinas"],
+            default: "Garin"
         },
         tipoIngreso: {
             type: String,

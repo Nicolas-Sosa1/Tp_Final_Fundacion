@@ -2,12 +2,42 @@ import { Animals} from "../models/animals.model.js";
 
 const animalsController = {
     createOne: async (req,res)=> {
-        const {nombre, edad, sexo, peso, castrado, vacunas, desparasitado, discapacidad, imagen, tipoIngreso, estadoGeneral} = req.body
+        const {
+    nombre,
+    edad,
+    sexo,
+    peso,
+    castrado,
+    vacunas,
+    desparasitado,
+    discapacidad,
+    imagen,
+    historia,
+    tamaño,
+    ubicacion,
+    tipoIngreso,
+    estadoGeneral
+} = req.body;
 
-        const newArray = {nombre, edad, sexo, peso, castrado, vacunas, desparasitado, discapacidad, imagen, tipoIngreso, estadoGeneral};
+const newAnimalData = {
+    nombre,
+    edad,
+    sexo,
+    peso,
+    castrado,
+    vacunas,
+    desparasitado,
+    discapacidad,
+    imagen,
+    historia,
+    tamaño,
+    ubicacion,
+    tipoIngreso,
+    estadoGeneral
+};
 
         try{
-            const newAnimal = await Animals.create(newArray)
+            const newAnimal = await Animals.create(newAnimalData)
             res.status(201).json(newAnimal)
         }catch(e){
 
@@ -99,21 +129,40 @@ const animalsController = {
     updateOne: async (req, res) => {
         const { id } = req.params;
 
-        const {nombre, edad, sexo, peso, castrado, vacunas, desparasitado, discapacidad, imagen, tipoIngreso, estadoGeneral} = req.body;
-
-        const dataToBeUpdated = {
+        const {
             nombre,
             edad,
             sexo,
-            peso, 
+            peso,
             castrado,
             vacunas,
             desparasitado,
             discapacidad,
             imagen,
+            historia,
+            tamaño,
+            ubicacion,
+            tipoIngreso,
+            estadoGeneral
+        } = req.body;
+
+        const dataToBeUpdated = {
+            nombre,
+            edad,
+            sexo,
+            peso,
+            castrado,
+            vacunas,
+            desparasitado,
+            discapacidad,
+            imagen,
+            historia,
+            tamaño,
+            ubicacion,
             tipoIngreso,
             estadoGeneral
         };
+
 
         try{
             const animal = await Animals.findById(id);
