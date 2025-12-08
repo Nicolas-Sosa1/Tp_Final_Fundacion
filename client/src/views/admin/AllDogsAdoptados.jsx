@@ -4,10 +4,7 @@ const AllDogsAdoptados = () => {
   return (
     <DogsConFilters
       context="adoptados"
-      defaultFilters={{
-        tipoIngreso: "adopcion",
-        estadoGeneral: "no_disponible"
-      }}
+      defaultFilters={{ estadoGeneral: false }}
     />
   );
 };

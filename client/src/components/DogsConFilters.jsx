@@ -5,12 +5,10 @@ import styles from "../css/DogsConFilters.module.css";
 
 const DogsConFilters = ({ defaultFilters = {}, context = "todos" }) => {
   const [perros, setPerros] = useState([]);
+
   const [filters, setFilters] = useState({
-    tipoIngreso: defaultFilters.tipoIngreso || "todos",
-    estadoGeneral:
-      defaultFilters.estadoGeneral ||
-      defaultFilters.estado ||
-      "todos",
+    tipoIngreso: defaultFilters.tipoIngreso || "todos", 
+    estadoGeneral: defaultFilters.estadoGeneral ?? "todos",
     tamaño: "todos",
     sexo: "todos",
   });
@@ -18,44 +16,47 @@ const DogsConFilters = ({ defaultFilters = {}, context = "todos" }) => {
   const getDogLink = (perro) => `/homeadmin/perro/${perro._id}`;
 
   useEffect(() => {
-  const fetchPerros = async () => {
-    try {
-      let adopcion;
-      let transito;
+    const fetchPerros = async () => {
+      try {
+        let lista = [];
 
-      if (context === "adoptados") {
-        adopcion = await axios.get("http://localhost:8000/api/animals/public/adopcion/baja"); 
-        transito = await axios.get("http://localhost:8000/api/animals/public/transito/baja");
-      } else {
-        adopcion = await axios.get("http://localhost:8000/api/animals/public/adopcion");
-        transito = await axios.get("http://localhost:8000/api/animals/public/transito");
+        if (context === "todos") {
+          const adopcion = await axios.get("http://localhost:8000/api/animals/public/adopcion");
+          const transito = await axios.get("http://localhost:8000/api/animals/public/transito");
+          lista = [...adopcion.data, ...transito.data];
+        }
+
+        if (context === "adoptados") {
+          const adopcionBaja = await axios.get("http://localhost:8000/api/animals/public/adopcion/baja");
+          const transitoBaja = await axios.get("http://localhost:8000/api/animals/public/transito/baja");
+          lista = [...adopcionBaja.data, ...transitoBaja.data];
+        }
+
+        setPerros(lista);
+      } catch (e) {
+        console.log("Error cargando perros:", e);
       }
+    };
 
-      setPerros([...adopcion.data, ...transito.data]);
-
-    } catch (e) {
-      console.log("Error cargando perros:", e);
-    }
-  };
-
-  fetchPerros();
-}, [context]);
-
+    fetchPerros();
+  }, [context]);
 
   const perrosFiltrados = perros.filter((p) => {
+    // FILTRO DE NECESIDAD REAL (adopción / tránsito)
     if (filters.tipoIngreso !== "todos" && p.tipoIngreso !== filters.tipoIngreso)
       return false;
 
+    // ESTADO
     if (filters.estadoGeneral !== "todos") {
-      if (filters.estadoGeneral === "disponible" && p.estadoGeneral !== true)
-        return false;
-      if (filters.estadoGeneral === "no_disponible" && p.estadoGeneral !== false)
-        return false;
+      if (filters.estadoGeneral === true && p.estadoGeneral !== true) return false;
+      if (filters.estadoGeneral === false && p.estadoGeneral !== false) return false;
     }
 
+    // TAMAÑO
     if (filters.tamaño !== "todos" && p.tamaño !== filters.tamaño)
       return false;
 
+    // SEXO
     if (filters.sexo !== "todos" && p.sexo !== filters.sexo)
       return false;
 
@@ -65,34 +66,44 @@ const DogsConFilters = ({ defaultFilters = {}, context = "todos" }) => {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <h1 className={styles.title}>Gestión de Perros</h1>
+        <h1 className={styles.title}>
+          {context === "adoptados" ? "Perritos adoptados" : "Todos los perros"}
+        </h1>
 
         <div className={styles.filtersBar}>
-          {/* tipoIngreso */}
+
+          {/* NECESIDAD (ADOPCIÓN / TRÁNSITO) */}
           <select
             value={filters.tipoIngreso}
             onChange={(e) =>
               setFilters({ ...filters, tipoIngreso: e.target.value })
             }
           >
-            <option value="todos">Ingreso</option>
+            <option value="todos">Necesidad</option>
             <option value="adopcion">Adopción</option>
             <option value="transito">Tránsito</option>
           </select>
 
-          {/* estado */}
+          {/* ESTADO */}
           <select
             value={filters.estadoGeneral}
-            onChange={(e) =>
-              setFilters({ ...filters, estadoGeneral: e.target.value })
-            }
+            onChange={(e) => {
+              const val = e.target.value;
+              setFilters({
+                ...filters,
+                estadoGeneral:
+                  val === "true" ? true :
+                  val === "false" ? false :
+                  "todos",
+              });
+            }}
           >
             <option value="todos">Estado</option>
-            <option value="disponible">Disponible</option>
-            <option value="no_disponible">No disponible</option>
+            <option value="true">Disponible</option>
+            <option value="false">No disponible</option>
           </select>
 
-          {/* tamaño */}
+          {/* TAMAÑO */}
           <select
             value={filters.tamaño}
             onChange={(e) =>
@@ -105,7 +116,7 @@ const DogsConFilters = ({ defaultFilters = {}, context = "todos" }) => {
             <option value="Grande">Grande</option>
           </select>
 
-          {/* sexo */}
+          {/* SEXO */}
           <select
             value={filters.sexo}
             onChange={(e) =>

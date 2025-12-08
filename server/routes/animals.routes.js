@@ -11,6 +11,8 @@ animalsRoutes.put("/update/:id", validateToken, isAdmin, animalsController.updat
 animalsRoutes.delete("/destroy/:id", validateToken, isAdmin, animalsController.deleteOne);
 animalsRoutes.get("/public/adopcion", animalsController.getAdopcionAlta);
 animalsRoutes.get("/public/transito", animalsController.getTransitoAlta);
+animalsRoutes.get("/public/adopcion/baja", animalsController.getAdopcionBaja);
+animalsRoutes.get("/public/transito/baja", animalsController.getTransitoBaja);
 
 
 
