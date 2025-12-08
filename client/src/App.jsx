@@ -7,8 +7,9 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 import Login from "./views/Login";
 import Register from "./views/Register";
+import HomePublic from "./views/HomePublic";
 
-import Home from "./views/user/Home";
+import HomeUser from "./views/user/HomeUser";
 import Donar from "./views/user/Donar";
 import CorreoArgentino from "./views/user/CorreoArgentino";
 
@@ -73,14 +74,21 @@ function App() {
 
       <main>
         <Routes>
-          <Route path="/login" element={<Login setLogin={setLogin} setMe={setMe} />} />
+          <Route
+            path="/login"
+            element={<Login setLogin={setLogin} setMe={setMe} />}
+          />
           <Route path="/register" element={<Register setLogin={setLogin} />} />
-          <Route 
-            path="/home" 
+          <Route
+            path="/home"
             element={
-              me.role === "admin" ? <HomeAdmin /> :
-              me.role === "user" ? <HomeUser /> :
-              <HomePublic />
+              me.role === "admin" ? (
+                <AllDogs />
+              ) : me.role === "user" ? (
+                <HomeUser />
+              ) : (
+                <HomePublic />
+              )
             }
           />
           <Route path="/donar" element={<Donar />} />
@@ -211,8 +219,7 @@ function App() {
           />
         </Routes>
       </main>
-        <Footer />  
-      
+      <Footer />
     </>
   );
 }
