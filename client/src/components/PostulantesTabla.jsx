@@ -1,22 +1,24 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
 import styles from "../css/admin/PostulantesTabla.module.css";
 
 const PostulantesTabla = ({ postulaciones = [] }) => {
   const [activeTab, setActiveTab] = useState("todos");
   const { id } = useParams();
 
-  const filtradas =
-    activeTab === "no-vistos"
-      ? postulaciones.filter((p) => !p.vista)
-      : postulaciones;
+  // Mapea los estados de la BD a los del UI
+  const mapEstado = {
+    aprobada: "Aceptada",
+    pendiente: "Pendiente",
+    rechazada: "Rechazada"
+  };
+
+  const filtradas = postulaciones;
 
   const estadoClase = {
     Aceptada: styles.aceptada,
     Pendiente: styles.pendiente,
-    Rechazada: styles.rechazada,
-    "No leída": styles.novisto,
+    Rechazada: styles.rechazada
   };
 
   return (
@@ -56,31 +58,39 @@ const PostulantesTabla = ({ postulaciones = [] }) => {
         </thead>
 
         <tbody>
-          {filtradas.map((p, index) => (
-            <tr key={p.id}>
-              <td>{index + 1}</td>
-              <td>
-                <span
-                  className={`${styles.estado} ${
-                    estadoClase[p.estado] || styles.novisto
-                  }`}
-                >
-                  {p.estado || "No leído"}
-                </span>
-              </td>
-              <td>{p.respuestas?.[3]}</td> {/* Nombre */}
-              <td>{p.respuestas?.[4]}</td> {/* Edad */}
-              <td>{p.respuestas?.[5]}</td> {/* Zona */}
-              <td>
-                <Link
-                  to={`/homeadmin/perro/${id}/postulacion/${p.id}`}
-                  className={styles.viewLink}
-                >
-                  📝
-                </Link>
-              </td>
-            </tr>
-          ))}
+          {filtradas.map((p, index) => {
+            // Convertimos estado de la BD → UI
+            const estadoUI = mapEstado[p.estadoSolicitud] || "Pendiente";
+
+            return (
+              <tr key={p._id}>
+                <td>{index + 1}</td>
+
+                <td>
+                  <span
+                    className={`${styles.estado} ${
+                      estadoClase[estadoUI]
+                    }`}
+                  >
+                    {estadoUI}
+                  </span>
+                </td>
+
+                <td>{p.nombre} {p.apellido}</td>
+                <td>{p.edad}</td>
+                <td>{p.zona}</td>
+
+                <td>
+                  <Link
+                    to={`/homeadmin/perro/${id}/postulacion/${p._id}`}
+                    className={styles.viewLink}
+                  >
+                    📝
+                  </Link>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </section>

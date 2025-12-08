@@ -1,43 +1,53 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
-
-import { postulacionesPorPerro } from "../../data/postulaciones";
-import { questions } from "../../data/preguntas";
-import { perros } from "../../data/perros";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 import Breadcrumbs from "../../components/BreadcrumbsAdmin";
-
 import styles from "../../css/admin/OnePostulacion.module.css";
 
 const OnePostulacion = () => {
   const { postulacionId } = useParams();
   const navigate = useNavigate();
 
-  // Buscar la postulación
-  const todasLasPostulaciones = Object.values(postulacionesPorPerro).flat();
-  const postulacion = todasLasPostulaciones.find(
-    (p) => p.id === Number(postulacionId)
-  );
+  const [solicitud, setSolicitud] = useState(null);
+  const [evaluacion, setEvaluacion] = useState({});
+  const [loading, setLoading] = useState(true);
 
-  // ✅ hooks SIEMPRE arriba
-  const [evaluacion, setEvaluacion] = useState(postulacion?.evaluacion || {});
+  // ================================
+  // CARGAR SOLICITUD REAL DESDE BD
+  // ================================
+  useEffect(() => {
+  const fetchSolicitud = async () => {
+    try {
+      const token = localStorage.getItem("token_user");
+      const res = await axios.get(
+        "http://localhost:8000/api/solicitudes/adopcion",
+        { headers: { token_user: token } }
+      );
 
-  // Guard clause AFTER hooks
-  if (!postulacion) {
-    return <p>Postulación no encontrada</p>;
-  }
+      const encontrada = res.data.find((s) => s._id === postulacionId);
 
-  // Buscar perro asociado
-  const perroId = Number(
-    Object.entries(postulacionesPorPerro).find(([, arr]) =>
-      arr.some((p) => p.id === postulacion.id)
-    )[0]
-  );
+      // ⛔️ CHECK PARA DEBUG DE POPULATE
+      if (!encontrada?.animal) {
+        console.error("La solicitud no tiene el animal populado");
+      }
 
-  const perro = perros.find((p) => p.id === perroId);
+      setSolicitud(encontrada);
+      setLoading(false);
+    } catch (e) {
+      console.log("Error cargando solicitud:", e);
+      setLoading(false);
+    }
+  };
 
-  const contar = (valor) =>
-    Object.values(evaluacion).filter((v) => v === valor).length;
+  fetchSolicitud();
+}, [postulacionId]);
+
+
+  if (loading) return <p>Cargando solicitud...</p>;
+  if (!solicitud) return <p>No se encontró la solicitud</p>;
+
+  const perro = solicitud.animal; // viene populado desde BD
 
   const handleEvaluar = (numPregunta, valor) => {
     setEvaluacion((prev) => ({
@@ -46,104 +56,112 @@ const OnePostulacion = () => {
     }));
   };
 
-  const handleFinalizar = (nuevoEstado) => {
-    // Actualizar la postulación
-    postulacion.estado = nuevoEstado;
-    postulacion.vista = true;
-    postulacion.evaluacion = evaluacion;
+  const handleFinalizar = async (estadoFinal) => {
+    try {
+      const token = localStorage.getItem("token_user");
 
-    // Redirigir a la lista de postulaciones del perro
-    navigate(`/homeadmin/perro/${perroId}/postulaciones`);
+      await axios.patch(
+        `http://localhost:8000/api/solicitudes/adopcion/${postulacionId}/estado`,
+        { estado: estadoFinal },
+        { headers: { token_user: token } }
+      );
+
+      alert("Estado actualizado correctamente");
+
+      navigate(`/homeadmin/perro/${perro._id}/postulaciones`);
+    } catch (e) {
+      console.log(e);
+      alert("Error al actualizar estado");
+    }
   };
 
   return (
     <main className={styles.page}>
-      <Breadcrumbs perro={perro} postulacion={postulacion} />
+      <Breadcrumbs perro={perro} postulacion={solicitud} />
 
       <h1 className={styles.title}>
         Postulación de{" "}
-        <span className={styles.applicant}>{postulacion.respuestas[3]}</span>{" "}
-        para adoptar a <span className={styles.dogName}>{perro?.nombre}</span>
+        <span className={styles.applicant}>
+          {solicitud.nombre} {solicitud.apellido}
+        </span>{" "}
+        para adoptar a{" "}
+        <span className={styles.dogName}>{perro.nombre}</span>
       </h1>
 
+      {/* Acciones */}
       <header className={styles.header}>
         <div className={styles.actions}>
           <button
             className={styles.accept}
-            onClick={() => handleFinalizar("Aceptada")}
+            onClick={() => handleFinalizar("aprobada")}
           >
             Aceptar
           </button>
 
           <button
             className={styles.pending}
-            onClick={() => handleFinalizar("Pendiente")}
+            onClick={() => handleFinalizar("pendiente")}
           >
             Pendiente
           </button>
 
           <button
             className={styles.reject}
-            onClick={() => handleFinalizar("Rechazada")}
+            onClick={() => handleFinalizar("rechazada")}
           >
             Rechazar
           </button>
         </div>
-
-        <div className={styles.summary}>
-          <span className={styles.green}>
-            ✅ {contar("green")}/{questions.length}
-          </span>
-          <span className={styles.orange}>
-            🟠 {contar("orange")}/{questions.length}
-          </span>
-          <span className={styles.red}>
-            🔴 {contar("red")}/{questions.length}
-          </span>
-        </div>
       </header>
 
+      {/* Información */}
       <section className={styles.form}>
-        {questions.map((q) => {
-          const num = q.id;
+        <div className={styles.questionCard}>
+          <h4>Nombre completo</h4>
+          <p className={styles.answer}>
+            {solicitud.nombre} {solicitud.apellido}
+          </p>
+        </div>
 
-          return (
-            <div key={q.id} className={styles.questionCard}>
-              <div className={styles.questionHeader}>
-                <h4>
-                  {num}. {q.text}
-                </h4>
+        <div className={styles.questionCard}>
+          <h4>Edad</h4>
+          <p className={styles.answer}>{solicitud.edad}</p>
+        </div>
 
-                <div className={styles.rating}>
-                  <span
-                    className={`${styles.dot} ${styles.red} ${
-                      evaluacion[num] === "red" ? styles.active : ""
-                    }`}
-                    onClick={() => handleEvaluar(num, "red")}
-                  />
+        <div className={styles.questionCard}>
+          <h4>Zona</h4>
+          <p className={styles.answer}>{solicitud.zona}</p>
+        </div>
 
-                  <span
-                    className={`${styles.dot} ${styles.orange} ${
-                      evaluacion[num] === "orange" ? styles.active : ""
-                    }`}
-                    onClick={() => handleEvaluar(num, "orange")}
-                  />
+        <div className={styles.questionCard}>
+          <h4>Dirección</h4>
+          <p className={styles.answer}>{solicitud.direccion}</p>
+        </div>
 
-                  <span
-                    className={`${styles.dot} ${styles.green} ${
-                      evaluacion[num] === "green" ? styles.active : ""
-                    }`}
-                    onClick={() => handleEvaluar(num, "green")}
-                  />
-                </div>
-              </div>
+        <div className={styles.questionCard}>
+          <h4>Motivo de adopción</h4>
+          <p className={styles.answer}>{solicitud.motivoAdopcion}</p>
+        </div>
 
-              <p className={styles.answer}>
-                {postulacion.respuestas[num] || "—"}
-              </p>
-            </div>
-          );
-        })}
+        <div className={styles.questionCard}>
+          <h4>Vivienda</h4>
+          <p className={styles.answer}>{solicitud.viviendaTipo}</p>
+        </div>
+
+        <div className={styles.questionCard}>
+          <h4>Convivientes</h4>
+          <p className={styles.answer}>{solicitud.convivientes}</p>
+        </div>
+
+        <div className={styles.questionCard}>
+          <h4>Experiencia con animales</h4>
+          <p className={styles.answer}>{solicitud.experienciaConAnimales}</p>
+        </div>
+
+        <div className={styles.questionCard}>
+          <h4>Horas fuera de casa</h4>
+          <p className={styles.answer}>{solicitud.horasFueraDeCasa}</p>
+        </div>
       </section>
     </main>
   );

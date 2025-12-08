@@ -63,7 +63,7 @@ const VerPerrito = () => {
 
             const body = {
                 nombre: data.nombre,
-                edad: Number(numeroEdad),
+                edad: Number(data.edad),
                 sexo: data.sexo,
                 peso: Number(data.peso),
                 castrado: data.castrado,
