@@ -13,7 +13,7 @@ const NavbarAdmin = ({ logOut }) =>{
         <div className="d-flex align-items-center justify-content-between w-50">
           <NavLink to="/homeadmin" end className={({ isActive }) => isActive ? "text-decoration-none text-black-title font_sm navlink navlink_active": "text-decoration-none text-black-title font_sm navlink"}>Todos los perros</NavLink>
           <NavLink to="/agregarPerro"className={({ isActive }) => isActive ? "text-decoration-none text-black-title font_sm navlink navlink_active": "text-decoration-none text-black-title font_sm navlink"}>Agregar perro</NavLink>
-          <NavLink to="/postulaciones"className={({ isActive }) => isActive ? "text-decoration-none text-black-title font_sm navlink navlink_active": "text-decoration-none text-black-title font_sm navlink"}>Postulaciones</NavLink>
+          <NavLink to="/homeadmin/postulaciones"className={({ isActive }) => isActive ? "text-decoration-none text-black-title font_sm navlink navlink_active": "text-decoration-none text-black-title font_sm navlink"}>Postulaciones</NavLink>
           <NavLink to="/pagos"className={({ isActive }) => isActive ? "text-decoration-none text-black-title font_sm navlink navlink_active": "text-decoration-none text-black-title font_sm navlink"}>Donaciones</NavLink>
           <NavLink to="/homeadmin/adoptados"className={({ isActive }) => isActive ? "text-decoration-none text-black-title font_sm navlink navlink_active": "text-decoration-none text-black-title font_sm navlink"}>Adoptados</NavLink>
 

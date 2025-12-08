@@ -6,109 +6,182 @@ import styles from "../css/DogsConFilters.module.css";
 const DogsConFilters = ({ defaultFilters = {}, context = "todos" }) => {
   const [perros, setPerros] = useState([]);
 
+
   const [filters, setFilters] = useState({
-    tipoIngreso: defaultFilters.tipoIngreso || "todos", 
-    estadoGeneral: defaultFilters.estadoGeneral ?? "todos",
-    tamaño: "todos",
-    sexo: "todos",
+  tipoIngreso: defaultFilters.tipoIngreso || "todos",
+  estado: context === "adoptados"
+    ? "adoptado"
+    : (defaultFilters.estado || "todos"),
+  tamaño: "todos",
+  sexo: "todos",
   });
 
-  const getDogLink = (perro) => `/homeadmin/perro/${perro._id}`;
 
-  useEffect(() => {
-    const fetchPerros = async () => {
-      try {
-        let lista = [];
-
-        if (context === "todos") {
-          const adopcion = await axios.get("http://localhost:8000/api/animals/public/adopcion");
-          const transito = await axios.get("http://localhost:8000/api/animals/public/transito");
-          lista = [...adopcion.data, ...transito.data];
-        }
-
-        if (context === "adoptados") {
-          const adopcionBaja = await axios.get("http://localhost:8000/api/animals/public/adopcion/baja");
-          const transitoBaja = await axios.get("http://localhost:8000/api/animals/public/transito/baja");
-          lista = [...adopcionBaja.data, ...transitoBaja.data];
-        }
-
-        setPerros(lista);
-      } catch (e) {
-        console.log("Error cargando perros:", e);
-      }
-    };
-
-    fetchPerros();
-  }, [context]);
-
-  const perrosFiltrados = perros.filter((p) => {
-    // FILTRO DE NECESIDAD REAL (adopción / tránsito)
-    if (filters.tipoIngreso !== "todos" && p.tipoIngreso !== filters.tipoIngreso)
-      return false;
-
-    // ESTADO
-    if (filters.estadoGeneral !== "todos") {
-      if (filters.estadoGeneral === true && p.estadoGeneral !== true) return false;
-      if (filters.estadoGeneral === false && p.estadoGeneral !== false) return false;
+  const getDogLink = (perro) => {
+    if (context === "postulaciones") {
+      return `/homeadmin/perro/${perro._id}/postulaciones`;
     }
 
-    // TAMAÑO
-    if (filters.tamaño !== "todos" && p.tamaño !== filters.tamaño)
+    if (filters.estado === "conPostulaciones") {
+      return `/homeadmin/perro/${perro._id}/postulaciones`;
+    }
+
+    return `/homeadmin/perro/${perro._id}`;
+  };
+
+  
+  useEffect(() => {
+  const fetchPerros = async () => {
+    try {
+      let lista = [];
+
+      const adopcion = await axios.get("http://localhost:8000/api/animals/public/adopcion");
+      const transito = await axios.get("http://localhost:8000/api/animals/public/transito");
+      lista = [...adopcion.data, ...transito.data];
+
+      // --- VISTA ADOPTADOS ---
+      if (context === "adoptados") {
+        const adopcionBaja = await axios.get("http://localhost:8000/api/animals/public/adopcion/baja");
+        const transitoBaja = await axios.get("http://localhost:8000/api/animals/public/transito/baja");
+        lista = [...adopcionBaja.data, ...transitoBaja.data];
+      }
+
+      // --- CARGAR POSTULACIONES ---
+      const solicitudesRes = await axios.get(
+        "http://localhost:8000/api/solicitudes/adopcion",
+        { headers: { token_user: localStorage.getItem("token_user") } }
+      );
+
+      const mapPost = {};
+      solicitudesRes.data.forEach((s) => {
+        const id = s.animal?._id;
+        if (!id) return;
+        mapPost[id] = (mapPost[id] || 0) + 1;
+      });
+
+      lista = lista.map((p) => ({
+        ...p,
+        postulaciones: mapPost[p._id] || 0,
+      }));
+
+      // --- Vista /todos CARGA adoptados si se seleccionó ese filtro ---
+      if (context === "todos" && filters.estado === "adoptado") {
+        const adopcionBaja = await axios.get("http://localhost:8000/api/animals/public/adopcion/baja");
+        const transitoBaja = await axios.get("http://localhost:8000/api/animals/public/transito/baja");
+        lista = [...adopcionBaja.data, ...transitoBaja.data].map((p) => ({
+          ...p,
+          postulaciones: mapPost[p._id] || 0,
+        }));
+      }
+
+      setPerros(lista);
+    } catch (e) {
+      console.log("Error cargando perros:", e);
+    }
+  };
+
+  fetchPerros();
+}, [context, filters.estado]);
+
+
+
+
+  const perrosFiltrados = perros.filter((p) => {
+
+  // ESTADO
+  if (filters.estado !== "todos") {
+    if (filters.estado === "conPostulaciones" && p.postulaciones === 0)
       return false;
 
-    // SEXO
-    if (filters.sexo !== "todos" && p.sexo !== filters.sexo)
+    if (filters.estado === "sinPostulaciones" && p.postulaciones > 0)
       return false;
 
-    return true;
-  });
+    if (filters.estado === "adoptado" && p.estadoGeneral !== false)
+      return false;
+
+    if (
+      filters.estado === "conTransito" &&
+      !(p.estadoGeneral === false && p.tipoIngreso === "transito")
+    )
+      return false;
+  }
+
+  
+  if (context !== "postulaciones") {
+    if (filters.tipoIngreso !== "todos" && p.tipoIngreso !== filters.tipoIngreso)
+      return false;
+  }
+
+  // TAMAÑO
+  if (filters.tamaño !== "todos" && p.tamaño !== filters.tamaño)
+    return false;
+
+  // SEXO
+  if (filters.sexo !== "todos" && p.sexo !== filters.sexo)
+    return false;
+
+  return true;
+});
+
+
+
+
+  const getDynamicTitle = () => {
+  if (context === "adoptados") return "adoptados";
+
+  switch (filters.estado) {
+    case "conPostulaciones":
+      return "con postulaciones";
+    case "sinPostulaciones":
+      return "sin postulaciones";
+    case "adoptado":
+      return "adoptados";
+    case "conTransito":
+      return "en tránsito";
+    default:
+      return "";
+  }
+  };
+
 
   return (
     <main className={styles.page}>
       <header className={styles.header}>
         <h1 className={styles.title}>
-          {context === "adoptados" ? "Perritos adoptados" : "Todos los perros"}
+          {context === "postulaciones" ? "Perritos con postulaciones" : "Todos los perritos"}{" "}
+          {getDynamicTitle() && (
+            <span className={styles.highlight}>{getDynamicTitle()}</span>
+          )}
         </h1>
 
         <div className={styles.filtersBar}>
 
-          {/* NECESIDAD (ADOPCIÓN / TRÁNSITO) */}
+          {/* ESTADO */}
+          <select
+            value={filters.estado}
+            onChange={(e) => setFilters({ ...filters, estado: e.target.value })}
+          >
+            <option value="todos">Estado</option>
+            <option value="conPostulaciones">Con postulaciones</option>
+            <option value="sinPostulaciones">Sin postulaciones</option>
+            <option value="adoptado">Ya fue adoptado</option>
+            <option value="conTransito">Ya tiene tránsito</option>
+          </select>
+
+          {/* NECESIDAD */}
           <select
             value={filters.tipoIngreso}
-            onChange={(e) =>
-              setFilters({ ...filters, tipoIngreso: e.target.value })
-            }
+            onChange={(e) => setFilters({ ...filters, tipoIngreso: e.target.value })}
           >
             <option value="todos">Necesidad</option>
             <option value="adopcion">Adopción</option>
             <option value="transito">Tránsito</option>
           </select>
 
-          {/* ESTADO */}
-          <select
-            value={filters.estadoGeneral}
-            onChange={(e) => {
-              const val = e.target.value;
-              setFilters({
-                ...filters,
-                estadoGeneral:
-                  val === "true" ? true :
-                  val === "false" ? false :
-                  "todos",
-              });
-            }}
-          >
-            <option value="todos">Estado</option>
-            <option value="true">Disponible</option>
-            <option value="false">No disponible</option>
-          </select>
-
           {/* TAMAÑO */}
           <select
             value={filters.tamaño}
-            onChange={(e) =>
-              setFilters({ ...filters, tamaño: e.target.value })
-            }
+            onChange={(e) => setFilters({ ...filters, tamaño: e.target.value })}
           >
             <option value="todos">Tamaño</option>
             <option value="Pequeño">Pequeño</option>
@@ -119,21 +192,20 @@ const DogsConFilters = ({ defaultFilters = {}, context = "todos" }) => {
           {/* SEXO */}
           <select
             value={filters.sexo}
-            onChange={(e) =>
-              setFilters({ ...filters, sexo: e.target.value })
-            }
+            onChange={(e) => setFilters({ ...filters, sexo: e.target.value })}
           >
             <option value="todos">Sexo</option>
             <option value="Macho">Macho</option>
             <option value="Hembra">Hembra</option>
           </select>
 
+          {/* LIMPIAR */}
           <button
             className={styles.clear}
             onClick={() =>
               setFilters({
                 tipoIngreso: "todos",
-                estadoGeneral: "todos",
+                estado: "todos",
                 tamaño: "todos",
                 sexo: "todos",
               })

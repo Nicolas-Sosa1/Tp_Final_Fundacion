@@ -7,8 +7,9 @@ import solicitudesController from "../controllers/solicitudes.controller.js";
 const solicitudesRoutes = Router();
 
 // USUARIO
-solicitudesRoutes.post("/adopcion/:animalId", validateToken, solicitudesController.crearSolicitudTransito);
-solicitudesRoutes.post("/transito/:animalId", validateToken, solicitudesController.crearSolicitudAdopcion);
+solicitudesRoutes.post("/adopcion/:animalId", validateToken, solicitudesController.crearSolicitudAdopcion);
+solicitudesRoutes.post("/transito/:animalId", validateToken, solicitudesController.crearSolicitudTransito);
+
 
 solicitudesRoutes.get("/mis-solicitudes", validateToken, solicitudesController.obtenerSolicitudesPorUsuario);
 

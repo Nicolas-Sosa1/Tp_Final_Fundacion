@@ -13,6 +13,9 @@ animalsRoutes.get("/public/adopcion", animalsController.getAdopcionAlta);
 animalsRoutes.get("/public/transito", animalsController.getTransitoAlta);
 animalsRoutes.get("/public/adopcion/baja", animalsController.getAdopcionBaja);
 animalsRoutes.get("/public/transito/baja", animalsController.getTransitoBaja);
+animalsRoutes.delete("/delete-permanent/:id", validateToken, isAdmin, animalsController.deletePermanent);
+animalsRoutes.patch("/adoptado/:id", validateToken, isAdmin, animalsController.toggleAdoptado);
+
 
 
 

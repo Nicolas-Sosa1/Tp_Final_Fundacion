@@ -14,34 +14,35 @@ const OneDogPostulaciones = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const token = localStorage.getItem("token_user");
+  try {
+    const token = localStorage.getItem("token_user");
 
-        // Cargar perro
-        const perroRes = await axios.get(
-          `http://localhost:8000/api/animals/${id}`,
-          { headers: { token_user: token } }
-        );
+    // Cargar perro
+    const perroRes = await axios.get(
+      `http://localhost:8000/api/animals/${id}`,
+      { headers: { token_user: token } }
+    );
 
-        setPerro(perroRes.data.animal);
+    setPerro(perroRes.data.animal);
 
-        // Cargar postulaciones reales
-        const postRes = await axios.get(
-          `http://localhost:8000/api/solicitudes/adopcion`,
-          { headers: { token_user: token } }
-        );
+    // Cargar postulaciones reales
+    const postRes = await axios.get(
+      `http://localhost:8000/api/solicitudes/adopcion`,
+      { headers: { token_user: token } }
+    );
 
-        // Filtrar solo las del perro actual
-        const filtrar = postRes.data.filter(
-          (s) => s.animal._id === id
-        );
+    // Filtrar solo las que pertenecen a este perro
+    const filtrar = postRes.data.filter(
+      (s) => s.animal && s.animal._id && s.animal._id.toString() === id
+    );
 
-        setPostulaciones(filtrar);
+    setPostulaciones(filtrar);
 
-      } catch (error) {
-        console.log("Error cargando postulaciones:", error);
-      }
-    };
+  } catch (error) {
+    console.log("Error cargando postulaciones:", error);
+  }
+};
+
 
     fetchData();
   }, [id]);
