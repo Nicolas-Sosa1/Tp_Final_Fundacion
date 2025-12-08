@@ -1,270 +1,236 @@
-import Carousel from 'react-bootstrap/Carousel';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Carousel from "react-bootstrap/Carousel";
+import "bootstrap/dist/css/bootstrap.min.css";
 import styles from "../../css/admin/Update.module.css";
-import { useState } from 'react';
 
 const UpdateAnimal = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+
     const [editando, setEditando] = useState(false);
+
     const [data, setData] = useState({
-        nombre: "Kira",
-        edad: "16 Meses",
-        sexo: "Hembra",
-        tamaño: "Mediano",
-        peso: 6,
-        historia: "Kira fue encontrada temblando bajo un auto, flaca y asustada. Al recibir comida por primera vez, movió la cola con esperanza. Lo rescatamos, se recuperó rápido y mostró ser un perro dulce y agradecido.",
+        nombre: "",
+        edad: 0,
+        sexo: "",
+        tamaño: "",
+        peso: 0,
+        historia: "",
         castrado: false,
         vacunas: [],
-        ubicacion: "Garin",
+        ubicacion: "",
         desparasitado: false,
-        discapacidad: "No",
+        discapacidad: "",
         imagen: "",
+        tipoIngreso: "",
+        estadoGeneral: true
     });
+
     const [tempData, setTempData] = useState(data);
-    const [numeroEdad, unidadEdad] = data.edad.split(" ");
+
+    useEffect(() => {
+        const fetchAnimal = async () => {
+            try {
+                const token = localStorage.getItem("token_user");
+                const res = await axios.get(
+                    `http://localhost:8000/api/animals/${id}`,
+                    { headers: { token_user: token } }
+                );
+
+                setData(res.data.animal);
+                setTempData(res.data.animal);
+            } catch (e) {
+                console.log("Error al cargar animal:", e);
+            }
+        };
+
+        fetchAnimal();
+    }, [id]);
 
     const handleImageChange = (e) => {
-        const files = Array.from(e.target.files);
-
-        if (files.length > 5) {
-            alert("Solo puedes seleccionar hasta 5 imágenes");
-            return;
-        }
-
-        const imageURLs = files.map((file) => URL.createObjectURL(file));
-
-        setData((prevData) => ({
-            ...prevData,
-            imagen: imageURLs,
-        }));
+        const file = e.target.files[0];
+        if (!file) return;
+        const url = URL.createObjectURL(file);
+        setData({ ...data, imagen: url });
     };
 
-    console.log(numeroEdad)
-    console.log(unidadEdad)
-    console.log(data.edad)
+    const guardarCambios = async () => {
+        try {
+            const token = localStorage.getItem("token_user");
+
+            const res = await axios.put(
+                `http://localhost:8000/api/animals/update/${id}`,
+                data,
+                { headers: { token_user: token } }
+            );
+
+            setData(res.data);
+            setEditando(false);
+            alert("Cambios guardados correctamente");
+        } catch (e) {
+            console.log("Error guardando cambios:", e);
+            alert("Error al actualizar");
+        }
+    };
+
     return (
         <div className={styles.wrapper}>
             <div className="d-flex justify-content-between align-items-center h-75 w-75 shadow-lg rounded-5 p-3 mx-auto">
-                <div className="w-50 p-3 d-flex justify-content-center align-items-center flex-column ">
-                    <Carousel >
+                
+                <div className="w-50 p-3 d-flex justify-content-center align-items-center flex-column">
+                    <Carousel>
                         <Carousel.Item interval={4000}>
                             <div className={styles.contenedor_img}>
-                                <img className="d-block w-100 rounded-4" src="../img/perro.png" alt="Perrito 1" />
+                                <img className="d-block w-100 rounded-4" src={data.imagen || "../img/perro.png"} alt="Imagen" />
                             </div>
                         </Carousel.Item>
-                        <Carousel.Item interval={4000}>
-                            <div className={styles.contenedor_img}>
-                                <img className="d-block w-100 rounded-4" src="../img/perro_2.png" alt="Perrito 2" />
-                            </div>
-                        </Carousel.Item>
-
                     </Carousel>
 
-                    <div className='d-flex w-100 align-items-center justify-content-center'>
-                        {editando ? (
-                            <div className='mt-3 d-flex gap-3 align-items-center justify-content-center  w-100 '>
-                                <div className={styles.contenedor_img_prev}>
-                                    <img className="d-block w-100 rounded-4" src="../img/perro.png" alt="Perrito 1" />
-                                </div>
-                                <div className={styles.contenedor_img_prev}>
-                                    <img className="d-block w-100 rounded-4" src="../img/perro_2.png" alt="Perrito 1" />
-                                </div>
+                    <div className="d-flex mt-3 gap-3">
+                        <div className={styles.contenedor_img_prev}>
+                            <img className="d-block w-100 rounded-4" src={data.imagen || "../img/perro.png"} alt="" />
+                        </div>
 
-                                <div className={styles.contenedor_img_prev}>
-                                    <label htmlFor="upload" className={styles.btn_subir}>
-                                        <i class="fa-solid fa-plus"></i>
-                                    </label>
-
-                                    <input
-                                        id="upload"
-                                        type="file"
-                                        accept="image/*"
-                                        multiple
-                                        onChange={handleImageChange}
-                                        style={{ display: "none" }}
-                                    />
-                                </div>
-                            </div>
-                        ) : (
-                            <div className='mt-3 d-flex gap-3 align-items-start justify-content-center w-100'>
-                                <div className={styles.contenedor_img_prev}>
-                                    <img className="d-block w-100 rounded-4" src="../img/perro.png" alt="Perrito 1" />
-                                </div>
-                                <div className={styles.contenedor_img_prev}>
-                                    <img className="d-block w-100 rounded-4" src="../img/perro_2.png" alt="Perrito 1" />
-                                </div>
+                        {editando && (
+                            <div className={styles.contenedor_img_prev}>
+                                <label htmlFor="upload" className={styles.btn_subir}>
+                                    <i className="fa-solid fa-plus"></i>
+                                </label>
+                                <input
+                                    id="upload"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    style={{ display: "none" }}
+                                />
                             </div>
                         )}
                     </div>
                 </div>
 
                 <div className="h-100 p-3 w-50 d-flex flex-column">
-                    <div>
-                        {editando ? (
-                            <input className='background-transparent-orange text-black-title rounded border-orange font-25 px-3 mb-3' type="text" value={data.nombre} onChange={(e) => setData({ ...data, nombre: e.target.value })} />
-                        ) : (
-                            <h2 className='title_orange '>{data.nombre}</h2>
-                        )}
-                    </div>
-
-                    <h2 className="title_orange mb-3 font-25">Historia</h2>
                     {editando ? (
-                        <textarea className='background-transparent-orange text-black-title  font-400 px-3 rounded border-orange no-scrollbar' rows="5" cols="34" value={data.historia} onChange={(e) => setData({ ...data, historia: e.target.value })} />
+                        <input
+                            type="text"
+                            className="background-transparent-orange text-black-title rounded border-orange font-25 px-3 mb-3"
+                            value={data.nombre}
+                            onChange={(e) => setData({ ...data, nombre: e.target.value })}
+                        />
                     ) : (
-                        <h2 className='font-400 ps-3 font-20 historia_text'>{data.historia}</h2>
+                        <h2 className="title_orange">{data.nombre}</h2>
                     )}
 
-                    <h2 className="title_orange font-25 ">Detalles</h2>
+                    <h2 className="title_orange mb-3 font-25">Historia</h2>
+
+                    {editando ? (
+                        <textarea
+                            className="background-transparent-orange text-black-title font-400 px-3 rounded border-orange no-scrollbar"
+                            rows="5"
+                            value={data.historia}
+                            onChange={(e) => setData({ ...data, historia: e.target.value })}
+                        />
+                    ) : (
+                        <h2 className="font-400 ps-3 font-20 historia_text">{data.historia}</h2>
+                    )}
+
+                    <h2 className="title_orange font-25">Detalles</h2>
 
                     <div className="d-flex flex-column gap-3 p-3">
+
                         {editando ? (
-                            <div className="d-flex align-items-center">
-                                <h3 className="font-20 mb-1 pe-3">Sexo:</h3>
-                                <div className={styles.contenedor_genero}>
-                                    <label className={data.sexo === "Hembra" ? styles.hembra : styles.opcion}>
-                                        <input
-                                            type="radio"
-                                            name="gender"
-                                            value="Hembra"
-                                            checked={data.sexo === "Hembra"}
-                                            onChange={(e) => setData({ ...data, sexo: e.target.value })}
-                                        />
-                                        <span>Hembra</span>
-                                    </label>
-
-                                    <label className={data.sexo === "Macho" ? styles.macho : styles.opcion}>
-                                        <input
-                                            type="radio"
-                                            name="gender"
-                                            value="Macho"
-                                            checked={data.sexo === "Macho"}
-                                            onChange={(e) => setData({ ...data, sexo: e.target.value })}
-                                        />
-                                        <span>Macho</span>
-                                    </label>
-
-                                </div>
-                            </div>
+                            <select
+                                className="background-transparent-orange text-black-title font-400 font-15 rounded border-orange px-3 w-50"
+                                value={data.sexo}
+                                onChange={(e) => setData({ ...data, sexo: e.target.value })}
+                            >
+                                <option value="Hembra">Hembra</option>
+                                <option value="Macho">Macho</option>
+                            </select>
                         ) : (
-                            <div className="d-flex align-items-center">
-                                <h3 className="font-20 mb-1 pe-3 title_orange">Sexo:</h3>
-                                <p className="font-400 font-20 m-0 title_orange">{data.sexo}</p>
-                            </div>
+                            <p className="font-20 title_orange">Sexo: {data.sexo}</p>
                         )}
 
                         {editando ? (
-                            <div className="d-flex align-items-center">
-                                <h3 className="font-20 mb-1 pe-3 ">Edad:</h3>
-                                <input className='background-transparent-orange text-black-title  font-400 font-15 rounded border-orange px-3 w-25'
-                                    type="number"
-                                    value={numeroEdad}
-                                    onChange={(e) => setData({ ...data, edad: `${e.target.value} ${numeroEdad}` })} />
-
-                                <div className={styles.contenedor_edad}>
-                                    <label className={unidadEdad === "Meses" ? styles.meses : styles.opcion}>
-                                        <input
-                                            type="radio"
-                                            name="age"
-                                            value="Meses"
-                                            checked={unidadEdad === "Meses"}
-                                            onChange={(e) => setData({ ...data, edad: `${numeroEdad} ${e.target.value}` })} />
-                                        <span>Meses</span>
-                                    </label>
-
-                                    <label className={unidadEdad === "Años" ? styles.meses : styles.opcion}>
-                                        <input
-                                            type="radio"
-                                            name="age"
-                                            value="Años"
-                                            checked={unidadEdad === "Años"}
-                                            onChange={(e) => setData({ ...data, edad: `${numeroEdad} ${e.target.value}` })} />
-                                        <span>Años</span>
-                                    </label>
-
-                                </div>
-                            </div>
+                            <input
+                                type="number"
+                                className="background-transparent-orange text-black-title font-400 font-15 rounded border-orange px-3 w-25"
+                                value={data.edad}
+                                onChange={(e) => setData({ ...data, edad: Number(e.target.value) })}
+                            />
                         ) : (
-                            <div className="d-flex align-items-center">
-                                <h3 className="font-20 mb-1 pe-3 title_orange">Edad:</h3>
-                                <p className="font-400 font-20 m-0 title_orange">{data.edad}</p>
-                            </div>
-
+                            <p className="font-20 title_orange">Edad: {data.edad} años</p>
                         )}
 
                         {editando ? (
-                            <div className="d-flex align-items-center">
-                                <h3 className="font-20 mb-1 pe-3  ">Peso:</h3>
-                                <input className='background-transparent-orange text-black-title font-400 font-15 rounded border-orange px-3 w-25' type="number" value={data.peso} onChange={(e) => setData({ ...data, peso: e.target.value })} />
-                            </div>
+                            <input
+                                type="number"
+                                className="background-transparent-orange text-black-title font-400 font-15 rounded border-orange px-3 w-25"
+                                value={data.peso}
+                                onChange={(e) => setData({ ...data, peso: Number(e.target.value) })}
+                            />
                         ) : (
-                            <div className="d-flex align-items-center">
-                                <h3 className="font-20 mb-1 pe-3 title_orange">Peso:</h3>
-                                <p className="font-400 font-20 m-0 title_orange">{data.peso} kg</p>
-                            </div>
-                        )}
-                        {editando ? (
-                            <div className="d-flex align-items-center">
-                                <h3 className="font-20 mb-1 pe-3 ">Tamaño:</h3>
-                                <select className='background-transparent-orange text-black-title font-400 font-15 rounded border-orange px-3 w-50'
-                                    value={data.tamaño}
-                                    onChange={(e) => setData({ ...data, tamaño: e.target.value })}
-                                >
-                                    <option value="Pequeño">Pequeño</option>
-                                    <option value="Mediano">Mediano</option>
-                                    <option value="Grande">Grande</option>
-                                </select>
-                            </div>
-                        ) : (
-                            <div className="d-flex align-items-center">
-                                <h3 className="font-20 mb-1 pe-3 title_orange">Tamaño:</h3>
-                                <p className="font-400 font-20 m-0 title_orange">{data.tamaño}</p>
-                            </div>
-                        )}
-                        {editando ? (
-                            <div className="d-flex align-items-center">
-                                <h3 className="font-20 mb-1 pe-3">Ubicación:</h3>
-                                <select className='background-transparent-orange text-black-title font-400 font-15 rounded border-orange px-3 w-50'
-                                    value={data.ubicacion}
-                                    onChange={(e) => setData({ ...data, ubicacion: e.target.value })}
-                                >
-                                    <option value="Garin">Garin</option>
-                                    <option value="Jose C.Paz">Jose C.Paz</option>
-                                    <option value="Pilar">Pilar</option>
-                                </select>
-                            </div>
-                        ) : (
-                            <div className="d-flex align-items-center">
-                                <h3 className="font-20 mb-1 pe-3 title_orange">Ubicación:</h3>
-                                <p className="font-400 font-20 m-0 title_orange ">Buenos Aires, {data.ubicacion}</p>
-                            </div>
+                            <p className="font-20 title_orange">Peso: {data.peso} kg</p>
                         )}
 
+                        {editando ? (
+                            <select
+                                value={data.tamaño}
+                                className="background-transparent-orange text-black-title font-400 font-15 rounded border-orange px-3 w-50"
+                                onChange={(e) => setData({ ...data, tamaño: e.target.value })}
+                            >
+                                <option value="Pequeño">Pequeño</option>
+                                <option value="Mediano">Mediano</option>
+                                <option value="Grande">Grande</option>
+                            </select>
+                        ) : (
+                            <p className="font-20 title_orange">Tamaño: {data.tamaño}</p>
+                        )}
 
+                        {editando ? (
+                            <select
+                                value={data.ubicacion}
+                                className="background-transparent-orange text-black-title font-400 font-15 rounded border-orange px-3 w-50"
+                                onChange={(e) => setData({ ...data, ubicacion: e.target.value })}
+                            >
+                                <option value="Garin">Garin</option>
+                                <option value="Jose C. Paz">Jose C. Paz</option>
+                                <option value="Pilar">Pilar</option>
+                            </select>
+                        ) : (
+                            <p className="font-20 title_orange">Ubicación: Buenos Aires, {data.ubicacion}</p>
+                        )}
                     </div>
-                    <div className='container'>
-                        {!editando ? (
+
+                    {!editando ? (
+                        <button
+                            className="btn btn-primary float-end"
+                            onClick={() => {
+                                setTempData(data);
+                                setEditando(true);
+                            }}
+                        >
+                            Editar información
+                        </button>
+                    ) : (
+                        <div className="d-flex justify-content-end gap-2">
                             <button
-                                className='btn btn-primary float-end'
+                                className="btn btn-secondary"
                                 onClick={() => {
-                                    setTempData(data);
-                                    setEditando(true);
+                                    setData(tempData);
+                                    setEditando(false);
                                 }}
                             >
-                                Editar información
+                                Cancelar
                             </button>
-                        ) : (
-                            <div className="d-flex justify-content-end gap-2">
-                                <button className='btn btn-secondary' onClick={() => { setData(tempData); setEditando(false); }}>
-                                    Cancelar
-                                </button>
-                                <button
-                                    className='btn btn-success' onClick={() => { setTempData(data); setEditando(false); }}>
-                                    Guardar cambios
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                </div>
 
+                            <button className="btn btn-success" onClick={guardarCambios}>
+                                Guardar cambios
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

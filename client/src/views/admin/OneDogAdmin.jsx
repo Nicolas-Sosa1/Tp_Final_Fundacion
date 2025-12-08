@@ -1,28 +1,84 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import OneDog from "../../components/OneDog";
-import { perros } from "../../data/perros";
 
 const OneDogAdmin = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const perroOriginal = perros.find((p) => p.id === Number(id));
-
+  const [data, setData] = useState(null);
+  const [tempData, setTempData] = useState(null);
   const [editando, setEditando] = useState(false);
-  const [data, setData] = useState(perroOriginal);
-  const [tempData, setTempData] = useState(perroOriginal);
 
-  if (!perroOriginal) return <p>Perro no encontrado</p>;
+  // -------------------------
+  // CARGAR ANIMAL REAL
+  // -------------------------
+  useEffect(() => {
+    const fetchDog = async () => {
+      try {
+        const token = localStorage.getItem("token_user");
+        const res = await axios.get(
+          `http://localhost:8000/api/animals/${id}`,
+          { headers: { token_user: token } }
+        );
 
-  const guardarEnBD = (nuevo) => {
-    console.log("→ Guardando en base de datos...", nuevo);
-    // aquí iría tu fetch/axios
+        setData(res.data.animal);
+        setTempData(res.data.animal);
+      } catch (e) {
+        console.log("Error cargando perro:", e);
+      }
+    };
+
+    fetchDog();
+  }, [id]);
+
+  if (!data) return <p>Cargando perro...</p>;
+
+  // -------------------------
+  // GUARDAR CAMBIOS EN BD
+  // -------------------------
+  const guardarEnBD = async (nuevo) => {
+    try {
+      const token = localStorage.getItem("token_user");
+
+      const res = await axios.put(
+        `http://localhost:8000/api/animals/update/${id}`,
+        nuevo,
+        { headers: { token_user: token } }
+      );
+
+      alert("Cambios guardados correctamente");
+      setData(res.data);
+    } catch (e) {
+      console.log("Error guardando:", e);
+      alert("Error al guardar cambios");
+    }
   };
 
-  const eliminarDeBD = (id) => {
-    console.log("→ Eliminando de la base de datos...", id);
-    // fetch/axios aquí
+  // -------------------------
+  // ELIMINAR (marcar como no disponible)
+  // -------------------------
+  const eliminarDeBD = async () => {
+    const seguro = window.confirm(
+      `¿Eliminar a ${data.nombre}? Esta acción no se puede deshacer.`
+    );
+    if (!seguro) return;
+
+    try {
+      const token = localStorage.getItem("token_user");
+
+      await axios.delete(
+        `http://localhost:8000/api/animals/destroy/${id}`,
+        { headers: { token_user: token } }
+      );
+
+      alert("Animal eliminado correctamente");
+      navigate("/homeadmin");
+    } catch (e) {
+      console.log("Error eliminando:", e);
+      alert("Error al eliminar");
+    }
   };
 
   return (
@@ -42,22 +98,7 @@ const OneDogAdmin = () => {
         guardarEnBD(data);
         setEditando(false);
       }}
-      /* NUEVO → cambiar adopción */
-      onToggleAdopted={() => {
-        const nuevoEstado = { ...data, isAdopted: !data.isAdopted };
-        setData(nuevoEstado);
-        guardarEnBD(nuevoEstado);
-      }}
-      /* NUEVO → preguntar antes de eliminar */
-      onDeleteRequest={() => {
-        const seguro = window.confirm(
-          `¿Eliminar a ${data.nombre}? Esta acción no se puede deshacer.`
-        );
-        if (!seguro) return;
-
-        eliminarDeBD(data.id);
-        navigate("/homeadmin");
-      }}
+      onDeleteRequest={eliminarDeBD}
       modo="admin"
     />
   );

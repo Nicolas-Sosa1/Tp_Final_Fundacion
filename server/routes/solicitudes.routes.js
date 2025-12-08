@@ -8,7 +8,7 @@ const solicitudesRoutes = Router();
 
 // USUARIO
 solicitudesRoutes.post("/adopcion/:animalId", validateToken, solicitudesController.crearSolicitudTransito);
-solicitudesRoutes.post("/transito/:animalId", validateToken, solicitudesController.crearSolicitudTransito);
+solicitudesRoutes.post("/transito/:animalId", validateToken, solicitudesController.crearSolicitudAdopcion);
 
 solicitudesRoutes.get("/mis-solicitudes", validateToken, solicitudesController.obtenerSolicitudesPorUsuario);
 

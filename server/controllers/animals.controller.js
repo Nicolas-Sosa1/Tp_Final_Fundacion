@@ -2,39 +2,39 @@ import { Animals} from "../models/animals.model.js";
 
 const animalsController = {
     createOne: async (req,res)=> {
-        const {
-    nombre,
-    edad,
-    sexo,
-    peso,
-    castrado,
-    vacunas,
-    desparasitado,
-    discapacidad,
-    imagen,
-    historia,
-    tamaño,
-    ubicacion,
-    tipoIngreso,
-    estadoGeneral
-} = req.body;
+                const {
+            nombre,
+            edad,
+            sexo,
+            peso,
+            castrado,
+            vacunas,
+            desparasitado,
+            discapacidad,
+            imagen,
+            historia,
+            tamaño,
+            ubicacion,
+            tipoIngreso,
+            estadoGeneral
+        } = req.body;
 
-const newAnimalData = {
-    nombre,
-    edad,
-    sexo,
-    peso,
-    castrado,
-    vacunas,
-    desparasitado,
-    discapacidad,
-    imagen,
-    historia,
-    tamaño,
-    ubicacion,
-    tipoIngreso,
-    estadoGeneral
-};
+        const newAnimalData = {
+            nombre,
+            edad,
+            sexo,
+            peso,
+            castrado,
+            vacunas,
+            desparasitado,
+            discapacidad,
+            imagen,
+            historia,
+            tamaño,
+            ubicacion,
+            tipoIngreso,
+            estadoGeneral
+        };
 
         try{
             const newAnimal = await Animals.create(newAnimalData)
@@ -197,7 +197,7 @@ const newAnimalData = {
         try {
             const updatedAnimal = await Animals.findByIdAndUpdate(
                 id,
-                { estadoGeneral: "no_disponible" },
+                { estadoGeneral: false },
                 { new: true }
             );
 
