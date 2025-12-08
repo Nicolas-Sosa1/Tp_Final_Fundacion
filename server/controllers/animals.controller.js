@@ -114,13 +114,15 @@ const animalsController = {
         const id = req.params.id;
 
         try {
-            const animal = await Animals.findById(id).populate("vacunas");
+            const animal = await Animals.findById(id)
+                .populate("vacunas")
+                .populate("postulaciones"); 
 
             if (!animal) {
                 return res.status(404).json({ message: "No hay animal con ese ID" });
             }
 
-            res.status(200).json({animal});
+            res.status(200).json({ animal });
 
         } catch (e) {
             res.status(400).json({ message: "Error al buscar el animal", error: e.message });
@@ -213,7 +215,53 @@ const animalsController = {
         } catch (error) {
             return res.status(500).json({ message: "Error al actualizar el estado del animal" });
         }
-}
+    },
+    deletePermanent: async (req, res) => {
+        const { id } = req.params;
+
+        try {
+            const deleted = await Animals.findByIdAndDelete(id);
+
+            if (!deleted) {
+                return res.status(404).json({ message: "Animal no encontrado" });
+            }
+
+            return res.status(200).json({ message: "Animal eliminado de la base de datos" });
+
+        } catch (error) {
+            return res.status(500).json({ message: "Error al eliminar permanentemente el animal" });
+        }
+    },
+    toggleAdoptado: async (req, res) => {
+        const { id } = req.params;
+
+        try {
+            const animal = await Animals.findById(id);
+            if (!animal) {
+                return res.status(404).json({ message: "Animal no encontrado" });
+            }
+
+            const nuevoEstado = !animal.estadoGeneral;
+
+            const updated = await Animals.findByIdAndUpdate(
+                id,
+                { estadoGeneral: nuevoEstado },
+                { new: true }
+            );
+
+            return res.status(200).json({
+                message: nuevoEstado
+                    ? "El animal volvió a estar disponible"
+                    : "El animal fue marcado como adoptado",
+                animal: updated
+            });
+
+        } catch (error) {
+            return res.status(500).json({ message: "Error al cambiar estado" });
+        }
+    }
+
+
 
 }
 

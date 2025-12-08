@@ -12,6 +12,7 @@ const OneDog = ({
   onEditStart,
   onCancel,
   onSave,
+  onToggleAdopted = () => {},
   onDeleteRequest,
   modo = "user",
 }) => {
@@ -20,15 +21,10 @@ const OneDog = ({
       {modo === "admin" && <Breadcrumbs perro={data} />}
 
       <div className={styles.card}>
-        {/* --------- FOTOS --------- */}
         <div className={styles.gallery}>
           <Carousel interval={4000}>
             <Carousel.Item>
-              <img
-                src={data.imagen}
-                alt={data.nombre}
-                className={styles.mainImg}
-              />
+              <img src={data.imagen} alt={data.nombre} className={styles.mainImg} />
             </Carousel.Item>
           </Carousel>
 
@@ -37,9 +33,7 @@ const OneDog = ({
           </div>
         </div>
 
-        {/* --------- INFO --------- */}
         <div className={styles.info}>
-          {/* Nombre */}
           {!editando ? (
             <h2 className={styles.name}>{data.nombre}</h2>
           ) : (
@@ -50,7 +44,6 @@ const OneDog = ({
             />
           )}
 
-          {/* Historia */}
           <h3 className={styles.sectionTitle}>Historia</h3>
 
           {!editando ? (
@@ -60,33 +53,24 @@ const OneDog = ({
               className={styles.textarea}
               rows="4"
               value={data.historia}
-              onChange={(e) =>
-                onChange({ ...data, historia: e.target.value })
-              }
+              onChange={(e) => onChange({ ...data, historia: e.target.value })}
             />
           )}
 
-          {/* Detalles */}
           <h3 className={styles.sectionTitle}>Detalles</h3>
 
           <div className={styles.detailsList}>
-            {/* Sexo */}
+            {/* SEXO */}
             <div className={styles.detailItem}>
-              <img
-                src={`/src/assets/icons/${data.sexo}.svg`}
-                className={styles.detailIcon}
-              />
+              <img src={`/src/assets/icons/${data.sexo}.svg`} className={styles.detailIcon} />
               <span className={styles.detailLabel}>Sexo:</span>
-
               {!editando ? (
                 <span>{data.sexo}</span>
               ) : (
                 <select
                   className={styles.select}
                   value={data.sexo}
-                  onChange={(e) =>
-                    onChange({ ...data, sexo: e.target.value })
-                  }
+                  onChange={(e) => onChange({ ...data, sexo: e.target.value })}
                 >
                   <option>Macho</option>
                   <option>Hembra</option>
@@ -94,10 +78,9 @@ const OneDog = ({
               )}
             </div>
 
-            {/* Edad */}
+            {/* EDAD */}
             <div className={styles.detailItem}>
               <span className={styles.detailLabel}>🎂 Edad:</span>
-
               {!editando ? (
                 <span>{data.edad} años</span>
               ) : (
@@ -105,17 +88,14 @@ const OneDog = ({
                   type="number"
                   className={styles.number}
                   value={data.edad}
-                  onChange={(e) =>
-                    onChange({ ...data, edad: Number(e.target.value) })
-                  }
+                  onChange={(e) => onChange({ ...data, edad: Number(e.target.value) })}
                 />
               )}
             </div>
 
-            {/* Peso */}
+            {/* PESO */}
             <div className={styles.detailItem}>
               <span className={styles.detailLabel}>⚖ Peso:</span>
-
               {!editando ? (
                 <span>{data.peso} kg</span>
               ) : (
@@ -123,27 +103,22 @@ const OneDog = ({
                   type="number"
                   className={styles.number}
                   value={data.peso}
-                  onChange={(e) =>
-                    onChange({ ...data, peso: Number(e.target.value) })
-                  }
+                  onChange={(e) => onChange({ ...data, peso: Number(e.target.value) })}
                 />
               )}
             </div>
 
-            {/* Tamaño */}
+            {/* TAMAÑO */}
             <div className={styles.detailItem}>
               <img src={sizeIcon} className={styles.sizeIcon} />
-              <span className={styles.detailLabel}> Tamaño:</span>
-
+              <span className={styles.detailLabel}>Tamaño:</span>
               {!editando ? (
                 <span>{data.tamaño}</span>
               ) : (
                 <select
                   className={styles.select}
                   value={data.tamaño}
-                  onChange={(e) =>
-                    onChange({ ...data, tamaño: e.target.value })
-                  }
+                  onChange={(e) => onChange({ ...data, tamaño: e.target.value })}
                 >
                   <option value="Pequeño">Pequeño</option>
                   <option value="Mediano">Mediano</option>
@@ -152,19 +127,16 @@ const OneDog = ({
               )}
             </div>
 
-            {/* Ubicación */}
+            {/* UBICACION */}
             <div className={styles.detailItem}>
               <span className={styles.detailLabel}>📍 Ubicación:</span>
-
               {!editando ? (
                 <span>{data.ubicacion}</span>
               ) : (
                 <select
                   className={styles.select}
                   value={data.ubicacion}
-                  onChange={(e) =>
-                    onChange({ ...data, ubicacion: e.target.value })
-                  }
+                  onChange={(e) => onChange({ ...data, ubicacion: e.target.value })}
                 >
                   <option>Garin</option>
                   <option>Jose C. Paz</option>
@@ -175,7 +147,7 @@ const OneDog = ({
             </div>
           </div>
 
-          {/* BOTONES */}
+          {/* --------- BOTONES ADMIN --------- */}
           <div className={styles.buttons}>
             {modo === "admin" && !editando && (
               <>
@@ -184,6 +156,30 @@ const OneDog = ({
                 </button>
 
                 <div className={styles.adminActions}>
+                  {/* POSTULACIONES */}
+                  {Array.isArray(data.postulaciones) &&
+                    data.postulaciones.length > 0 && (
+                      <button
+                        className={styles.btnPostulaciones}
+                        onClick={() =>
+                          (window.location.href = `/homeadmin/perro/${data._id}/postulaciones`)
+                        }
+                      >
+                        Ver postulaciones
+                      </button>
+                    )}
+
+                  {/* ADOPCIÓN TOGGLE */}
+                  <button
+                    className={styles.btnAdopted}
+                    onClick={() => onToggleAdopted(data)}
+                  >
+                    {data.estadoGeneral === false
+                      ? "Quitar adopción"
+                      : "Fue adoptado"}
+                  </button>
+
+                  {/* ELIMINAR DEFINITIVAMENTE */}
                   <button
                     className={styles.btnDelete}
                     onClick={() => onDeleteRequest(data)}
@@ -202,6 +198,13 @@ const OneDog = ({
                 <button className={styles.btnSave} onClick={onSave}>
                   Guardar
                 </button>
+              </div>
+            )}
+
+            {modo === "user" && (
+              <div className={styles.userBtns}>
+                <button className={styles.btnPrimary}>Adoptar</button>
+                <button className={styles.btnSecondary}>Ser hogar de tránsito</button>
               </div>
             )}
           </div>

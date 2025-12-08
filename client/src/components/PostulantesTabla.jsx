@@ -6,7 +6,7 @@ const PostulantesTabla = ({ postulaciones = [] }) => {
   const [activeTab, setActiveTab] = useState("todos");
   const { id } = useParams();
 
-  // Mapea los estados de la BD a los del UI
+  
   const mapEstado = {
     aprobada: "Aceptada",
     pendiente: "Pendiente",

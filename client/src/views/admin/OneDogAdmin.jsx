@@ -11,9 +11,6 @@ const OneDogAdmin = () => {
   const [tempData, setTempData] = useState(null);
   const [editando, setEditando] = useState(false);
 
-  // -------------------------
-  // CARGAR ANIMAL REAL
-  // -------------------------
   useEffect(() => {
     const fetchDog = async () => {
       try {
@@ -35,13 +32,9 @@ const OneDogAdmin = () => {
 
   if (!data) return <p>Cargando perro...</p>;
 
-  // -------------------------
-  // GUARDAR CAMBIOS EN BD
-  // -------------------------
   const guardarEnBD = async (nuevo) => {
     try {
       const token = localStorage.getItem("token_user");
-
       const res = await axios.put(
         `http://localhost:8000/api/animals/update/${id}`,
         nuevo,
@@ -51,17 +44,34 @@ const OneDogAdmin = () => {
       alert("Cambios guardados correctamente");
       setData(res.data);
     } catch (e) {
-      console.log("Error guardando:", e);
       alert("Error al guardar cambios");
     }
   };
 
-  // -------------------------
-  // ELIMINAR (marcar como no disponible)
-  // -------------------------
-  const eliminarDeBD = async () => {
+
+const toggleAdoptado = async () => {
+  try {
+    const token = localStorage.getItem("token_user");
+
+    const res = await axios.patch(
+      `http://localhost:8000/api/animals/adoptado/${id}`,
+      {},
+      { headers: { token_user: token } }
+    );
+
+    alert(res.data.message);
+    setData(res.data.animal);
+
+  } catch (e) {
+    alert("Error al actualizar estado");
+  }
+};
+
+
+
+  const eliminarPermanentemente = async () => {
     const seguro = window.confirm(
-      `¿Eliminar a ${data.nombre}? Esta acción no se puede deshacer.`
+      `⚠ ¿Eliminar DEFINITIVAMENTE a ${data.nombre}? ESTA ACCIÓN NO SE PUEDE DESHACER.`
     );
     if (!seguro) return;
 
@@ -69,15 +79,14 @@ const OneDogAdmin = () => {
       const token = localStorage.getItem("token_user");
 
       await axios.delete(
-        `http://localhost:8000/api/animals/destroy/${id}`,
+        `http://localhost:8000/api/animals/delete-permanent/${id}`,
         { headers: { token_user: token } }
       );
 
-      alert("Animal eliminado correctamente");
+      alert("Animal eliminado PERMANENTEMENTE");
       navigate("/homeadmin");
     } catch (e) {
-      console.log("Error eliminando:", e);
-      alert("Error al eliminar");
+      alert("Error al eliminar definitivamente");
     }
   };
 
@@ -98,7 +107,8 @@ const OneDogAdmin = () => {
         guardarEnBD(data);
         setEditando(false);
       }}
-      onDeleteRequest={eliminarDeBD}
+      onToggleAdopted={toggleAdoptado}
+      onDeleteRequest={eliminarPermanentemente}
       modo="admin"
     />
   );

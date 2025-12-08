@@ -1,25 +1,32 @@
 import { SolicitudAdopcion } from "../models/solicitudAdopcion.model.js";
 import { SolicitudTransito } from "../models/solicitudTransito.model.js";
+import { Animals } from "../models/animals.model.js";
+
 
 const solicitudesController = {
 
     crearSolicitudAdopcion: async (req, res) => {
+    try {
+        // 1) Crear solicitud
+        const solicitud = await SolicitudAdopcion.create({
+            usuario: req.userId,
+            animal: req.params.animalId,
+            ...req.body
+        });
 
-        try {
-            const solicitud = await SolicitudAdopcion.create({
-                usuario: req.userId,
-                animal: req.params.animalId,
-                ...req.body
-            });
+        // 2) Agregar solicitud al animal
+        await Animals.findByIdAndUpdate(
+            req.params.animalId,
+            { $push: { postulaciones: solicitud._id } }
+        );
 
-            return res.status(201).json(solicitud);
+        return res.status(201).json(solicitud);
 
-        } catch (error) {
-            console.error(error);
-            return res.status(400).json({ message: "Error al crear solicitud de adopción" });
-        }
-    },
-
+    } catch (error) {
+        console.error(error);
+        return res.status(400).json({ message: "Error al crear solicitud de adopción" });
+    }
+},
 
     crearSolicitudTransito: async (req, res) => {
         try {

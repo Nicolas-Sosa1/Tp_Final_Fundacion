@@ -65,6 +65,11 @@ const animalsShema = mongoose.Schema(
             type: Boolean,
             default: true
         },
+        postulaciones: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "solicitudes_adopcion"
+        }],
+
 
     }, {timestamps:true}
 )
