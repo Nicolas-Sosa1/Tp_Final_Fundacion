@@ -41,7 +41,7 @@ const Animales = () => {
   const navigate = useNavigate();
 
   // Verificar si el usuario está autenticado
-  const isAuthenticated = !!localStorage.getItem("token_user");
+  // const isAuthenticated = !!localStorage.getItem("token_user");
 
   // Estado para vista detallada
   const [detallePerro, setDetallePerro] = useState({
@@ -84,23 +84,23 @@ const Animales = () => {
   const fetchDetallePerro = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("token_user");
-      const config = token ? { headers: { token_user: token } } : {};
+      // const token = localStorage.getItem("token_user");
+      // const config = token ? { headers: { token_user: token } } : {};
       
-      const res = await axios.get(`${API_URL}/api/animals/${id}`, config);
+      const res = await axios.get(`${API_URL}/api/animals/${id}`);
       setDetallePerro(res.data.animal);
       setLoading(false);
     } catch (e) {
       console.log("Error cargando perro:", e);
       
       // Solo redirigir si hay error 401 y el usuario tenía token
-      if (e.response?.status === 401 && isAuthenticated) {
-        localStorage.removeItem("token_user");
-        setError("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
-      } else {
-        setError("Error al cargar los detalles del animal.");
-      }
-      setLoading(false);
+      // if (e.response?.status === 401 && isAuthenticated) {
+      //   localStorage.removeItem("token_user");
+      //   setError("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
+      // } else {
+      //   setError("Error al cargar los detalles del animal.");
+      // }
+      // setLoading(false);
     }
   };
 
@@ -110,17 +110,17 @@ const Animales = () => {
       setLoading(true);
       setError(null);
       
-      const token = localStorage.getItem("token_user");
+      // const token = localStorage.getItem("token_user");
       
-      // Configurar headers solo si hay token
-      const config = token ? { 
-        headers: { 
-          Authorization: `Bearer ${token}`,
-          token_user: token 
-        }
-      } : {};
+      // // Configurar headers solo si hay token
+      // const config = token ? { 
+      //   headers: { 
+      //     Authorization: `Bearer ${token}`,
+      //     token_user: token 
+      //   }
+      // } : {};
       
-      console.log("Cargando animales...", token ? "Con token" : "Sin token");
+      console.log("Cargando animales...");
       
       try {
         const response = await axios.get(
@@ -137,8 +137,8 @@ const Animales = () => {
         
         // Si /public/all falla, usar los endpoints individuales
         const [adopcionRes, transitoRes] = await Promise.all([
-          axios.get(`${API_URL}/api/animals/public/adopcion`, config),
-          axios.get(`${API_URL}/api/animals/public/transito`, config)
+          axios.get(`${API_URL}/api/animals/public/adopcion`),
+          axios.get(`${API_URL}/api/animals/public/transito`)
         ]);
 
         // Combinar y filtrar solo los disponibles
@@ -155,18 +155,18 @@ const Animales = () => {
       
       // Manejo de errores de autenticación
       if (err.response?.status === 401) {
-        if (isAuthenticated) {
-          // Token inválido o expirado para usuario logueado
-          localStorage.removeItem("token_user");
-          setError("Tu sesión ha expirado. Los datos se cargarán en modo público.");
+        // if (isAuthenticated) {
+        //   // Token inválido o expirado para usuario logueado
+        //   localStorage.removeItem("token_user");
+        //   setError("Tu sesión ha expirado. Los datos se cargarán en modo público.");
           
-          // Intentar cargar nuevamente sin token
-          setTimeout(() => fetchPerros(), 1000);
-        } else {
-          // Usuario no logueado - mostrar error genérico
-          setError("Error al cargar los animales. Por favor, intenta nuevamente.");
-          setLoading(false);
-        }
+        //   // Intentar cargar nuevamente sin token
+        //   setTimeout(() => fetchPerros(), 1000);
+        // } else {
+        //   // Usuario no logueado - mostrar error genérico
+        //   setError("Error al cargar los animales. Por favor, intenta nuevamente.");
+        //   setLoading(false);
+        // }
       } else {
         // Otros errores
         setError("Error al cargar los animales. Por favor, intenta nuevamente.");
@@ -260,14 +260,14 @@ const Animales = () => {
         >
           Reintentar
         </button>
-        {!isAuthenticated && (
+
           <button 
             className="btn btn-outline-orange mt-3 ms-2"
             onClick={() => navigate("/login")}
           >
             Iniciar Sesión
           </button>
-        )}
+
       </div>
     );
   }
@@ -286,7 +286,7 @@ const Animales = () => {
         </button>
         
         {/* Banner de autenticación si no está logueado */}
-        {!isAuthenticated && (
+        {/* {!isAuthenticated && (
           <div className="alert alert-info mb-4">
             <i className="fas fa-info-circle me-2"></i>
             Estás viendo esta página en modo público. 
@@ -298,7 +298,7 @@ const Animales = () => {
             </button> 
             para más opciones.
           </div>
-        )}
+        )} */}
         
         <div className="row justify-content-center">
           <div className="col-lg-10">
@@ -455,7 +455,7 @@ const Animales = () => {
                     
                     {/* Botones de acción */}
                     <div className="d-grid gap-3 d-md-flex mt-5">
-                      {isAuthenticated ? (
+
                         <button 
                           className="btn btn-primary btn-lg px-5 py-3 flex-fill"
                           onClick={() => handleAccion(detallePerro)}
@@ -463,20 +463,7 @@ const Animales = () => {
                           <i className="fas fa-heart me-2"></i>
                           {detallePerro.tipoIngreso === 'adopcion' ? 'Adoptar' : 'Ser Hogar de Tránsito'}
                         </button>
-                      ) : (
-                        <button 
-                          className="btn btn-primary btn-lg px-5 py-3 flex-fill"
-                          onClick={() => navigate("/login", { 
-                            state: { 
-                              from: `/animales/${id}`,
-                              message: `Para ${detallePerro.tipoIngreso === 'adopcion' ? 'adoptar' : 'ser hogar de tránsito'} a ${detallePerro.nombre}, necesitas iniciar sesión.` 
-                            } 
-                          })}
-                        >
-                          <i className="fas fa-sign-in-alt me-2"></i>
-                          Inicia sesión para {detallePerro.tipoIngreso === 'adopcion' ? 'Adoptar' : 'Ayudar'}
-                        </button>
-                      )}
+                    
                       
                       <button 
                         className="btn btn-outline-primary btn-lg px-5 py-3 flex-fill"
@@ -503,21 +490,7 @@ const Animales = () => {
         <h1 className="title_orange mb-0">Nuestros Animales en Adopción</h1>
         
         {/* Indicador de estado de autenticación */}
-        {!isAuthenticated && (
-          <div className="alert alert-info py-2 mb-0">
-            <small>
-              <i className="fas fa-info-circle me-1"></i>
-              Modo público - 
-              <button 
-                className="btn btn-link p-0 ms-1"
-                onClick={() => navigate("/login", { state: { from: "/animales" } })}
-              >
-                Inicia sesión
-              </button> 
-              para más opciones
-            </small>
-          </div>
-        )}
+
       </div>
       
       {/* Barra de filtros */}
@@ -686,20 +659,7 @@ const Animales = () => {
                         Ver Detalles
                       </button>
                       
-                      {!isAuthenticated && (
-                        <button 
-                          className="btn btn-outline-secondary btn-sm"
-                          onClick={() => navigate("/login", { 
-                            state: { 
-                              from: `/animales/${perro._id}`,
-                              message: `Para interactuar con ${perro.nombre}, necesitas iniciar sesión.` 
-                            } 
-                          })}
-                        >
-                          <i className="fas fa-sign-in-alt me-1"></i>
-                          Inicia sesión
-                        </button>
-                      )}
+
                     </div>
                   </div>
                 </div>
