@@ -16,6 +16,11 @@ const OneDog = ({
   onDeleteRequest,
   modo = "user",
 }) => {
+
+  const imageSrc = data.imagen?.startsWith("http")
+    ? data.imagen
+    : `http://localhost:8000/uploads/${data.imagen}`;
+
   return (
     <div className={styles.bread}>
       {modo === "admin" && <Breadcrumbs perro={data} />}
@@ -24,12 +29,12 @@ const OneDog = ({
         <div className={styles.gallery}>
           <Carousel interval={4000}>
             <Carousel.Item>
-              <img src={data.imagen} alt={data.nombre} className={styles.mainImg} />
+              <img src={imageSrc} alt={data.nombre} className={styles.mainImg} />
             </Carousel.Item>
           </Carousel>
 
           <div className={styles.thumbRow}>
-            <img src={data.imagen} className={styles.thumbnail} />
+            <img src={imageSrc} className={styles.thumbnail} />
           </div>
         </div>
 
@@ -62,7 +67,10 @@ const OneDog = ({
           <div className={styles.detailsList}>
             {/* SEXO */}
             <div className={styles.detailItem}>
-              <img src={`/src/assets/icons/${data.sexo}.svg`} className={styles.detailIcon} />
+              <img
+                src={`/src/assets/icons/${data.sexo}.svg`}
+                className={styles.detailIcon}
+              />
               <span className={styles.detailLabel}>Sexo:</span>
               {!editando ? (
                 <span>{data.sexo}</span>
@@ -127,7 +135,7 @@ const OneDog = ({
               )}
             </div>
 
-            {/* UBICACION */}
+            {/* UBICACIÓN */}
             <div className={styles.detailItem}>
               <span className={styles.detailLabel}>📍 Ubicación:</span>
               {!editando ? (
@@ -147,7 +155,7 @@ const OneDog = ({
             </div>
           </div>
 
-          {/* --------- BOTONES ADMIN --------- */}
+          {/* -------- BOTONES ADMIN -------- */}
           <div className={styles.buttons}>
             {modo === "admin" && !editando && (
               <>
@@ -179,7 +187,7 @@ const OneDog = ({
                       : "Fue adoptado"}
                   </button>
 
-                  {/* ELIMINAR DEFINITIVAMENTE */}
+                  {/* ELIMINAR PERRO */}
                   <button
                     className={styles.btnDelete}
                     onClick={() => onDeleteRequest(data)}
@@ -190,6 +198,7 @@ const OneDog = ({
               </>
             )}
 
+            {/* BOTONES DE EDICIÓN */}
             {editando && (
               <div className={styles.editBtns}>
                 <button className={styles.btnCancel} onClick={onCancel}>
@@ -201,6 +210,7 @@ const OneDog = ({
               </div>
             )}
 
+            {/* BOTONES DEL USUARIO */}
             {modo === "user" && (
               <div className={styles.userBtns}>
                 <button className={styles.btnPrimary}>Adoptar</button>

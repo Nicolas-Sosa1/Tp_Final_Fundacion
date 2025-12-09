@@ -1,59 +1,70 @@
 import { Animals} from "../models/animals.model.js";
 
 const animalsController = {
-    createOne: async (req,res)=> {
-                const {
-            nombre,
-            edad,
-            sexo,
-            peso,
-            castrado,
-            vacunas,
-            desparasitado,
-            discapacidad,
-            imagen,
-            historia,
-            tamaño,
-            ubicacion,
-            tipoIngreso,
-            estadoGeneral
-        } = req.body;
+    createOne: async (req, res) => {
+    // 🚨 VALIDAR IMAGEN
+    if (!req.file) {
+        return res.status(400).json({
+            errors: { imagen: "Debes subir una imagen del animal" }
+        });
+    }
 
-        const newAnimalData = {
-            nombre,
-            edad,
-            sexo,
-            peso,
-            castrado,
-            vacunas,
-            desparasitado,
-            discapacidad,
-            imagen,
-            historia,
-            tamaño,
-            ubicacion,
-            tipoIngreso,
-            estadoGeneral
-        };
+    // Nombre del archivo subido
+    const { filename } = req.file;
 
-        try{
-            const newAnimal = await Animals.create(newAnimalData)
-            res.status(201).json(newAnimal)
-        }catch(e){
+    // Crear URL pública correcta
+    const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${filename}`;
 
-            const messages = {};
+    // Extraer campos del body
+    const {
+        nombre,
+        edad,
+        sexo,
+        peso,
+        castrado,
+        vacunas,
+        desparasitado,
+        discapacidad,
+        historia,
+        tamaño,
+        ubicacion,
+        tipoIngreso,
+        estadoGeneral
+    } = req.body;
 
-            if (e.name === "ValidationError") {
-                Object.keys(e.errors).forEach((key) => {
-                    messages[key] = e.errors[key].message;
-                });
+    // Armar objeto final para MongoDB
+    const newAnimalData = {
+        nombre,
+        edad,
+        sexo,
+        peso: Number(peso),
+        castrado: castrado === "true",
+        desparasitado: desparasitado === "true",
+        discapacidad,
+        historia,
+        tamaño,
+        ubicacion,
+        tipoIngreso,
+        estadoGeneral: estadoGeneral === "true",
+        imagen: imageUrl,                       // 🔥 URL completa para React
+        vacunas: vacunas ? JSON.parse(vacunas) : []
+    };
 
+    try {
+        const newAnimal = await Animals.create(newAnimalData);
+        return res.status(201).json(newAnimal);
+    } catch (e) {
+        const messages = {};
+
+        if (e.name === "ValidationError") {
+            for (const key in e.errors) {
+                messages[key] = e.errors[key].message;
             }
-
-            return res.status(400).json({ errors: { ...messages } });
         }
 
-    },
+        return res.status(400).json({ errors: messages });
+    }
+},
     getAdopcionAlta: async (req, res) => {
         try {
             const lista = await Animals.find({

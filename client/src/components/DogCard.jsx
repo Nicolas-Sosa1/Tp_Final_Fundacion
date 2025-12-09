@@ -3,13 +3,18 @@ import sizeIcon from "../assets/icons/tamanio.svg";
 import { Link } from "react-router-dom";
 
 const DogCard = ({ perro, to }) => {
-  const { nombre, edad, peso, tamaño, sexo, imagen, historia } = perro;
+  const { nombre, edad, peso, tamaño, sexo, imagen } = perro;
+
+  
+  const imageSrc = imagen?.startsWith("http")
+    ? imagen
+    : `http://localhost:8000/uploads/${imagen}`;
 
   return (
     <Link to={to} className={styles.link}>
       <article className={styles.dogcard}>
         <div className={styles.imageWrapper}>
-          <img src={imagen} alt={nombre} className={styles.dogphoto} />
+          <img src={imageSrc} alt={nombre} className={styles.dogphoto} />
 
           <img
             src={`/src/assets/icons/${sexo}.svg`}
