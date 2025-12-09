@@ -1,0 +1,65 @@
+/* views/css/Animales.module.css */
+.filtersCard {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #dee2e6;
+}
+
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.card-img-top {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.card-title {
+  color: #333;
+  font-weight: 600;
+}
+
+.card-text {
+  color: #666;
+  line-height: 1.5;
+}
+
+.btn_navbar {
+  background-color: #ff6b35;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn_navbar:hover {
+  background-color: #e55a2b;
+  transform: scale(1.05);
+  color: white;
+}
+
+.btn_navbar:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.badge {
+  font-size: 0.8rem;
+  padding: 5px 10px;
+}
+
+.text-orange {
+  color: #ff6b35 !important;
+}
+
+.title_orange {
+  color: #ff6b35;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}

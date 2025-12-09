@@ -1,10 +1,4 @@
 
-main{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .loginWrapper {
     width: 100%;
     display: flex;

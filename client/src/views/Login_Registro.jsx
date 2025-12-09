@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode"; // Importar jwtDecode
 import styles from "../css/Login_Registro.module.css";
 
 const Login = ({ setLogin, setMe }) => {
@@ -25,39 +26,60 @@ const Login = ({ setLogin, setMe }) => {
     const handleRegisterChange = e =>
         setRegisterData({ ...registerData, [e.target.name]: e.target.value });
 
-
     const loginProcess = e => {
         e.preventDefault();
         axios
             .post("http://localhost:8000/api/users/login", loginData)
             .then(res => {
-                localStorage.setItem("token_user", res.data.token);
+                const token = res.data.token;
+                localStorage.setItem("token_user", token);
+                
+                // Decodificar token para obtener info del usuario
+                const decoded = jwtDecode(token);
+                
                 setLogin(true);
                 setMe({
-                    role:
-                        loginData.email === "lucas.fernandez@test.com"
-                            ? "admin"
-                            : "user",
-                    email: loginData.email
+                    role: decoded.role,
+                    email: decoded.email,
+                    firstName: decoded.firstName,
+                    lastName: decoded.lastName,
+                    id: decoded.id
                 });
                 setErrors({});
                 navigate("/home");
             })
-            .catch(err => setErrors(err.response?.data?.errors || {}));
+            .catch(err => {
+                console.error("Login error:", err);
+                setErrors(err.response?.data?.errors || { general: "Error en el login" });
+            });
     };
-
 
     const registerUser = e => {
         e.preventDefault();
         axios
             .post("http://localhost:8000/api/users/register", registerData)
             .then(res => {
-                localStorage.setItem("token_user", res.data.token);
+                const token = res.data.token;
+                localStorage.setItem("token_user", token);
+                
+                // También decodificar el token después del registro
+                const decoded = jwtDecode(token);
+                
                 setLogin(true);
+                setMe({
+                    role: decoded.role,
+                    email: decoded.email,
+                    firstName: decoded.firstName,
+                    lastName: decoded.lastName,
+                    id: decoded.id
+                });
                 setErrors({});
                 navigate("/home");
             })
-            .catch(err => setErrors(err.response?.data?.errors || {}));
+            .catch(err => {
+                console.error("Register error:", err);
+                setErrors(err.response?.data?.errors || { general: "Error en el registro" });
+            });
     };
 
     return (
@@ -67,6 +89,11 @@ const Login = ({ setLogin, setMe }) => {
 
                 <form onSubmit={loginProcess} className="gap-3">
                     <h2 className="title_orange mb-3">Iniciar sesión</h2>
+
+                    {/* Mostrar error general si existe */}
+                    {errors.general && (
+                        <p className={styles.errorText}>{errors.general}</p>
+                    )}
 
                     <div className="d-flex relative w-50 ">
                         <i className={`fa-solid fa-user orange ${styles.icons}`}></i>
@@ -117,6 +144,11 @@ const Login = ({ setLogin, setMe }) => {
 
                 <form onSubmit={registerUser} >
                     <h2 className="title_orange mb-5">Registrarme</h2>
+
+                    {/* Mostrar error general si existe */}
+                    {errors.general && (
+                        <p className={styles.errorText}>{errors.general}</p>
+                    )}
 
                     <input
                         type="text"

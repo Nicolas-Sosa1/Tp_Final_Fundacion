@@ -1,153 +1,796 @@
 import axios from "axios"
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styles from '../css/Form.module.css'
 import { useState, useEffect } from "react";
-
+import { jwtDecode } from "jwt-decode";
 
 const Form = () => {
-
     const navigate = useNavigate();
+    const { tipo } = useParams();
     const [currentStep, setCurrentStep] = useState(1);
-    const totalSteps = 8;
+    const totalSteps = 5;
     const progressPercent = (currentStep - 1) / (totalSteps - 1);
-
-    const listaPerritos = [
-        { nombre: "Luna", id: 1 },
-        { nombre: "Milo", id: 2 },
-        { nombre: "Toby", id: 3 }
-    ];
-
-
-    const questions = [
-        // --- Información personal ---
-        { id: 3, text: "Nombre completo" },
-        { id: 4, text: "Edad" },
-        { id: 5, text: "Zona" },
-        { id: 6, text: "Dirección" },
-        { id: 7, text: "Número de celular" },
-        { id: 8, text: "Mail" },
-        { id: 9, text: "Instagram y/o Facebook" },
-        { id: 10, text: "¿Cuál es tu profesión y situación laboral actual?" },
-
-        // --- Sobre la adopción ---
-        { id: 1, text: "¿A cuál de nuestros rescatados querés adoptar?" },
-        { id: 2, text: "En caso de que ya no esté disponible, ¿te interesaría adoptar a algún otro?" },
-        { id: 11, text: "¿Por qué querés adoptar?" },
-
-        // --- Hogar y convivencia ---
-        { id: 12, text: "¿Vivís en casa o departamento? Detallá si tiene balcón, terraza o patio y el tipo de protección de cada uno" },
-        { id: 13, text: "¿Con quién vivís? Indicá edad de cada uno y el parentesco" },
-        { id: 20, text: "¿Todos los miembros del núcleo familiar están de acuerdo con adoptar? Por favor corroboralo antes de enviar el cuestionario" },
-        { id: 21, text: "¿Vos o alguna de las personas que viven en la casa padecen de algún tipo de alergia?" },
-
-        // --- Condiciones del hogar ---
-        { id: 14, text: "¿El animal adoptado estaría muchas horas solo? Si los horarios varían por favor aclaralo" },
-        { id: 15, text: "¿El animal viviría en interiores o exteriores? ¿En qué momentos? ¿Dónde dormiría?" },
-        { id: 16, text: "¿Alquilás o sos propietario? En caso de ser alquiler, ¿te aseguraste de que se admitan mascotas?" },
-        { id: 17, text: "Si debieras mudarte y no admitieran mascotas, ¿qué harías?" },
-
-        // --- Rutinas y cuidados ---
-        { id: 27, text: "¿Tenés tiempo para dedicarle a los paseos? ¿Cuántos harían por día? ¿Con o sin correa?" },
-        { id: 18, text: "¿Qué pasaría con él si te vas de vacaciones?" },
-        { id: 31, text: "¿Tenés en cuenta que necesitará un período de adaptación? Esto incluye romper, ladrar y/o llorar, sobre todo en cachorros" },
-
-        // --- Situaciones económicas ---
-        { id: 19, text: "En caso de quedarte sin trabajo, ¿hay alguien dispuesto a hacerse cargo de los gastos de manutención?" },
-        { id: 30, text: "¿Tenés en cuenta el gasto que requiere tener un animal? Incluyendo vacunas, veterinario, comida de buena calidad y chapita identificadora" },
-
-        // --- Mascotas actuales o anteriores ---
-        { id: 23, text: "¿Tuviste o tenés otra mascota? En caso de haber tenido, ¿qué le pasó?" },
-        { id: 24, text: "En caso de que tengas, ¿está/n castrado/s? Si la respuesta es NO, ¿por qué? ¿Tenés pensado hacerlo?" },
-        { id: 25, text: "¿Estás de acuerdo con la castración? Si la respuesta es no, ¿por qué?" },
-        { id: 26, text: "¿Tenés pensado castrar al animal que adoptes? Si la respuesta es NO, ¿asumirías el compromiso de hacerlo a los 7 meses igualmente?" },
-        { id: 28, text: "En caso de tener más animales, ambos necesitarán un período de adaptación. ¿Estás de acuerdo con esto?" },
-
-        // --- Consideraciones especiales ---
-        { id: 22, text: "En caso de ser una pareja, ¿evaluaron qué pasaría con el animal si en algún momento decidieran separarse?" },
-        { id: 29, text: "¿Tenés en cuenta que podría crecer más de lo esperado? ¿Qué harías si esto pasara?" }
-    ];
-
-    const updateState = (e) => {
-        setData({ ...data, [e.target.name]: e.target.value });
-    };
+    
+    const [listaAnimales, setListaAnimales] = useState([]);
+    const [showList, setShowList] = useState(false);
     const [errors, setErrors] = useState({});
+    const [loadingAnimales, setLoadingAnimales] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const formType = tipo || "adopcion";
 
     const [data, setData] = useState({
         nombre: "",
+        apellido: "",
         edad: "",
         zona: "",
         direccion: "",
-        nro_celular: "",
+        telefono: "",
         mail: "",
-        redSocialTipo: "",
-        redSocialUser: "",
         profesion: "",
         adoptarA: "",
-
+        animalId: "",
         adoptarOtro: "",
-        motivo: "",
-
-
+        motivoAdopcion: "",
         convivientes: "",
-        acuerdo: "",
-        alergias: "",
+        experienciaConAnimales: "",
+        viviendaTipo: "casa",
+        tienePatio: "si",
+        otrasMascotas: "",
+        aptoEconomicamente: "si",
+        horasFueraDeCasa: 8,
         soloHoras: "",
         interiorExterior: "",
         alquiler: "",
-        mudanza: "",
-
         paseos: "",
         vacaciones: "",
-        adaptacion: "",
-
-        horasSolo: "",
-        vivienda: "", 
-
-
-        responsableEmergencia: "",
-        responsableNombre: "",
-        responsableAcuerdo: "",
         gastosMascota: "",
-
-        otrasMascotas: "",
-        castracionActuales: "",
         acuerdoCastracion: "",
-        castrarAdoptado: "",
-
-        convivenciaAdaptacion: "", 
-        parejaSeparacion: "",
-        crecimientoImprevisto: ""
+        compromiso: ""
     });
 
-
-    const sendData = (e) => {
-        e.preventDefault();
-        const URL = "http://localhost:8000/api/form/new";
-
-        axios.post(URL, data, { headers: { token_user: localStorage.getItem("token_user") } }).then(response => {
-
-            setListaPerros([...listaPerros, response.data]);
-            navigate("/home");
-        }
-        ).catch(e => {
-            if (e.response?.status === 406) {
-                logOut();
+    useEffect(() => {
+        const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+        
+        const endpointPrincipal = formType === 'transito' 
+            ? `${baseURL}/api/animals/public/transito`
+            : `${baseURL}/api/animals/public/adopcion`;
+        
+        const endpointAlternativo = formType === 'transito' 
+            ? `${baseURL}/api/animals/public/transito/list`
+            : `${baseURL}/api/animals/public/adopcion/list`;
+        
+        const procesarAnimales = (responseData) => {
+            if (responseData && Array.isArray(responseData)) {
+                const animalesFiltrados = responseData
+                    .filter(animal => 
+                        animal.estadoGeneral === true && 
+                        animal.tipoIngreso === formType
+                    )
+                    .map(animal => ({
+                        nombre: animal.nombre,
+                        id: animal._id,
+                        tipoIngreso: animal.tipoIngreso
+                    }));
+                setListaAnimales(animalesFiltrados);
+            } else {
+                setListaAnimales([]);
             }
-            setErrors(e.response?.data?.errors || {});
-        });
-    };
-    const [showList, setShowList] = useState(false);
+            setLoadingAnimales(false);
+        };
+        
+        axios.get(endpointPrincipal)
+            .then(res => {
+                procesarAnimales(res.data);
+            })
+            .catch(() => {
+                axios.get(endpointAlternativo)
+                    .then(resAlt => {
+                        procesarAnimales(resAlt.data);
+                    })
+                    .catch(() => {
+                        setLoadingAnimales(false);
+                        setListaAnimales([]);
+                    });
+            });
+    }, [formType]);
 
-    const filteredList = listaPerritos.filter(perro =>
-        perro.nombre.toLowerCase().includes(data.adoptarA.toLowerCase())
+    const updateState = (e) => {
+        setData({ 
+            ...data, 
+            [e.target.name]: e.target.value 
+        });
+        
+        if (errors[e.target.name]) {
+            setErrors(prev => ({
+                ...prev,
+                [e.target.name]: null
+            }));
+        }
+    };
+
+    const filteredList = listaAnimales.filter(animal =>
+        animal.nombre.toLowerCase().includes(data.adoptarA.toLowerCase())
     );
 
+    const validateStep = () => {
+        const newErrors = {};
+        
+        if (currentStep === 1) {
+            if (!data.nombre.trim()) newErrors.nombre = "El nombre es requerido";
+            if (!data.apellido.trim()) newErrors.apellido = "El apellido es requerido";
+            if (!data.edad || data.edad < 18 || data.edad > 100) newErrors.edad = "Debes ser mayor de 18 años";
+            if (!data.zona.trim()) newErrors.zona = "La zona es requerida";
+            if (!data.direccion.trim()) newErrors.direccion = "La dirección es requerida";
+            if (!data.telefono.trim() || data.telefono.length < 8) newErrors.telefono = "El teléfono es requerido";
+            if (!data.mail.trim() || !data.mail.includes("@")) newErrors.mail = "Email inválido";
+        }
+        
+        if (currentStep === 2) {
+            if (!data.adoptarA.trim()) newErrors.adoptarA = "Selecciona un animal";
+            if (!data.animalId) newErrors.adoptarA = "Debes seleccionar un animal de la lista";
+            if (!data.adoptarOtro.trim() && formType === 'adopcion') newErrors.adoptarOtro = "Responde esta pregunta";
+            
+            if (!data.motivoAdopcion.trim()) {
+                newErrors.motivoAdopcion = "Cuéntanos por qué quieres adoptar";
+            } else if (data.motivoAdopcion.trim().length < 10) {
+                newErrors.motivoAdopcion = "El motivo debe tener al menos 10 caracteres";
+            }
+        }
+        
+        if (currentStep === 3) {
+            if (!data.convivientes.trim()) newErrors.convivientes = "Este campo es requerido";
+            if (!data.experienciaConAnimales.trim()) newErrors.experienciaConAnimales = "Indica tu experiencia con animales";
+            if (!data.otrasMascotas.trim()) newErrors.otrasMascotas = "Este campo es requerido";
+        }
+        
+        if (currentStep === 4) {
+            if (!data.horasFueraDeCasa || data.horasFueraDeCasa < 0 || data.horasFueraDeCasa > 24) newErrors.horasFueraDeCasa = "Horas inválidas";
+            if (!data.paseos.trim()) newErrors.paseos = "Este campo es requerido";
+            if (!data.vacaciones.trim()) newErrors.vacaciones = "Este campo es requerido";
+        }
+        
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
+    const handleNext = () => {
+        if (validateStep()) {
+            setCurrentStep(prev => Math.min(prev + 1, totalSteps));
+        }
+    };
+
+    const handlePrevious = () => {
+        setCurrentStep(prev => Math.max(prev - 1, 1));
+    };
+
+    const sendData = async (e) => {
+        e.preventDefault();
+        
+        let allValid = true;
+        for (let step = 1; step <= totalSteps; step++) {
+            setCurrentStep(step);
+            if (!validateStep()) {
+                allValid = false;
+                break;
+            }
+        }
+        
+        if (!allValid) {
+            alert("Por favor, completa todos los campos requeridos marcados con *");
+            return;
+        }
+        
+        const token1 = localStorage.getItem("token_user");
+        const token2 = localStorage.getItem("token");
+        const token3 = document.cookie.split('; ').find(row => row.startsWith('token_user='))?.split('=')[1];
+        
+        const token = token1 || token2 || token3;
+        
+        if (!token) {
+            alert("Debes iniciar sesión para enviar el formulario.");
+            navigate("/login");
+            return;
+        }
+        
+        try {
+            const decoded = jwtDecode(token);
+            const currentTime = Date.now() / 1000;
+            if (decoded.exp && decoded.exp < currentTime) {
+                localStorage.removeItem("token_user");
+                alert("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
+                navigate("/login");
+                return;
+            }
+        } catch {
+            localStorage.removeItem("token_user");
+            alert("Token inválido. Por favor, inicia sesión nuevamente.");
+            navigate("/login");
+            return;
+        }
+        
+        if (!data.animalId || data.animalId.length !== 24) {
+            alert("Por favor, selecciona un animal válido de la lista");
+            setCurrentStep(2);
+            return;
+        }
+        
+        setIsSubmitting(true);
+        
+        const datosParaEnviar = {
+            nombre: data.nombre.trim(),
+            apellido: data.apellido.trim(),
+            edad: parseInt(data.edad),
+            zona: data.zona.trim(),
+            direccion: data.direccion.trim(),
+            telefono: data.telefono.trim(),
+            convivientes: data.convivientes.trim(),
+            experienciaConAnimales: data.experienciaConAnimales.trim(),
+            motivoAdopcion: data.motivoAdopcion.trim(),
+            viviendaTipo: data.viviendaTipo,
+            tienePatio: data.tienePatio,
+            otrasMascotas: data.otrasMascotas.trim(),
+            aptoEconomicamente: data.aptoEconomicamente,
+            horasFueraDeCasa: parseInt(data.horasFueraDeCasa) || 8,
+            mail: data.mail.trim()
+        };
+        
+        const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+        const URL = formType === 'transito' 
+            ? `${baseURL}/api/solicitudes/transito/${data.animalId}`
+            : `${baseURL}/api/solicitudes/adopcion/${data.animalId}`;
+        
+        const config = {
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'token_user': token,
+                'Content-Type': 'application/json'
+            },
+            timeout: 30000
+        };
+        
+        try {
+            const response = await axios.post(URL, datosParaEnviar, config);
+            
+            if (response.data.success === false) {
+                throw new Error(response.data.message || "Error del servidor");
+            }
+            
+            alert(`✅ ${formType === 'transito' 
+                ? 'Solicitud de tránsito enviada exitosamente!' 
+                : 'Formulario de adopción enviado exitosamente!'}`);
+            
+            setData({
+                nombre: "", apellido: "", edad: "", zona: "", direccion: "", telefono: "",
+                mail: "", profesion: "", adoptarA: "", animalId: "", adoptarOtro: "",
+                motivoAdopcion: "", convivientes: "", experienciaConAnimales: "", viviendaTipo: "casa",
+                tienePatio: "si", otrasMascotas: "", aptoEconomicamente: "si",
+                horasFueraDeCasa: 8, soloHoras: "", interiorExterior: "", alquiler: "",
+                paseos: "", vacaciones: "", gastosMascota: "", acuerdoCastracion: "",
+                compromiso: ""
+            });
+            
+            setCurrentStep(1);
+            
+            setTimeout(() => {
+                navigate("/actividades");
+            }, 2000);
+            
+        } catch (error) {
+            if (error.response) {
+                const responseData = error.response.data;
+                
+                if (error.response.status === 401) {
+                    localStorage.removeItem("token_user");
+                    alert("Tu sesión ha expirado o el token no es válido. Por favor, inicia sesión nuevamente.");
+                    navigate("/login");
+                    
+                } else if (error.response.status === 400) {
+                    if (responseData.errors) {
+                        const errorMessages = Object.entries(responseData.errors)
+                            .map(([campo, mensaje]) => `• ${campo}: ${mensaje}`)
+                            .join('\n');
+                        
+                        alert(`❌ Errores de validación:\n${errorMessages}`);
+                        
+                        const camposConError = Object.keys(responseData.errors);
+                        if (camposConError.some(campo => ['nombre', 'apellido', 'edad', 'zona', 'direccion', 'telefono'].includes(campo))) {
+                            setCurrentStep(1);
+                        } else if (camposConError.some(campo => ['motivoAdopcion'].includes(campo))) {
+                            setCurrentStep(2);
+                        } else if (camposConError.some(campo => ['convivientes', 'experienciaConAnimales', 'otrasMascotas', 'viviendaTipo', 'tienePatio'].includes(campo))) {
+                            setCurrentStep(3);
+                        } else if (camposConError.some(campo => ['horasFueraDeCasa', 'aptoEconomicamente'].includes(campo))) {
+                            setCurrentStep(4);
+                        }
+                        
+                    } else if (responseData.message) {
+                        alert(`❌ ${responseData.message}`);
+                    } else {
+                        alert("❌ Error: Datos inválidos enviados al servidor");
+                    }
+                    
+                } else if (error.response.status === 403) {
+                    alert("❌ No tienes permisos para realizar esta acción.");
+                } else if (error.response.status === 404) {
+                    alert("❌ Animal no encontrado. Por favor, selecciona otro animal.");
+                    setCurrentStep(2);
+                } else if (error.response.status === 409) {
+                    alert("❌ Ya existe una solicitud para este animal.");
+                } else {
+                    alert(`❌ Error ${error.response.status}: ${responseData.message || error.response.statusText}`);
+                }
+                
+            } else if (error.request) {
+                alert("❌ No se pudo conectar con el servidor. Verifica tu conexión a internet.");
+            } else {
+                alert(`❌ Error: ${error.message}`);
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const selectAnimal = (animal) => {
+        setData({ 
+            ...data, 
+            adoptarA: animal.nombre,
+            animalId: animal.id
+        });
+        setShowList(false);
+    };
+
+    const renderStep1 = () => (
+        <div className={styles.subform}>
+            <h4 className="title_orange mb-3">Información Personal</h4>
+            
+            <div className="row">
+                <div className="col-md-6">
+                    <div className="d-flex flex-column mb-3">
+                        <div className={styles.inputGroup}>
+                            <input 
+                                type="text" 
+                                name="nombre" 
+                                value={data.nombre} 
+                                onChange={updateState} 
+                                className={errors.nombre ? styles.errorInput : ""}
+                                placeholder="Tu nombre"
+                            />
+                            <label>Nombre *</label>
+                            {errors.nombre && <span className={styles.errorText}>{errors.nombre}</span>}
+                        </div>
+                    </div>
+                </div>
+                <div className="col-md-6">
+                    <div className="d-flex flex-column mb-3">
+                        <div className={styles.inputGroup}>
+                            <input 
+                                type="text" 
+                                name="apellido" 
+                                value={data.apellido} 
+                                onChange={updateState} 
+                                className={errors.apellido ? styles.errorInput : ""}
+                                placeholder="Tu apellido"
+                            />
+                            <label>Apellido *</label>
+                            {errors.apellido && <span className={styles.errorText}>{errors.apellido}</span>}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div className="row">
+                <div className="col-md-6">
+                    <div className="d-flex flex-column mb-3">
+                        <div className={styles.inputGroup}>
+                            <input 
+                                type="number" 
+                                name="edad" 
+                                value={data.edad} 
+                                onChange={updateState} 
+                                min="18"
+                                max="100"
+                                className={errors.edad ? styles.errorInput : ""}
+                                placeholder="Tu edad"
+                            />
+                            <label>Edad *</label>
+                            {errors.edad && <span className={styles.errorText}>{errors.edad}</span>}
+                        </div>
+                    </div>
+                </div>
+                <div className="col-md-6">
+                    <div className="d-flex flex-column mb-3">
+                        <div className={styles.inputGroup}>
+                            <input 
+                                type="tel" 
+                                name="telefono" 
+                                value={data.telefono} 
+                                onChange={updateState} 
+                                placeholder="11 2345-6789"
+                                className={errors.telefono ? styles.errorInput : ""}
+                            />
+                            <label>Teléfono *</label>
+                            {errors.telefono && <span className={styles.errorText}>{errors.telefono}</span>}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div className="d-flex flex-column mb-3">
+                <div className={styles.inputGroup}>
+                    <input 
+                        type="email" 
+                        name="mail" 
+                        value={data.mail} 
+                        onChange={updateState} 
+                        placeholder="ejemplo@email.com"
+                        className={errors.mail ? styles.errorInput : ""}
+                    />
+                    <label>Email *</label>
+                    {errors.mail && <span className={styles.errorText}>{errors.mail}</span>}
+                </div>
+            </div>
+            
+            <div className="row">
+                <div className="col-md-6">
+                    <div className="d-flex flex-column mb-3">
+                        <div className={styles.inputGroup}>
+                            <input 
+                                type="text" 
+                                name="zona" 
+                                value={data.zona} 
+                                onChange={updateState} 
+                                placeholder="Ej: Garín, Pilar, etc."
+                                className={errors.zona ? styles.errorInput : ""}
+                            />
+                            <label>Zona / Localidad *</label>
+                            {errors.zona && <span className={styles.errorText}>{errors.zona}</span>}
+                        </div>
+                    </div>
+                </div>
+                <div className="col-md-6">
+                    <div className="d-flex flex-column mb-3">
+                        <div className={styles.inputGroup}>
+                            <input 
+                                type="text" 
+                                name="direccion" 
+                                value={data.direccion} 
+                                onChange={updateState} 
+                                placeholder="Calle, número"
+                                className={errors.direccion ? styles.errorInput : ""}
+                            />
+                            <label>Dirección *</label>
+                            {errors.direccion && <span className={styles.errorText}>{errors.direccion}</span>}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div className="d-flex flex-column mb-3">
+                <div className={styles.inputGroup}>
+                    <input
+                        type="text"
+                        name="profesion"
+                        value={data.profesion}
+                        onChange={updateState}
+                        placeholder="Tu profesión o situación laboral"
+                        className={errors.profesion ? styles.errorInput : ""}
+                    />
+                    <label>Profesión / Situación Laboral</label>
+                </div>
+            </div>
+        </div>
+    );
+
+    const renderStep2 = () => {
+        const titulo = formType === 'transito' 
+            ? "¿A cuál de nuestros rescatados querés dar tránsito? *" 
+            : "¿A cuál de nuestros rescatados querés adoptar? *";
+            
+        const placeholderBuscar = formType === 'transito'
+            ? "Buscar animal para tránsito por nombre..."
+            : "Buscar animal para adopción por nombre...";
+            
+        const placeholderMotivo = formType === 'transito'
+            ? "Cuéntanos tu motivación para dar tránsito..."
+            : "Cuéntanos tu motivación para adoptar...";
+        
+        return (
+            <div className={styles.section}>
+                <h4 className="title_orange mb-3">
+                    {formType === 'transito' ? 'Sobre el Tránsito' : 'Sobre la Adopción'}
+                </h4>
+                
+                <div className="position-relative mb-4">
+                    <label className="title_orange mx-2 mb-1">{titulo}</label>
+                    
+                    <input
+                        type="text"
+                        name="adoptarA"
+                        value={data.adoptarA}
+                        onChange={(e) => {
+                            updateState(e);
+                            setShowList(true);
+                        }}
+                        onFocus={() => setShowList(true)}
+                        onBlur={() => setTimeout(() => setShowList(false), 200)}
+                        placeholder={placeholderBuscar}
+                        className={`${styles.input} ${errors.adoptarA ? styles.errorInput : ""}`}
+                        autoComplete="off"
+                    />
+                    
+                    {data.animalId && (
+                        <div className="mt-2">
+                            <small className="text-success">
+                                ✅ Seleccionado: {data.adoptarA}
+                            </small>
+                        </div>
+                    )}
+                    
+                    {showList && data.adoptarA.length > 0 && !loadingAnimales && (
+                        <div className={styles.autocompleteList}>
+                            {filteredList.length > 0 ? (
+                                filteredList.map((animal) => (
+                                    <div
+                                        key={animal.id}
+                                        onClick={() => selectAnimal(animal)}
+                                        className={styles.autocompleteItem}
+                                        onMouseDown={(e) => e.preventDefault()}
+                                    >
+                                        <strong>{animal.nombre}</strong>
+                                        <small className="text-muted ms-2">
+                                            ({animal.tipoIngreso === 'adopcion' ? 'Adopción' : 'Tránsito'})
+                                        </small>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="p-2 text-center">
+                                    No se encontraron animales para {formType === 'transito' ? 'tránsito' : 'adopción'}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                    {errors.adoptarA && <span className={styles.errorText}>{errors.adoptarA}</span>}
+                    
+                    {loadingAnimales && (
+                        <div className="mt-2">
+                            <small className="text-muted">Cargando animales...</small>
+                        </div>
+                    )}
+                </div>
+                
+                {formType === 'adopcion' && (
+                    <div className="d-flex flex-column mb-4">
+                        <label className="title_orange mx-2 mt-3 mb-1">
+                            Si ya no está disponible, ¿te interesaría adoptar a otro? *
+                        </label>
+                        <input
+                            type="text"
+                            name="adoptarOtro"
+                            value={data.adoptarOtro}
+                            onChange={updateState}
+                            placeholder="Explica si estarías abierto a adoptar otro animal..."
+                            className={`${styles.input} ${errors.adoptarOtro ? styles.errorInput : ""}`}
+                        />
+                        {errors.adoptarOtro && <span className={styles.errorText}>{errors.adoptarOtro}</span>}
+                    </div>
+                )}
+                
+                <div className="d-flex flex-column mb-4">
+                    <label className="title_orange mx-2 mt-3 mb-1">
+                        ¿Por qué querés {formType === 'transito' ? 'dar tránsito' : 'adoptar'}? *
+                    </label>
+                    <textarea 
+                        name="motivoAdopcion"
+                        value={data.motivoAdopcion}
+                        onChange={updateState} 
+                        placeholder={placeholderMotivo}
+                        rows={3}
+                        className={`${styles.textarea} ${errors.motivoAdopcion ? styles.errorInput : ""}`}
+                    ></textarea>
+                    {errors.motivoAdopcion && <span className={styles.errorText}>{errors.motivoAdopcion}</span>}
+                </div>
+            </div>
+        );
+    };
+
+    const renderStep3 = () => (
+        <div className={styles.section}>
+            <h4 className="title_orange mb-3">Hogar y Experiencia</h4>
+            
+            <div className="d-flex flex-column mb-4">
+                <label className="title_orange mx-2 mt-1 mb-1">¿Con quién vivís? *</label>
+                <textarea 
+                    name="convivientes" 
+                    value={data.convivientes} 
+                    onChange={updateState} 
+                    placeholder="Ej: Vivo con mi pareja y dos hijos de 8 y 10 años"
+                    rows={2}
+                    className={`${styles.textarea} ${errors.convivientes ? styles.errorInput : ""}`}
+                ></textarea>
+                {errors.convivientes && <span className={styles.errorText}>{errors.convivientes}</span>}
+            </div>
+            
+            <div className="d-flex flex-column mb-4">
+                <label className="title_orange mx-2 mt-1 mb-1">¿Tenés experiencia con animales? *</label>
+                <textarea 
+                    name="experienciaConAnimales" 
+                    value={data.experienciaConAnimales} 
+                    onChange={updateState} 
+                    placeholder="Cuéntanos sobre tu experiencia con animales..."
+                    rows={2}
+                    className={`${styles.textarea} ${errors.experienciaConAnimales ? styles.errorInput : ""}`}
+                ></textarea>
+                {errors.experienciaConAnimales && <span className={styles.errorText}>{errors.experienciaConAnimales}</span>}
+            </div>
+            
+            <div className="d-flex flex-column mb-4">
+                <label className="title_orange mx-2 mt-1 mb-1">¿Tenés otras mascotas? *</label>
+                <textarea 
+                    name="otrasMascotas" 
+                    value={data.otrasMascotas} 
+                    onChange={updateState} 
+                    placeholder="Cuéntanos sobre tus mascotas actuales..."
+                    rows={2}
+                    className={`${styles.textarea} ${errors.otrasMascotas ? styles.errorInput : ""}`}
+                ></textarea>
+                {errors.otrasMascotas && <span className={styles.errorText}>{errors.otrasMascotas}</span>}
+            </div>
+            
+            <div className="row">
+                <div className="col-md-6">
+                    <div className="d-flex flex-column mb-4">
+                        <label className="title_orange mx-2 mt-1 mb-1">Tipo de vivienda *</label>
+                        <select 
+                            name="viviendaTipo" 
+                            value={data.viviendaTipo} 
+                            onChange={updateState}
+                            className="form-select"
+                        >
+                            <option value="casa">Casa</option>
+                            <option value="departamento">Departamento</option>
+                            <option value="quinta">Quinta</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+                </div>
+                <div className="col-md-6">
+                    <div className="d-flex flex-column mb-4">
+                        <label className="title_orange mx-2 mt-1 mb-1">¿Tenés patio? *</label>
+                        <select 
+                            name="tienePatio" 
+                            value={data.tienePatio} 
+                            onChange={updateState}
+                            className="form-select"
+                        >
+                            <option value="si">Sí</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    const renderStep4 = () => (
+        <div className={styles.section}>
+            <h4 className="title_orange mb-3">Cuidados y Responsabilidad</h4>
+            
+            <div className="d-flex flex-column mb-4">
+                <label className="title_orange mx-2 mt-2 mb-1">
+                    ¿Cuántas horas al día estaría solo el animal? *
+                </label>
+                <input
+                    type="number"
+                    name="horasFueraDeCasa"
+                    value={data.horasFueraDeCasa}
+                    onChange={updateState}
+                    min="0"
+                    max="24"
+                    placeholder="Ej: 8 horas"
+                    className={`form-control ${errors.horasFueraDeCasa ? styles.errorInput : ""}`}
+                />
+                {errors.horasFueraDeCasa && <span className={styles.errorText}>{errors.horasFueraDeCasa}</span>}
+            </div>
+            
+            <div className="d-flex flex-column mb-4">
+                <label className="title_orange mx-2 mt-2 mb-1">
+                    ¿Cómo serían los paseos diarios? (frecuencia, duración) *
+                </label>
+                <textarea
+                    name="paseos"
+                    value={data.paseos}
+                    onChange={updateState}
+                    placeholder="Describe tu rutina de paseos..."
+                    rows={2}
+                    className={`${styles.textarea} ${errors.paseos ? styles.errorInput : ""}`}
+                ></textarea>
+                {errors.paseos && <span className={styles.errorText}>{errors.paseos}</span>}
+            </div>
+            
+            <div className="d-flex flex-column mb-4">
+                <label className="title_orange mx-2 mt-3 mb-1">
+                    ¿Qué harías con el animal si te vas de vacaciones? *
+                </label>
+                <textarea
+                    name="vacaciones"
+                    value={data.vacaciones}
+                    onChange={updateState}
+                    placeholder="¿Tienes alguien que lo cuide? ¿Lo llevarías contigo?..."
+                    rows={2}
+                    className={`${styles.textarea} ${errors.vacaciones ? styles.errorInput : ""}`}
+                ></textarea>
+                {errors.vacaciones && <span className={styles.errorText}>{errors.vacaciones}</span>}
+            </div>
+            
+            <div className="d-flex flex-column mb-4">
+                <label className="title_orange mx-2 mt-3 mb-1">
+                    ¿Podés cubrir los gastos del animal? *
+                </label>
+                <select 
+                    name="aptoEconomicamente" 
+                    value={data.aptoEconomicamente} 
+                    onChange={updateState}
+                    className="form-select"
+                >
+                    <option value="si">Sí</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+        </div>
+    );
+
+    const renderStep5 = () => (
+        <div className={styles.section}>
+            <h4 className="title_orange mb-3">Confirmación Final</h4>
+            
+            <div className="d-flex flex-column mb-4 mt-3">
+                <label className="title_orange mx-2 mt-1 mb-1">
+                    Confirmación de compromiso (opcional)
+                </label>
+                <textarea 
+                    name="compromiso" 
+                    value={data.compromiso} 
+                    onChange={updateState}
+                    placeholder="Puedes confirmar tu compromiso de cuidar responsablemente al animal (opcional)..."
+                    rows={3}
+                    className={`${styles.textarea} ${errors.compromiso ? styles.errorInput : ""}`}
+                ></textarea>
+                {errors.compromiso && <span className={styles.errorText}>{errors.compromiso}</span>}
+            </div>
+            
+            <div className="alert alert-info mt-4">
+                <h5 className="alert-heading">📝 Importante</h5>
+                <p className="mb-0">
+                    Al enviar este formulario, aceptas que:
+                    <ul>
+                        <li>Toda la información proporcionada es verídica</li>
+                        <li>Te comprometes a brindar un hogar responsable</li>
+                        <li>La fundación realizará un seguimiento del proceso</li>
+                        <li>Podrán contactarte para coordinar una entrevista</li>
+                    </ul>
+                </p>
+            </div>
+        </div>
+    );
+
+    const titulo = formType === 'transito' 
+        ? "Formulario de Tránsito" 
+        : "Formulario de Adopción";
+        
+    const descripcion = formType === 'transito'
+        ? "Completa este formulario para postularte como hogar de tránsito. Todos los campos con * son obligatorios."
+        : "Completa este formulario para postularte como adoptante. Todos los campos con * son obligatorios.";
+
+    const textoBotonEnviar = formType === 'transito' 
+        ? (isSubmitting ? 'Enviando...' : 'Enviar Solicitud de Tránsito') 
+        : (isSubmitting ? 'Enviando...' : 'Enviar Solicitud de Adopción');
 
     return (
-
         <div className={styles.wrapper}>
-            <h2 className="title_orange mb-5">Completa este formulario</h2>
+            <h2 className="title_orange mb-4">{titulo}</h2>
+            <p className="text-center mb-4">{descripcion}</p>
+            
             <div className={styles.cardForm}>
                 <form onSubmit={sendData} className={styles.formContainer}>
                     <div className={styles.progress_container}>
@@ -155,530 +798,96 @@ const Form = () => {
                             className={styles.progress}
                             style={{ transform: `translateY(-50%) scaleX(${progressPercent})` }}
                         ></div>
-
+                        
                         <ol>
-                            <li className={currentStep === 1 ? styles.current : (currentStep > 1 ? styles.done : "")}>Información personal </li>
-                            <li className={currentStep === 2 ? styles.current : (currentStep > 2 ? styles.done : "")}>Sobre la adopción</li>
-                            <li className={currentStep === 3 ? styles.current : (currentStep > 3 ? styles.done : "")}>Hogar y convivencia</li>
-                            <li className={currentStep === 4 ? styles.current : (currentStep > 4 ? styles.done : "")}>Condiciones del hogar</li>
-                            <li className={currentStep === 5 ? styles.current : (currentStep > 5 ? styles.done : "")}>Rutinas y cuidados</li>
-                            <li className={currentStep === 6 ? styles.current : (currentStep > 6 ? styles.done : "")}>Situación económica</li>
-                            <li className={currentStep === 7 ? styles.current : (currentStep > 7 ? styles.done : "")}>Mascotas</li>
-                            <li className={currentStep === 7 ? styles.current : (currentStep > 8 ? styles.done : "")}>Consideraciones</li>
+                            <li className={currentStep === 1 ? styles.current : (currentStep > 1 ? styles.done : "")}>
+                                <span>1</span>
+                                <small>Personal</small>
+                            </li>
+                            <li className={currentStep === 2 ? styles.current : (currentStep > 2 ? styles.done : "")}>
+                                <span>2</span>
+                                <small>{formType === 'transito' ? 'Tránsito' : 'Adopción'}</small>
+                            </li>
+                            <li className={currentStep === 3 ? styles.current : (currentStep > 3 ? styles.done : "")}>
+                                <span>3</span>
+                                <small>Hogar</small>
+                            </li>
+                            <li className={currentStep === 4 ? styles.current : (currentStep > 4 ? styles.done : "")}>
+                                <span>4</span>
+                                <small>Cuidados</small>
+                            </li>
+                            <li className={currentStep === 5 ? styles.current : (currentStep > 5 ? styles.done : "")}>
+                                <span>5</span>
+                                <small>Compromiso</small>
+                            </li>
                         </ol>
                     </div>
-                    {currentStep === 1 && (
-                        <>
-                            <div className={styles.subform}>
-                                <div className="d-flex flex-column mb-3">
-                                    <div className={styles.inputGroup}>
-                                        <input type="text" name="nombre" value={data.nombre} onChange={updateState} required />
-                                        <label>Nombre Completo</label>
-                                    </div>
-                                </div>
-                                <div className="d-flex flex-column mb-3">
-                                    <div className={styles.inputGroup}>
-                                        <input type="number" name="edad" value={data.edad} onChange={updateState} required />
-                                        <label>Edad</label>
-                                    </div>
-
-                                </div>
-
-                                <div className="d-flex flex-column mb-3">
-                                    <div className={styles.inputGroup}>
-                                        <select
-                                            name="zona"
-                                            value={data.zona}
-                                            onChange={updateState}
-                                            required
-                                            className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}
-
-                                        >
-                                            <option value="" disabled hidden></option>
-                                            <option value="Garin">Garin</option>
-                                            <option value="Jose C.Paz">José C. Paz</option>
-                                            <option value="Pilar">Pilar</option>
-                                        </select>
-                                        <label>Zona</label>
-                                    </div>
-
-
-                                </div>
-                                <div className="d-flex flex-column mb-3">
-                                    <div className={styles.inputGroup}>
-                                        <input type="text" name="direccion" value={data.direccion} onChange={updateState} className="bg-white text-black-title  font-400 font-15 rounded border-orang p-2e px-3 w-100" />
-                                        <label>Dirección:</label>
-                                    </div>
-                                </div>
-                                <div className="d-flex flex-column mb-3">
-                                    <div className={styles.inputGroup}>
-                                        <input type="number" name="nro_celular" value={data.nro_celular} onChange={updateState} className="bg-white text-black-title  font-400 font-15 rounded border-orang p-2e px-3 w-100" />
-                                        <label>Nro Celular:</label>
-                                    </div>
-                                </div>
-                                <div className="d-flex flex-column mb-3">
-
-                                    <div className={styles.inputGroup}>
-                                        <input type="text" name="mail" value={data.mail} onChange={updateState} className="bg-white text-black-title  font-400 font-15 rounded border-orang p-2e px-3 w-100" />
-                                        <label>Mail:</label>
-                                    </div>
-                                </div>
-                                <div className="d-flex flex-column mb-3">
-
-                                    <div className={styles.inputGroup}>
-
-                                        <select
-                                            name="redSocialTipo"
-                                            value={data.redSocialTipo}
-                                            onChange={updateState}
-                                            className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}
-                                        >
-                                            <option value="">Seleccioná una</option>
-                                            <option value="Instagram">Instagram</option>
-                                            <option value="Facebook">Facebook</option>
-                                            <option value="TikTok">TikTok</option>
-                                            <option value="Twitter/X">Twitter/X</option>
-                                            <option value="Otra">Otra</option>
-                                        </select>
-                                        <label>Red social:</label>
-                                    </div>
-                                </div>
-                                <div className="d-flex flex-column mb-3">
-                                    <div className={styles.inputGroup}>
-                                        <input
-                                            type="text"
-                                            name="redSocialUser"
-                                            placeholder="Ej: @pepe.dev"
-                                            value={data.redSocialUser}
-                                            onChange={updateState}
-                                            className="bg-white text-black-title font-400 font-15 rounded border-orange p-2 px-3 w-100"
-                                        />
-                                        <label>Usuario:</label>
-                                    </div>
-
-
-                                </div>
-                                {(errors?.redSocialTipo || errors?.redSocialUser) && (
-                                    <p className={styles.errorText}>
-                                        {errors.redSocialTipo || errors.redSocialUser}
-                                    </p>
-                                )}
-                                <div className="d-flex flex-column mb-3">
-                                    <div className={styles.inputGroup}>
-                                        <label className="title_orange mx-3">Profesión / situación laboral:</label>
-                                        <input
-                                            type="text"
-                                            name="profesion"
-                                            value={data.profesion}
-                                            onChange={updateState}
-                                            className="bg-white text-black-title font-400 font-15 rounded border-orange p-2 px-3 w-100"
-                                            placeholder="Contá brevemente a qué te dedicás"
-                                        />
-                                    </div>
-                                    {errors?.profesion && (
-                                        <p className={styles.errorText}>{errors.profesion}</p>
-                                    )}
-                                </div>
-
-
+                    
+                    <div className={styles.formContent}>
+                        {currentStep === 1 && renderStep1()}
+                        {currentStep === 2 && renderStep2()}
+                        {currentStep === 3 && renderStep3()}
+                        {currentStep === 4 && renderStep4()}
+                        {currentStep === 5 && renderStep5()}
+                        
+                        {Object.keys(errors).length > 0 && (
+                            <div className="alert alert-danger mt-3">
+                                <strong>Errores en este paso:</strong>
+                                <ul className="mb-0">
+                                    {Object.values(errors).map((error, index) => (
+                                        <li key={index}>{error}</li>
+                                    ))}
+                                </ul>
                             </div>
-                        </>
-                    )}
-                    {currentStep === 2 && (
-                        <div className={styles.section}>
-                            <div className="position-relative mb-4">
-                                <label className="title_orange mx-2 mb-1">¿A cuál de nuestros rescatados querés adoptar?</label>
-
-                                <input
-                                    type="text"
-                                    name="adoptarA"
-                                    value={data.adoptarA}
-                                    onChange={(e) => {
-                                        updateState(e);
-                                        setShowList(true);
-                                    }}
-                                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}
-                                />
-                                {showList && data.adoptarA.length > 0 && (
-                                    <div
-                                        className="position-absolute w-100 "
-                                        style={{
-                                            background: "white",
-                                            border: "1px solid rgb(129, 129, 129)",
-                                            borderRadius: "0 8px",
-                                            zIndex: 1,
-                                            maxHeight: "200px",
-                                            overflowY: "auto",
-                                            top: "70px"
-                                        }}
-                                    >
-                                        {filteredList.length > 0 ? (
-                                            filteredList.map((perro) => (
-                                                <div
-                                                    key={perro.id}
-                                                    onClick={() => {
-                                                        setData({ ...data, adoptarA: perro.nombre });
-                                                        setShowList(false);
-                                                    }}
-                                                    style={{
-                                                        padding: "10px",
-                                                        cursor: "pointer",
-                                                        borderBottom: "1px solid #ffb36b",
-                                                    }}
-                                                >
-                                                    {perro.nombre}
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <div className="p-2 text-center">No encontrado</div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="d-flex flex-column mb-4">
-                                <label className="title_orange mx-2 mt-3 mb-1">Si ya no está disponible, ¿te interesaría adoptar a otro?</label>
-                                <select name="adoptarOtro" value={data.adoptarOtro} onChange={updateState}
-                                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}>
-                                    <option value="">Seleccionar</option>
-                                    <option value="Si">Sí</option>
-                                    <option value="No">No</option>
-                                </select>
-                            </div>
-
-                            <div className="d-flex flex-column mb-4">
-                                <label className="title_orange mx-2 mt-3 mb-1">¿Por qué querés adoptar?</label>
-                                <textarea name="motivo" value={data.motivo} onChange={updateState}
-                                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`} rows={3}></textarea>
-                            </div>
-                        </div>
-                    )}
-                    {currentStep === 3 && (
-                        <div>
-                            <div className={styles.subform}>
-
-
-                                <div className="d-flex flex-column mb-4">
-                                    <label className="title_orange mx-2  mt-1 mb-1">¿Con quién vivís?</label>
-
-                                    <input type="text" name="convivientes" value={data.convivientes} onChange={updateState}
-                                        className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`} />
-                                </div>
-
-                                <div className="d-flex flex-column mb-4">
-                                    <label className="title_orange mx-2  mt-1 mb-1">¿Todos están de acuerdo con adoptar?</label>
-                                    <select name="acuerdo" value={data.acuerdo} onChange={updateState}
-                                        className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}>
-                                        <option value="">Seleccionar</option>
-                                        <option value="Si">Sí</option>
-                                        <option value="No">No</option>
-                                    </select>
-                                </div>
-
-                                <div className="d-flex flex-column mb-4">
-                                    <label className="title_orange mx-2  mt-1 mb-1">¿Hay alergias en la familia?</label>
-                                    <select name="alergias" value={data.alergias} onChange={updateState}
-                                        className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}>
-                                        <option value="">Seleccionar</option>
-                                        <option value="Si">Sí</option>
-                                        <option value="No">No</option>
-                                    </select>
-                                </div>
-                                <div className="d-flex flex-column mb-4">
-                                    <label className="title_orange mx-2  mt-3 mb-1">¿Cuántas horas estaría solo?</label>
-                                    <input type="number" name="soloHoras" value={data.soloHoras} onChange={updateState}
-                                        className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`} />
-                                </div>
-
-                                <div className="d-flex flex-column mb-4">
-                                    <label className="title_orange mx-2  mt-3 mb-1">¿Vivirá en interior o exterior?</label>
-                                    <input type="text" name="interiorExterior" value={data.interiorExterior} onChange={updateState}
-                                        className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`} />
-                                </div>
-
-                                <div className="d-flex flex-column mb-4">
-                                    <label className="title_orange mx-2  mt-3 mb-1">¿Alquilás o sos propietario?</label>
-                                    <select name="alquiler" value={data.alquiler} onChange={updateState}
-                                        className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}>
-                                        <option value="">Seleccionar</option>
-                                        <option value="Propietario">Propietario</option>
-                                        <option value="Alquiler">Alquiler</option>
-                                    </select>
-                                </div>
-
-                            </div>
-                            <div className="d-flex justify-content-center align-items-center w-100 mb-4">
-                                <div >
-                                    <label className="title_orange mx-2 w-100 text-center mt-1">Si te mudás y no admiten mascotas, ¿qué harías?</label>
-                                    <textarea name="mudanza" value={data.mudanza} onChange={updateState}
-                                        className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}></textarea>
-                                </div>
-                            </div>
-                        </div>
-
-
-                    )}
-                    {currentStep === 4 && (
-                        <div className={styles.section}>
-                            {/* { id: 27, text: "¿Tenés tiempo para dedicarle a los paseos? ¿Cuántos harían por día? ¿Con o sin correa?" },
-        { id: 18, text: "¿Qué pasaría con él si te vas de vacaciones?" },
-        { id: 31, text: "¿Tenés en cuenta que necesitará un período de adaptación? Esto incluye romper, ladrar y/o llorar, sobre todo en cachorros" }, */}
-                            <div className="d-flex flex-column mb-4">
-                                <label className="title_orange mx-2 mt-2 mb-1">
-                                    ¿Tenés tiempo para dedicarle a los paseos? ¿Cuántos harían por día? ¿Con o sin correa?
-                                </label>
-                                <textarea
-                                    name="paseos"
-                                    value={data.paseos}
-                                    onChange={updateState}
-                                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}
-                                ></textarea>
-                            </div>
-
-                            <div className="d-flex flex-column mb-4">
-                                <label className="title_orange mx-2 mt-3 mb-1">
-                                    ¿Qué pasaría con él si te vas de vacaciones?
-                                </label>
-                                <textarea
-                                    name="vacaciones"
-                                    value={data.vacaciones}
-                                    onChange={updateState}
-                                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}
-                                ></textarea>
-                            </div>
-
-                            <div className="d-flex flex-column mb-4">
-                                <label className="title_orange mx-2 mt-3 mb-1">
-                                    ¿Tenés en cuenta que necesitará un período de adaptación? Esto incluye romper, ladrar y/o llorar, sobre todo en cachorros.
-                                </label>
-                                <textarea
-                                    name="adaptacion"
-                                    value={data.adaptacion}
-                                    onChange={updateState}
-                                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}
-                                ></textarea>
-                            </div>
-
-                        </div>
-                    )}
-                    {currentStep === 5 && (
-                        <div className={styles.section}>
-                            <div className="d-flex flex-column mb-3">
-                                <label className="title_orange mx-2 mb-1">
-                                    ¿El animal adoptado estaría muchas horas solo? Si los horarios varían por favor aclaralo.
-                                </label>
-                                <textarea
-                                    name="horasSolo"
-                                    value={data.horasSolo}
-                                    onChange={updateState}
-                                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}
-                                ></textarea>
-                            </div>
-
-                            <div className="d-flex flex-column mb-3">
-                                <label className="title_orange mx-2 mb-1">
-                                    ¿El animal viviría en interiores o exteriores? ¿En qué momentos? ¿Dónde dormiría?
-                                </label>
-                                <textarea
-                                    name="vivienda"
-                                    value={data.vivienda}
-                                    onChange={updateState}
-                                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}
-                                ></textarea>
-                            </div>
-
-                            <div className="d-flex flex-column mb-3">
-                                <label className="title_orange mx-2 mb-1">
-                                    ¿Alquilás o sos propietario? En caso de ser alquiler, ¿te aseguraste de que se admitan mascotas?
-                                </label>
-                                <textarea
-                                    name="alquiler"
-                                    value={data.alquiler}
-                                    onChange={updateState}
-                                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}
-                                ></textarea>
-                            </div>
-
-                            <div className="d-flex flex-column mb-3">
-                                <label className="title_orange mx-2 mb-1">
-                                    Si debieras mudarte y no admitieran mascotas, ¿qué harías?
-                                </label>
-                                <textarea
-                                    name="mudanza"
-                                    value={data.mudanza}
-                                    onChange={updateState}
-                                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}
-                                ></textarea>
-                            </div>
-
-                        </div>
-
-                    )}
-                    {currentStep === 6 && (
-                        <div className={styles.section}>
-                            <div className="d-flex flex-column mb-4">
-                                <label className="title_orange mx-2 mt-3 mb-1">
-                                    En caso de quedarte sin trabajo, ¿hay alguien que pueda hacerse cargo del animal?
-                                </label>
-
-                                <select
-                                    name="responsableEmergencia"
-                                    value={data.responsableEmergencia}
-                                    onChange={updateState}
-                                    className={`bg-white text-black-title font-15 rounded-3 border-orange p-2 ${styles.border_2}`}
-                                >
-                                    <option value="">Seleccioná una opción</option>
-                                    <option value="si">Sí</option>
-                                    <option value="no">No</option>
-                                    <option value="no_seguro">No estoy seguro/a</option>
-                                </select>
-
-                                <label className="title_orange mx-2 mt-3 mb-1">
-                                    ¿Quién sería esa persona?
-                                </label>
-                                <input
-                                    type="text"
-                                    name="responsableNombre"
-                                    value={data.responsableNombre}
-                                    onChange={updateState}
-                                    placeholder="Familiar, pareja, amigo, etc."
-                                    className={`bg-white text-black-title font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}
-                                />
-
-                                <label className="title_orange mx-2 mt-3 mb-1">
-                                    ¿Esta persona sabe y está de acuerdo?
-                                </label>
-                                <select
-                                    name="responsableAcuerdo"
-                                    value={data.responsableAcuerdo}
-                                    onChange={updateState}
-                                    className={`bg-white text-black-title font-15 rounded-3 border-orange p-2 ${styles.border_2}`}
-                                >
-                                    <option value="">Seleccioná una opción</option>
-                                    <option value="si">Sí</option>
-                                    <option value="no">No</option>
-                                </select>
-                            </div>
-
-                            <div className="d-flex flex-column mb-4">
-                                <label className="title_orange mx-2 mt-1 mb-1">
-                                    ¿Tenés en cuenta el gasto que requiere tener un animal? Incluyendo vacunas, veterinario, comida de buena calidad y chapita identificadora.
-                                </label>
-                                <textarea
-                                    name="gastosMascota"
-                                    value={data.gastosMascota}
-                                    onChange={updateState}
-                                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}
-                                ></textarea>
-                            </div>
-
-                        </div>
-                    )}
-                    {currentStep === 7 && (
-                        <div className={styles.section}>
-                            <div className="d-flex flex-column mb-1">
-                                <label className="title_orange mx-2 mt-1 mb-1">
-                                    ¿Tuviste o tenés otra mascota? En caso de haber tenido, ¿qué le pasó?
-                                </label>
-                                <textarea
-                                    name="otrasMascotas"
-                                    value={data.otrasMascotas}
-                                    onChange={updateState}
-                                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}
-                                ></textarea>
-                            </div>
-
-                            <div className="d-flex flex-column mb-4">
-                                <label className="title_orange mx-2 mt-1 mb-1">
-                                    En caso de que tengas, ¿está/n castrado/s? Si la respuesta es NO, ¿por qué? ¿Tenés pensado hacerlo?
-                                </label>
-                                <textarea
-                                    name="castracionActuales"
-                                    value={data.castracionActuales}
-                                    onChange={updateState}
-                                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}
-                                ></textarea>
-                            </div>
-
-                            <div className="d-flex flex-column mb-4">
-                                <label className="title_orange mx-2 mt-1 mb-1">
-                                    ¿Estás de acuerdo con la castración? Si la respuesta es no, ¿por qué?
-                                </label>
-                                <textarea
-                                    name="acuerdoCastracion"
-                                    value={data.acuerdoCastracion}
-                                    onChange={updateState}
-                                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}
-                                ></textarea>
-                            </div>
-
-                            <div className="d-flex flex-column mb-4">
-                                <label className="title_orange mx-2 mt-1 mb-1">
-                                    ¿Tenés pensado castrar al animal que adoptes? Si la respuesta es NO, ¿asumirías el compromiso de hacerlo a los 7 meses igualmente?
-                                </label>
-                                <textarea
-                                    name="castrarAdoptado"
-                                    value={data.castrarAdoptado}
-                                    onChange={updateState}
-                                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}
-                                ></textarea>
-                            </div>
-                        </div>
-                    )}
-                    {currentStep === 8 && (
-                        <div className={styles.section}>
-                            <div className="d-flex flex-column mb-4 mt-3">
-                                <label className="title_orange mx-2  mt-1 mb-1 mb-1"> En caso de tener más animales, ambos necesitarán un período de adaptación. ¿Estás de acuerdo con esto?</label>
-                                <select name="convivenciaAdaptacion" value={data.convivenciaAdaptacion} onChange={updateState}
-                                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}>
-                                    <option value="">Seleccionar</option>
-                                    <option value="Si">Si</option>
-                                    <option value="No">No</option>
-                                </select>
-                            </div>
-                            <div className="d-flex flex-column mb-4">
-                                <label className="title_orange mx-2 mt-3 mb-1">
-                                    En caso de ser una pareja, ¿evaluaron qué pasaría con el animal si en algún momento decidieran separarse?
-                                </label>
-                                <textarea
-                                    name="parejaSeparacion"
-                                    value={data.parejaSeparacion}
-                                    onChange={updateState}
-                                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}
-                                ></textarea>
-                            </div>
-
-                            <div className="d-flex flex-column mb-4">
-                                <label className="title_orange mx-2 mt-3 mb-3">
-                                    ¿Tenés en cuenta que podría crecer más de lo esperado? ¿Qué harías si esto pasara?
-                                </label>
-                                <textarea
-                                    name="crecimientoImprevisto"
-                                    value={data.crecimientoImprevisto}
-                                    onChange={updateState}
-                                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}
-                                ></textarea>
-                            </div>
-                        </div>
-                    )}
-
-                    <div className="d-flex align-items-center justify-content-end mt-4 mx-5">
-                        {currentStep > 1 && (
-                            <button type="button" onClick={() => setCurrentStep(prev => Math.max(prev - 1, 1))} className="px-3 rounded btn  btn-orange text-white mx-3">Anterior</button>
-                        )}
-
-                        {currentStep === 8 ? (
-                            <button type="submit" className="px-3 rounded btn btn-success text-white">Agregar perro</button>
-                        ) : (
-                            <button type="button" onClick={() => setCurrentStep(prev => Math.min(prev + 1, totalSteps))} className="px-3 rounded btn  btn-orange text-white">Siguiente</button>
                         )}
                     </div>
-
+                    
+                    <div className="d-flex align-items-center justify-content-between mt-4 px-3">
+                        <div>
+                            {currentStep > 1 && (
+                                <button 
+                                    type="button" 
+                                    onClick={handlePrevious}
+                                    className="px-4 py-2 rounded btn btn-outline-orange"
+                                    disabled={isSubmitting}
+                                >
+                                    ← Anterior
+                                </button>
+                            )}
+                        </div>
+                        
+                        <div className="d-flex align-items-center">
+                            <span className="me-3 text-muted">
+                                Paso {currentStep} de {totalSteps}
+                            </span>
+                            
+                            {currentStep === totalSteps ? (
+                                <button 
+                                    type="submit" 
+                                    className={`px-4 py-2 rounded btn ${formType === 'transito' ? 'btn-warning' : 'btn-success'}`}
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting && (
+                                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                    )}
+                                    {textoBotonEnviar}
+                                </button>
+                            ) : (
+                                <button 
+                                    type="button" 
+                                    onClick={handleNext}
+                                    className="px-4 py-2 rounded btn btn-orange"
+                                    disabled={isSubmitting}
+                                >
+                                    Siguiente →
+                                </button>
+                            )}
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
-    )
+    );
+};
 
-}
-
-export default Form
+export default Form;

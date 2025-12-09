@@ -1,17 +1,21 @@
+import { useState, useEffect } from "react";
 import styles from "../css/admin/DogInfoPanel.module.css";
 import sizeIcon from "../assets/icons/tamanio.svg";
+import iconoMacho from "../assets/icons/Macho.svg";  // ✅ Nueva importación
+import iconoHembra from "../assets/icons/Hembra.svg"; // ✅ Nueva importación
 
 const DogInfoPanel = ({ perro }) => {
   const {
     nombre,
-    estado,
-    zona,
     edad,
-    genero,
-    tamanio,
+    sexo,
+    tamaño,
     peso,
-    foto,
-    descripcion,
+    imagen,
+    historia,
+    ubicacion,
+    tipoIngreso,
+    estadoGeneral
   } = perro;
 
   return (
@@ -19,23 +23,28 @@ const DogInfoPanel = ({ perro }) => {
       {/* Header */}
       <div className={styles.header}>
         <h2 className={styles.name}>{nombre}</h2>
-        <span className={styles.status}>{estado}</span>
+
+        {/* estadoGeneral boolean */}
+        <span className={styles.status}>
+          {estadoGeneral ? "Disponible" : "No disponible"}
+        </span>
       </div>
 
       {/* Meta */}
       <div className={styles.meta}>
-        <span>📍 {zona}</span>
-        <span>🎂 {edad}</span>
+        <span>📍 {ubicacion}</span>
+        <span>🎂 {edad} años</span>
 
         <div className={styles.metaItem}>
           <img
-            src={`/src/assets/icons/${genero}.svg`}
-            alt={genero}
+            src={sexo === "Macho" ? iconoMacho : iconoHembra}  // ✅ Corregido
+            alt={sexo}
             className={styles.genderIcon}
           />
-          <span>{genero}</span>
+          <span>{sexo}</span>
         </div>
-        <span>⚖ {peso}</span>
+
+        <span>⚖ {peso} kg</span>
 
         {/* Tamaño */}
         <div className={styles.metaItem}>
@@ -43,30 +52,33 @@ const DogInfoPanel = ({ perro }) => {
             <img
               src={sizeIcon}
               className={`${styles.sizeIcon} ${styles.chico} ${
-                tamanio === "chico" ? styles.active : ""
+                tamaño === "Pequeño" ? styles.active : ""
               }`}
+              alt="Tamaño pequeño"
             />
             <img
               src={sizeIcon}
               className={`${styles.sizeIcon} ${styles.mediano} ${
-                tamanio === "mediano" ? styles.active : ""
+                tamaño === "Mediano" ? styles.active : ""
               }`}
+              alt="Tamaño mediano"
             />
             <img
               src={sizeIcon}
               className={`${styles.sizeIcon} ${styles.grande} ${
-                tamanio === "grande" ? styles.active : ""
+                tamaño === "Grande" ? styles.active : ""
               }`}
+              alt="Tamaño grande"
             />
           </div>
         </div>
       </div>
 
       {/* Foto */}
-      <img src={foto} alt={nombre} className={styles.photo} />
+      <img src={imagen} alt={nombre} className={styles.photo} />
 
       {/* Descripción */}
-      <p className={styles.description}>{descripcion}</p>
+      <p className={styles.description}>{historia}</p>
     </aside>
   );
 };

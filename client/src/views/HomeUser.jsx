@@ -1,22 +1,48 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import styles from "../css/HomeUser.module.css";
+import styles from "../css/user/HomeUser.module.css";
 import heroImg from "../assets/dogs/perros.jpg";
 import aboutImg from "../assets/dogs/perro-rescatado.png";
 import { Link } from "react-router-dom";
-
 
 const HomeUser = () => {
     const [adopcion, setAdopcion] = useState([]);
     const [transito, setTransito] = useState([]);
     const [misPagos, setMisPagos] = useState([]);
 
-    useEffect(() => {
-        axios.get("http://localhost:8000/api/animals/public/adopcion")
-            .then(res => setAdopcion(res.data));
+    // Función para obtener URL segura de imagen
+    const getSafeImageUrl = (url) => {
+        if (!url || url.startsWith('blob:')) {
+            return aboutImg; // Usa aboutImg como fallback
+        }
+        return url;
+    };
 
-        axios.get("http://localhost:8000/api/animals/public/transito")
-            .then(res => setTransito(res.data));
+    useEffect(() => {
+        // Config para incluir token si existe
+        const token = localStorage.getItem("token_user");
+        const config = token ? { headers: { token_user: token } } : {};
+
+        axios.get("http://localhost:8000/api/animals/public/adopcion", config)
+            .then(res => {
+                // Filtrar posibles blobs inválidos
+                const safeData = res.data.map(dog => ({
+                    ...dog,
+                    imagen: getSafeImageUrl(dog.imagen)
+                }));
+                setAdopcion(safeData);
+            })
+            .catch(err => console.log("Error cargando adopción:", err));
+
+        axios.get("http://localhost:8000/api/animals/public/transito", config)
+            .then(res => {
+                const safeData = res.data.map(dog => ({
+                    ...dog,
+                    imagen: getSafeImageUrl(dog.imagen)
+                }));
+                setTransito(safeData);
+            })
+            .catch(err => console.log("Error cargando tránsito:", err));
 
         axios.get("http://localhost:8000/api/payment/mine", {
             headers: { token_user: localStorage.getItem("token_user") }
@@ -33,7 +59,7 @@ const HomeUser = () => {
                 <div className={styles.heroText}>
                     <h1>Adoptá un amigo. Salvá una vida.</h1>
                     <p>Más de 100 peluditos esperan un hogar lleno de amor.</p>
-                    <Link to="/login" className={styles.heroButton}>Ver animales</Link>
+                    <Link to="/animales" className={styles.heroButton}>Ver animales</Link>
                 </div>
                 <img className={styles.heroImg} src={heroImg} alt="Perros felices" />
             </section>
@@ -45,7 +71,7 @@ const HomeUser = () => {
                         recuperación y adopción responsable de animales en situación de calle.  
                         Trabajamos gracias al amor de voluntarios y personas como vos.
                     </p>
-                    <Link to="/login" className={styles.aboutButton}>Quiero ayudar</Link>
+                    <Link to="/donar" className={styles.aboutButton}>Quiero ayudar</Link>
                 </div>
 
                 <img className={styles.aboutImg} src={aboutImg} alt="Rescate animal"/>
@@ -56,14 +82,21 @@ const HomeUser = () => {
                 <div className={styles.carousel}>
                     {adopcion.map((dog) => (
                         <div key={dog._id} className={styles.card}>
-                            <img src={dog.imagen} alt={dog.nombre} />
+                            <img 
+                                src={dog.imagen} 
+                                alt={dog.nombre} 
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = aboutImg; // Usa aboutImg como fallback
+                                }}
+                            />
                             <h4>{dog.nombre}</h4>
                             <p>{dog.edad} años — {dog.sexo}</p>
                         </div>
                     ))}
                 </div>
 
-                <Link to="/login" className={styles.verMas}>Ver más perros</Link>
+                <Link to="/animales" className={styles.verMas}>Ver más perros</Link>
             </section>
 
             <section className={styles.section}>
@@ -72,14 +105,21 @@ const HomeUser = () => {
                 <div className={styles.carousel}>
                     {transito.map((dog) => (
                         <div key={dog._id} className={styles.card}>
-                            <img src={dog.imagen} alt={dog.nombre} />
+                            <img 
+                                src={dog.imagen} 
+                                alt={dog.nombre} 
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = aboutImg; // Usa aboutImg como fallback
+                                }}
+                            />
                             <h4>{dog.nombre}</h4>
                             <p>{dog.edad} años — {dog.sexo}</p>
                         </div>
                     ))}
                 </div>
 
-                <Link to="/login" className={styles.verMas}>Ver más perros en tránsito</Link>
+                <Link to="/animales" className={styles.verMas}>Ver más perros en tránsito</Link>
             </section>
             <section id="actividad" className={styles.activityWrapper}>
                 <div className={styles.card}>
@@ -126,9 +166,6 @@ const HomeUser = () => {
                     )}
                 </div>
             </section>
-
-
-
         </div>
     );
 };

@@ -1,8 +1,6 @@
 import Carousel from "react-bootstrap/Carousel";
 import "bootstrap/dist/css/bootstrap.min.css";
 import sizeIcon from "../assets/icons/tamanio.svg";
-import iconoMacho from "../assets/icons/Macho.svg";    // ✅ Nueva importación
-import iconoHembra from "../assets/icons/Hembra.svg";   // ✅ Nueva importación
 import Breadcrumbs from "../components/BreadcrumbsAdmin";
 
 import styles from "../css/OneDog.module.css";
@@ -35,7 +33,7 @@ const OneDog = ({
           </Carousel>
 
           <div className={styles.thumbRow}>
-            <img src={data.imagen} className={styles.thumbnail} alt="Miniatura" />
+            <img src={data.imagen} className={styles.thumbnail} />
           </div>
         </div>
 
@@ -75,9 +73,8 @@ const OneDog = ({
             {/* Sexo */}
             <div className={styles.detailItem}>
               <img
-                src={data.sexo === "Macho" ? iconoMacho : iconoHembra}  // ✅ Corregido
+                src={`/src/assets/icons/${data.sexo}.svg`}
                 className={styles.detailIcon}
-                alt={data.sexo}
               />
               <span className={styles.detailLabel}>Sexo:</span>
 
@@ -135,7 +132,7 @@ const OneDog = ({
 
             {/* Tamaño */}
             <div className={styles.detailItem}>
-              <img src={sizeIcon} className={styles.sizeIcon} alt="Icono tamaño" />
+              <img src={sizeIcon} className={styles.sizeIcon} />
               <span className={styles.detailLabel}> Tamaño:</span>
 
               {!editando ? (
