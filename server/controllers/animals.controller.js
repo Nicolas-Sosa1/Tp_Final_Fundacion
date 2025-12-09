@@ -65,6 +65,59 @@ const animalsController = {
         return res.status(400).json({ errors: messages });
     }
 },
+    createOne1: async (req,res)=> {
+                const {
+            nombre,
+            edad,
+            sexo,
+            peso,
+            castrado,
+            vacunas,
+            desparasitado,
+            discapacidad,
+            imagen,
+            historia,
+            tamaño,
+            ubicacion,
+            tipoIngreso,
+            estadoGeneral
+        } = req.body;
+
+        const newAnimalData = {
+            nombre,
+            edad,
+            sexo,
+            peso,
+            castrado,
+            vacunas,
+            desparasitado,
+            discapacidad,
+            imagen,
+            historia,
+            tamaño,
+            ubicacion,
+            tipoIngreso,
+            estadoGeneral
+        };
+
+        try{
+            const newAnimal = await Animals.create(newAnimalData)
+            res.status(201).json(newAnimal)
+        }catch(e){
+
+            const messages = {};
+
+            if (e.name === "ValidationError") {
+                Object.keys(e.errors).forEach((key) => {
+                    messages[key] = e.errors[key].message;
+                });
+
+            }
+
+            return res.status(400).json({ errors: { ...messages } });
+        }
+
+    },
     getAdopcionAlta: async (req, res) => {
         try {
             const lista = await Animals.find({

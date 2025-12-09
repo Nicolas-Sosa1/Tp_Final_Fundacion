@@ -5,10 +5,11 @@ const DogGrid = ({ perros, getLink }) => {
   return (
     <section className={styles.doggrid}>
       {perros.map((perro) => (
-        <DogCard key={perro.id} perro={perro} to={getLink(perro)} />
+        <DogCard key={perro._id} perro={perro} to={getLink(perro)} />
       ))}
     </section>
   );
 };
 
 export default DogGrid;
+

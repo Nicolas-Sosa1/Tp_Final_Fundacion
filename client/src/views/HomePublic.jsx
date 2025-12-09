@@ -5,19 +5,20 @@ import heroImg from "../assets/dogs/perros.jpg";
 import aboutImg from "../assets/dogs/perro-rescatado.png";
 import { Link } from "react-router-dom";
 
-
 const HomePublic = () => {
     const [adopcion, setAdopcion] = useState([]);
-    const [transito, setTransito] = useState([]);
 
     useEffect(() => {
+        // Solo cargar algunos perros para muestra
         axios.get("http://localhost:8000/api/animals/public/adopcion")
-            .then(res => setAdopcion(res.data))
+            .then(res => {
+                // Limitar a solo 3-4 perros para mostrar
+                const limitedData = res.data.slice(0, 4);
+                setAdopcion(limitedData);
+            })
             .catch(err => console.log(err));
-
-        axios.get("http://localhost:8000/api/animals/public/transito")
-            .then(res => setTransito(res.data))
-            .catch(err => console.log(err));
+        
+        // No cargar datos de tránsito para público
     }, []);
 
     return (
@@ -27,7 +28,7 @@ const HomePublic = () => {
                 <div className={styles.heroText}>
                     <h1>Adoptá un amigo. Salvá una vida.</h1>
                     <p>Más de 100 peluditos esperan un hogar lleno de amor.</p>
-                    <Link to="/login" className={styles.heroButton}>Ver animales</Link>
+                    <Link to="/login" className={styles.heroButton}>Ingresar para ver</Link>
                 </div>
                 <img className={styles.heroImg} src={heroImg} alt="Perros felices" />
             </section>
@@ -39,43 +40,36 @@ const HomePublic = () => {
                         recuperación y adopción responsable de animales en situación de calle.  
                         Trabajamos gracias al amor de voluntarios y personas como vos.
                     </p>
-                    <Link to="/login" className={styles.aboutButton}>Quiero ayudar</Link>
+                    <Link to="/donaciones" className={styles.aboutButton}>Quiero donar</Link>
                 </div>
 
                 <img className={styles.aboutImg} src={aboutImg} alt="Rescate animal"/>
             </section>
             <section className={styles.section}>
-                <h2>Buscan Adopción</h2>
+                <h2>Algunos de nuestros rescatados</h2>
+                <p className="text-center mb-4">Regístrate o inicia sesión para ver todos los animales disponibles.</p>
 
                 <div className={styles.carousel}>
                     {adopcion.map((dog) => (
                         <div key={dog._id} className={styles.card}>
-                            <img src={dog.imagen} alt={dog.nombre} />
+                            <img 
+                                src={dog.imagen} 
+                                alt={dog.nombre} 
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = aboutImg; // Fallback image
+                                }}
+                            />
                             <h4>{dog.nombre}</h4>
                             <p>{dog.edad} años — {dog.sexo}</p>
                         </div>
                     ))}
                 </div>
 
-                <Link to="/login" className={styles.verMas}>Ver más perros</Link>
+                <Link to="/login" className={styles.verMas}>Ingresar para ver más perros</Link>
             </section>
 
-            <section className={styles.section}>
-                <h2>Buscan Tránsito</h2>
-
-                <div className={styles.carousel}>
-                    {transito.map((dog) => (
-                        <div key={dog._id} className={styles.card}>
-                            <img src={dog.imagen} alt={dog.nombre} />
-                            <h4>{dog.nombre}</h4>
-                            <p>{dog.edad} años — {dog.sexo}</p>
-                        </div>
-                    ))}
-                </div>
-
-                <Link to="/login" className={styles.verMas}>Ver más perros en tránsito</Link>
-            </section>
-
+            {/* Sección de tránsito ELIMINADA para público */}
         </div>
     );
 };

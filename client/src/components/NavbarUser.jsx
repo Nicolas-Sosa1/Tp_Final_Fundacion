@@ -7,18 +7,66 @@ const NavbarUser = ({ logOut }) => {
       
       <div className="d-flex align-items-center">
         <div className={styles.contenedor_img}>
-          <img src="../../img/logo.png" alt="logo" />
+          <img src="../img/logo.png" alt="logo" />
         </div>
         <p className="title_orange font_title mr-5 mb-0">Huellas Sin Techo</p>
       </div>
       
       <div className="d-flex align-items-center justify-content-between w-50">
-        <NavLink to="/home" className={({ isActive }) =>isActive ? "text-decoration-none text-black-title font_sm navlink navlink_active": "text-decoration-none text-black-title font_sm navlink"}>Inicio</NavLink>
-        <NavLink to="/home#actividad" className="text-decoration-none text-black-title font_sm navlink">Tu actividad</NavLink>
-        <NavLink to="/transito" className={({ isActive }) => isActive ? "text-decoration-none text-black-title font_sm navlink navlink_active": "text-decoration-none text-black-title font_sm navlink"}>Dar tránsito</NavLink>
-        <NavLink to="/donar" className={({ isActive }) => isActive? "text-decoration-none text-black-title font_sm navlink navlink_active": "text-decoration-none text-black-title font_sm navlink"}>¡Donar ahora!</NavLink>
-        <Link to="/adoptar" className="text-decoration-none"><button className="btn_navbar rounded-3 pad-10">¡Quiero Adoptar!</button></Link>
-        <Link to="/home" onClick={logOut}><i className="fa-solid fa-arrow-right-from-bracket icon_20 text-black-title"></i></Link>
+        <NavLink 
+          to="/home" 
+          className={({ isActive }) => 
+            isActive 
+              ? "text-decoration-none text-black-title font_sm navlink navlink_active"
+              : "text-decoration-none text-black-title font_sm navlink"
+          }
+        >
+          Inicio
+        </NavLink>
+        
+        {/* ENLACE ACTUALIZADO: De /home#actividad a /actividades */}
+        <NavLink 
+          to="/actividades" 
+          className={({ isActive }) => 
+            isActive 
+              ? "text-decoration-none text-black-title font_sm navlink navlink_active"
+              : "text-decoration-none text-black-title font_sm navlink"
+          }
+        >
+          Mis Actividades
+        </NavLink>
+        
+        <NavLink 
+          to="/formulario/transito" 
+          className={({ isActive }) => 
+            isActive 
+              ? "text-decoration-none text-black-title font_sm navlink navlink_active"
+              : "text-decoration-none text-black-title font_sm navlink"
+          }
+        >
+          Dar tránsito
+        </NavLink>
+        
+        <NavLink 
+          to="/donar" 
+          className={({ isActive }) => 
+            isActive
+              ? "text-decoration-none text-black-title font_sm navlink navlink_active"
+              : "text-decoration-none text-black-title font_sm navlink"
+          }
+        >
+          ¡Donar ahora!
+        </NavLink>
+        
+        <Link to="/formulario/adopcion" className="text-decoration-none">
+          <button className="btn_navbar rounded-3 pad-10">
+            ¡Quiero Adoptar!
+          </button>
+        </Link>
+        
+        <Link to="/home" onClick={logOut}>
+          <i className="fa-solid fa-arrow-right-from-bracket icon_20 text-black-title"></i>
+        </Link>
       </div>
     </nav>
   );
