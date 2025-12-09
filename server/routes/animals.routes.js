@@ -17,11 +17,12 @@ animalsRoutes.get("/public/transito/baja", animalsController.getTransitoBaja);
 animalsRoutes.delete("/delete-permanent/:id", validateToken, isAdmin, animalsController.deletePermanent);
 animalsRoutes.patch("/adoptado/:id", validateToken, isAdmin, animalsController.toggleAdoptado);
 
-
 // ⚠️ AGREGAR estas rutas para compatibilidad con Form.jsx
 animalsRoutes.get("/public/adopcion/list", animalsController.getAdopcionAlta);
 animalsRoutes.get("/public/transito/list", animalsController.getTransitoAlta);
 
+// ✅ AGREGAR esta ruta para solucionar el error 404
+animalsRoutes.get("/public/adopcion/all", animalsController.getAdopcionAlta);
 
 // Rutas de administración
 animalsRoutes.post("/neww", validateToken, isAdmin, animalsController.createOne1);
