@@ -16,7 +16,7 @@ solicitudesRoutes.get("/mis-solicitudes", validateToken, solicitudesController.o
 // ADMIN
 solicitudesRoutes.get("/adopcion", validateToken, isAdmin, solicitudesController.obtenerTodasAdopciones);
 solicitudesRoutes.get("/transito", validateToken, isAdmin, solicitudesController.obtenerTodosTransitos);
-
+solicitudesRoutes.get("/adopcion/:id",validateToken,isAdmin,solicitudesController.obtenerSolicitudAdopcionPorId);
 solicitudesRoutes.patch("/adopcion/:id/estado", validateToken, isAdmin, solicitudesController.cambiarEstadoAdopcion);
 solicitudesRoutes.patch("/transito/:id/estado", validateToken, isAdmin, solicitudesController.cambiarEstadoTransito);
 

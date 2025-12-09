@@ -6,27 +6,27 @@ import { Animals } from "../models/animals.model.js";
 const solicitudesController = {
 
     crearSolicitudAdopcion: async (req, res) => {
-    try {
-        // 1) Crear solicitud
-        const solicitud = await SolicitudAdopcion.create({
-            usuario: req.userId,
-            animal: req.params.animalId,
-            ...req.body
-        });
+        try {
+            // 1) Crear solicitud
+            const solicitud = await SolicitudAdopcion.create({
+                usuario: req.userId,
+                animal: req.params.animalId,
+                ...req.body
+            });
 
-        // 2) Agregar solicitud al animal
-        await Animals.findByIdAndUpdate(
-            req.params.animalId,
-            { $push: { postulaciones: solicitud._id } }
-        );
+            // 2) Agregar solicitud al animal
+            await Animals.findByIdAndUpdate(
+                req.params.animalId,
+                { $push: { postulaciones: solicitud._id } }
+            );
 
-        return res.status(201).json(solicitud);
+            return res.status(201).json(solicitud);
 
-    } catch (error) {
-        console.error(error);
-        return res.status(400).json({ message: "Error al crear solicitud de adopción" });
-    }
-},
+        } catch (error) {
+            console.error(error);
+            return res.status(400).json({ message: "Error al crear solicitud de adopción" });
+        }
+    },
 
     crearSolicitudTransito: async (req, res) => {
         try {
@@ -119,7 +119,25 @@ const solicitudesController = {
         } catch (error) {
             return res.status(500).json({ message: "Error al actualizar estado" });
         }
-    }
+    },
+    obtenerSolicitudAdopcionPorId: async (req, res) => {
+        try {
+            const solicitud = await SolicitudAdopcion.findById(req.params.id)
+                .populate("usuario")
+                .populate("animal");
+
+            if (!solicitud) {
+                return res.status(404).json({ message: "Solicitud no encontrada" });
+            }
+
+            return res.status(200).json(solicitud);
+
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: "Error al obtener la solicitud" });
+        }
+    },
+
 };
 
 export default solicitudesController;

@@ -5,13 +5,13 @@ const DogInfoPanel = ({ perro }) => {
   const {
     nombre,
     estado,
-    zona,
+    ubicacion,
     edad,
-    genero,
-    tamanio,
+    sexo,
+    tamaño,
     peso,
-    foto,
-    descripcion,
+    imagen,
+    historia,
   } = perro;
 
   return (
@@ -24,49 +24,49 @@ const DogInfoPanel = ({ perro }) => {
 
       {/* Meta */}
       <div className={styles.meta}>
-        <span>📍 {zona}</span>
-        <span>🎂 {edad}</span>
+        <span>📍 {ubicacion}</span>
+        <span>🎂 {edad} año</span>
 
         <div className={styles.metaItem}>
           <img
-            src={`/src/assets/icons/${genero}.svg`}
-            alt={genero}
+            src={`/src/assets/icons/${sexo}.svg`}
+            alt={sexo}
             className={styles.genderIcon}
           />
-          <span>{genero}</span>
+          <span>{sexo}</span>
         </div>
         <span>⚖ {peso}</span>
 
-        {/* Tamaño */}
+        {/* tamaño */}
         <div className={styles.metaItem}>
           <div className={styles.sizes}>
             <img
               src={sizeIcon}
               className={`${styles.sizeIcon} ${styles.chico} ${
-                tamanio === "chico" ? styles.active : ""
+                tamaño === "Chico" ? styles.active : ""
               }`}
             />
             <img
               src={sizeIcon}
               className={`${styles.sizeIcon} ${styles.mediano} ${
-                tamanio === "mediano" ? styles.active : ""
+                tamaño === "Mediano" ? styles.active : ""
               }`}
             />
             <img
               src={sizeIcon}
               className={`${styles.sizeIcon} ${styles.grande} ${
-                tamanio === "grande" ? styles.active : ""
+                tamaño === "Grande" ? styles.active : ""
               }`}
             />
           </div>
         </div>
       </div>
 
-      {/* Foto */}
-      <img src={foto} alt={nombre} className={styles.photo} />
+      {/* imagen */}
+      <img src={imagen} alt={nombre} className={styles.photo} />
 
       {/* Descripción */}
-      <p className={styles.description}>{descripcion}</p>
+      <p className={styles.description}>{historia}</p>
     </aside>
   );
 };

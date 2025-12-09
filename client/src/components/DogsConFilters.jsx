@@ -17,16 +17,16 @@ const DogsConFilters = ({ defaultFilters = {}, context = "todos" }) => {
   });
 
 
-  const getDogLink = (perro) => {
+  const getDogLink = (perros) => {
     if (context === "postulaciones") {
-      return `/homeadmin/perro/${perro._id}/postulaciones`;
+      return `/homeadmin/perro/${perros._id}/postulaciones`;
     }
 
     if (filters.estado === "conPostulaciones") {
-      return `/homeadmin/perro/${perro._id}/postulaciones`;
+      return `/homeadmin/perro/${perros._id}/postulaciones`;
     }
 
-    return `/homeadmin/perro/${perro._id}`;
+    return `/homeadmin/perro/${perros._id}`;
   };
 
   

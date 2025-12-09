@@ -13,7 +13,11 @@ const PostulantesTabla = ({ postulaciones = [] }) => {
     rechazada: "Rechazada"
   };
 
-  const filtradas = postulaciones;
+const filtradas =
+  activeTab === "todos"
+    ? postulaciones
+    : postulaciones.filter((p) => p.estadoSolicitud === "pendiente");
+
 
   const estadoClase = {
     Aceptada: styles.aceptada,
@@ -36,11 +40,11 @@ const PostulantesTabla = ({ postulaciones = [] }) => {
 
         <button
           className={`${styles.tab} ${
-            activeTab === "no-vistos" ? styles.active : ""
+            activeTab === "pendiente" ? styles.active : ""
           }`}
-          onClick={() => setActiveTab("no-vistos")}
+          onClick={() => setActiveTab("pendiente")}
         >
-          Postulantes no vistos
+          Postulaciones pendientes de revisión
         </button>
       </div>
 
@@ -60,7 +64,7 @@ const PostulantesTabla = ({ postulaciones = [] }) => {
         <tbody>
           {filtradas.map((p, index) => {
             // Convertimos estado de la BD → UI
-            const estadoUI = mapEstado[p.estadoSolicitud] || "Pendiente";
+            const estadoUI = mapEstado[p.estadoSolicitud] || "pendiente";
 
             return (
               <tr key={p._id}>

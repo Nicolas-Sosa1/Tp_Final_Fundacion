@@ -19,7 +19,16 @@ const OnePostulacion = () => {
     const fetchSolicitud = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`/api/solicitudes/adopcion/${postulacionId}`);
+        const res = await axios.get(
+        `/api/solicitudes/adopcion/${postulacionId}`,
+        {
+          headers: {
+            token_user: localStorage.getItem("token_user"),
+            "Content-Type": "application/json"
+          }
+        }
+      );
+
         
         if (!res.data) {
           throw new Error("Solicitud no encontrada");
@@ -45,10 +54,17 @@ const OnePostulacion = () => {
     try {
       setUpdating(true);
       
-      await axios.patch(
-        `/api/solicitudes/adopcion/${postulacionId}/estado`,
-        { estado: estadoFinal }
-      );
+    await axios.patch(
+      `/api/solicitudes/adopcion/${postulacionId}/estado`,
+      { estado: estadoFinal },
+      {
+        headers: {
+          token_user: localStorage.getItem("token_user"),
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
 
       alert("Estado actualizado correctamente");
       

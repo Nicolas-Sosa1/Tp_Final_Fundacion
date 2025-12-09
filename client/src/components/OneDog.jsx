@@ -4,6 +4,7 @@ import sizeIcon from "../assets/icons/tamanio.svg";
 import Breadcrumbs from "../components/BreadcrumbsAdmin";
 
 import styles from "../css/OneDog.module.css";
+import { useNavigate } from "react-router-dom";
 
 const OneDog = ({
   data,
@@ -16,7 +17,7 @@ const OneDog = ({
   onDeleteRequest,
   modo = "user",
 }) => {
-
+ const navigate = useNavigate();
   const imageSrc = data.imagen?.startsWith("http")
     ? data.imagen
     : `http://localhost:8000/uploads/${data.imagen}`;
@@ -167,14 +168,12 @@ const OneDog = ({
                   {/* POSTULACIONES */}
                   {Array.isArray(data.postulaciones) &&
                     data.postulaciones.length > 0 && (
-                      <button
-                        className={styles.btnPostulaciones}
-                        onClick={() =>
-                          (window.location.href = `/homeadmin/perro/${data._id}/postulaciones`)
-                        }
-                      >
-                        Ver postulaciones
-                      </button>
+                        <button
+                          className={styles.btnPostulaciones}
+                          onClick={() => navigate(`/homeadmin/perro/${data._id}/postulaciones`)}
+                        >
+                          Ver postulaciones
+                        </button>
                     )}
 
                   {/* ADOPCIÓN TOGGLE */}
