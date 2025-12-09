@@ -26,6 +26,7 @@ app.use("/api/correo", correoRoutes)
 app.use("/api/animals", animalsRoutes)
 app.use("/api/solicitudes", solicitudesRoutes)
 app.use("/api/vacunas", vacunasRoutes);
+app.use("/uploads", express.static("uploads"));
 
 // Ruta de estado general
 app.get('/estado', (req, res) => {

@@ -9,38 +9,104 @@ const AddDog = ({ listaPerros, setListaPerros, me, logOut }) => {
     const [currentStep, setCurrentStep] = useState(1);
     const totalSteps = 3;
     const progressPercent = (currentStep - 1) / (totalSteps - 1);
+    const [fileImage, setFileImage] = useState(null); 
 
     const [data, setData] = useState({
         nombre: "",
         edad: "",
         sexo: "Hembra",
         peso: "",
-        castrado: "",
+        castrado: "false", // 💡 Inicia como string "false" para manejar el select
         vacunas: [],
-        desparasitado: "",
+        desparasitado: "false", // 💡 Inicia como string "false"
         discapacidad: "",
-        imagen: "",
+        imagen: "", // Esto almacena la URL local para la previsualización
         historia: "",
         tamaño: "Mediano",
         ubicacion: "Garin",
         tipoIngreso: "",
-        estadoGeneral: true
+        estadoGeneral: true // Este valor no se está usando en el form, pero se envía como "true"
     });
 
     const [errors, setErrors] = useState({});
 
+    // Función para manejar la navegación entre pasos y la validación básica
+    const handleNextStep = (e) => {
+        e.preventDefault();
+        // Agrega lógica de validación aquí si lo deseas
+        
+        // Simplemente avanza si no hay errores graves para el paso
+        if (currentStep < totalSteps) {
+            setCurrentStep(prev => prev + 1);
+        }
+    }
+
+    // FUNCIÓN DE ENVÍO AJUSTADA
     const sendData = (e) => {
         e.preventDefault();
         const URL = "http://localhost:8000/api/animals/new";
 
-        axios.post(URL, data, { headers: { token_user: localStorage.getItem("token_user") } })
+        const formData = new FormData();
+        const currentErrors = {};
+        
+        // 1. Validar y añadir la imagen (el objeto File)
+        if (fileImage) {
+            // 'imagen' debe coincidir con el nombre de campo en multer.single("imagen")
+            formData.append("imagen", fileImage); 
+        } else {
+            currentErrors.imagen = "La imagen es obligatoria.";
+        }
+
+        // 2. Añadir el resto de los campos de 'data'
+        // Campos de texto y números
+        formData.append("nombre", data.nombre);
+        formData.append("edad", data.edad);
+        formData.append("sexo", data.sexo);
+        formData.append("peso", data.peso.toString());
+        formData.append("discapacidad", data.discapacidad);
+        formData.append("historia", data.historia);
+        formData.append("tamaño", data.tamaño);
+        formData.append("ubicacion", data.ubicacion);
+        formData.append("tipoIngreso", data.tipoIngreso);
+        
+        // Booleanos (Enviar como string "true" o "false")
+        // Como el select retorna "true" o "false" como strings, se envían directamente.
+        formData.append("castrado", data.castrado); 
+        formData.append("desparasitado", data.desparasitado);
+        // 'estadoGeneral' es un booleano, se convierte a string
+        formData.append("estadoGeneral", data.estadoGeneral ? "true" : "false");
+        
+        // Array de IDs (Enviar como JSON string)
+        formData.append("vacunas", JSON.stringify(data.vacunas));
+        
+        if (Object.keys(currentErrors).length > 0) {
+            setErrors(currentErrors);
+            return;
+        }
+
+        axios.post(URL, formData, { headers: { token_user: localStorage.getItem("token_user") } })
             .then(response => {
                 setListaPerros([...listaPerros, response.data]);
                 navigate("/home");
             })
             .catch(e => {
                 if (e.response?.status === 406) logOut();
-                setErrors(e.response?.data?.errors || {});
+                
+                // Asegurar que se recogen los errores del backend
+                const backendErrors = e.response?.data?.errors || {};
+                
+                // Si hay errores, retrocede al paso 1 (si el error es en nombre, edad, peso, etc.)
+                // o paso 2 (si es castrado, desparasitado, etc.) o 3 (si es imagen, tipoIngreso, historia)
+                if(backendErrors.nombre || backendErrors.edad || backendErrors.sexo || backendErrors.peso) {
+                    setCurrentStep(1);
+                } else if (backendErrors.castrado || backendErrors.desparasitado || backendErrors.discapacidad || backendErrors.vacunas) {
+                    setCurrentStep(2);
+                } else if (backendErrors.imagen || backendErrors.historia || backendErrors.tamaño || backendErrors.ubicacion || backendErrors.tipoIngreso) {
+                    setCurrentStep(3);
+                }
+                
+                setErrors(backendErrors);
+                console.error("Error al enviar formulario:", e.response?.data);
             });
     };
 
@@ -58,12 +124,34 @@ const AddDog = ({ listaPerros, setListaPerros, me, logOut }) => {
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (!file) return;
+
+        // Guarda el objeto File que Multer necesita
+        setFileImage(file);
+        
+        // Guarda la URL temporal para la previsualización en el frontend
         const imgURL = URL.createObjectURL(file);
         setData(prevData => ({
             ...prevData,
             imagen: imgURL
         }));
+        // Limpiar error de imagen al seleccionar un archivo
+        setErrors(prevErrors => {
+            const { imagen, ...rest } = prevErrors;
+            return rest;
+        });
     };
+
+    // Manejar el cambio de checkboxes de vacunas
+    const handleVacunasChange = (e, vacunaId) => {
+        const checked = e.target.checked;
+        setData(prevData => ({
+            ...prevData,
+            vacunas: checked
+                ? [...prevData.vacunas, vacunaId]
+                : prevData.vacunas.filter((id) => id !== vacunaId),
+        }));
+    };
+
 
     useEffect(() => {
         getData();
@@ -74,7 +162,8 @@ const AddDog = ({ listaPerros, setListaPerros, me, logOut }) => {
             <h2 className="title_orange mt-5">Agrega a tu perro</h2>
 
             <div className={styles.cardForm}>
-                <form onSubmit={sendData} className={styles.formContainer}>
+                {/* 💡 Modificar la llamada a onSubmit: Usar sendData solo en el último paso */}
+                <form onSubmit={currentStep === totalSteps ? sendData : handleNextStep} className={styles.formContainer}> 
                     <div className={styles.progress_container}>
                         <div
                             className={styles.progress}
@@ -87,7 +176,8 @@ const AddDog = ({ listaPerros, setListaPerros, me, logOut }) => {
                             <li className={currentStep === 3 ? styles.current : ""}>Presentación</li>
                         </ol>
                     </div>
-
+                    {/* --- */}
+                    
                     {currentStep === 1 && (
                         <>
                             <div className={styles.subform}>
@@ -159,7 +249,8 @@ const AddDog = ({ listaPerros, setListaPerros, me, logOut }) => {
                             </div>
                         </>
                     )}
-
+                    {/* --- */}
+                    
                     {currentStep === 2 && (
                         <>
                             <div className={styles.subform}>
@@ -167,10 +258,9 @@ const AddDog = ({ listaPerros, setListaPerros, me, logOut }) => {
                                     <label className="title_orange">Castrado:</label>
                                     <select
                                         name="castrado"
-                                        value={data.castrado}
-                                        onChange={(e) =>
-                                            setData({ ...data, castrado: e.target.value === "true" })
-                                        }
+                                        // 💡 Usar el valor como string "true" o "false"
+                                        value={data.castrado} 
+                                        onChange={updateState}
                                         className={`background-transparent-orange text-black-title font-400 rounded border-orange px-3 ${styles.inputFull}`}
                                     >
                                         <option value="">Seleccionar</option>
@@ -184,10 +274,9 @@ const AddDog = ({ listaPerros, setListaPerros, me, logOut }) => {
                                     <label className="title_orange">Desparasitado:</label>
                                     <select
                                         name="desparasitado"
+                                        // 💡 Usar el valor como string "true" o "false"
                                         value={data.desparasitado}
-                                        onChange={(e) =>
-                                            setData({ ...data, desparasitado: e.target.value === "true" })
-                                        }
+                                        onChange={updateState}
                                         className={`background-transparent-orange text-black-title font-400 rounded border-orange px-3 ${styles.inputFull}`}
                                     >
                                         <option value="">Seleccionar</option>
@@ -222,19 +311,8 @@ const AddDog = ({ listaPerros, setListaPerros, me, logOut }) => {
                                                     type="checkbox"
                                                     value={v._id}
                                                     checked={data.vacunas.includes(v._id)}
-                                                    onChange={(e) => {
-                                                        if (e.target.checked) {
-                                                            setData({
-                                                                ...data,
-                                                                vacunas: [...data.vacunas, v._id],
-                                                            });
-                                                        } else {
-                                                            setData({
-                                                                ...data,
-                                                                vacunas: data.vacunas.filter((id) => id !== v._id),
-                                                            });
-                                                        }
-                                                    }}
+                                                    // 💡 Usar la función de manejo de cambio ajustada
+                                                    onChange={(e) => handleVacunasChange(e, v._id)} 
                                                 />
                                                 {v.nombre}
                                             </label>
@@ -245,6 +323,7 @@ const AddDog = ({ listaPerros, setListaPerros, me, logOut }) => {
                             </div>
                         </>
                     )}
+                    {/* --- */}
 
                     {currentStep === 3 && (
                         <>
@@ -252,15 +331,20 @@ const AddDog = ({ listaPerros, setListaPerros, me, logOut }) => {
                                 <div className="d-flex flex-column">
                                     <label className="title_orange me-3">Imagen:</label>
                                     <label htmlFor="upload" className={styles.btn_subir}>
-                                        Subir imagen
+                                        {fileImage ? `Subida: ${fileImage.name}` : 'Subir imagen'}
                                     </label>
                                     <input
                                         id="upload"
                                         type="file"
+                                        name="imagen" // 💡 Agregado name="imagen" (Aunque Multer usa el id, es buena práctica)
                                         accept="image/*"
                                         onChange={handleImageChange}
                                         style={{ display: "none" }}
                                     />
+                                    {/* Mostrar previsualización de la imagen */}
+                                    {data.imagen && !errors.imagen && (
+                                        <img src={data.imagen} alt="Previsualización" className={styles.imagePreview} style={{ maxWidth: '100px', maxHeight: '100px', marginTop: '10px', objectFit: 'cover' }} />
+                                    )}
                                     {errors.imagen && <p className={styles.errorText}>{errors.imagen}</p>}
                                 </div>
 
@@ -276,20 +360,24 @@ const AddDog = ({ listaPerros, setListaPerros, me, logOut }) => {
                                         <option value="adopcion">Adopción</option>
                                         <option value="transito">Tránsito</option>
                                     </select>
+                                    {errors.tipoIngreso && <p className={styles.errorText}>{errors.tipoIngreso}</p>}
                                 </div>
                             </div>
 
-                            <div className="d-flex justify-content-center align-items-center w-100 mt-3">
-                                <label className="title_orange me-3">Historia:</label>
+                            <div className="d-flex flex-column justify-content-center align-items-center w-100 mt-3">
+                                <label className="title_orange me-3 w-100 text-start mb-1">Historia:</label>
                                 <textarea
-                                    className="background-transparent-orange text-black-title w-50 font-400 px-3 rounded border-orange"
+                                    name="historia" // 💡 Agregado name="historia"
+                                    className="background-transparent-orange text-black-title w-100 font-400 px-3 rounded border-orange"
                                     style={{ height: "100px" }}
                                     value={data.historia}
-                                    onChange={(e) => setData({ ...data, historia: e.target.value })}
+                                    onChange={updateState} // 💡 Simplificado a updateState
                                 />
+                                {errors.historia && <p className={styles.errorText}>{errors.historia}</p>}
                             </div>
                         </>
                     )}
+                    {/* --- */}
 
                     <div className="d-flex align-items-center justify-content-end mt-4 mx-5">
                         {currentStep > 1 && (
@@ -302,14 +390,13 @@ const AddDog = ({ listaPerros, setListaPerros, me, logOut }) => {
                             </button>
                         )}
 
-                        {currentStep === 3 ? (
+                        {currentStep === totalSteps ? (
                             <button type="submit" className="px-3 rounded btn btn-success text-white">
                                 Agregar perro
                             </button>
                         ) : (
                             <button
-                                type="button"
-                                onClick={() => setCurrentStep((prev) => Math.min(prev + 1, totalSteps))}
+                                type="submit" // 💡 Cambiado a type="submit" para que llame a handleNextStep
                                 className="px-3 rounded btn btn-orange text-white"
                             >
                                 Siguiente
