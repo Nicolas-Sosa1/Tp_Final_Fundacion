@@ -1,7 +1,7 @@
 import DogsConFilters from "../../components/DogsConFilters";
 
-const AllDogs = () => {
+const AllDogsAdmin = () => {
   return <DogsConFilters context="todos" />;
 };
 
-export default AllDogs;
+export default AllDogsAdmin;

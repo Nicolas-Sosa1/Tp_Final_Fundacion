@@ -1,0 +1,252 @@
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 75vh;
+}
+
+.cardForm {
+  width: 90%;
+  max-width: 900px;
+  margin: auto;
+  background: white;
+  border: 1px solid gainsboro;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(255, 136, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  margin-bottom: 50px;
+}
+
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.subform {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: center;
+  justify-items: center;
+}
+
+.subform > div {
+  display: flex;
+  align-items: center;
+  width: 80%;
+}
+
+.subform label {
+  margin-bottom: 6px;
+}
+
+.inputFull {
+  margin-left: 10px;
+  width: 50%;
+}
+
+.progress_container ol {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  counter-reset: step-number;
+  z-index: 1;
+}
+.progress_container li {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  z-index: 1;
+  transition: 0.3s linear 0.3s;
+}
+
+.progress_container {
+  position: relative;
+  top: -47px;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.progress_container::before {
+  content: "";
+  height: 4px;
+  width: 65%;
+  background-color: var(--background-transparent);
+  position: absolute;
+  top: 20%;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  z-index: -1;
+}
+
+.progress_container .progress {
+  height: 4px;
+  width: 65%;
+  background-color: var(--naranja);
+  position: absolute;
+  top: 20%;
+  transform: translateY(-50%) scaleX(0);
+  left: 18%;
+  transform-origin: left;
+  transition: 0.3s;
+  z-index: 1;
+}
+
+.progress_container li::before {
+  counter-increment: step-number;
+  content: counter(step-number);
+  background-color: var(--naranja);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--naranja);
+  transition: 0.3s linear 0.3s;
+}
+
+.form {
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 45 16px rgba(167, 21, 84, 0.1);
+}
+
+.titulo {
+  font-size: 42px;
+  color: black;
+  margin-bottom: 10px;
+}
+
+.errorText {
+  color: red;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.progress_container li:where(.done, .current) {
+  color: var(--naranja);
+  font-weight: 400;
+}
+
+.progress_container li.done::before {
+  background-color: var(--naranja);
+  color: white;
+}
+
+.progress_container li.current::before {
+  background-color: var(--naranja);
+  color: white;
+  box-shadow: 0 0 3px rgba(167, 21, 84, 0.25);
+}
+
+.contenedor_genero,
+.contenedor_edad {
+  display: flex;
+  border: 1px solid var(--naranja);
+  border-radius: 25px;
+  overflow: hidden;
+  width: 180px;
+  cursor: pointer;
+  margin-left: 40px;
+  height: 100%;
+}
+
+.contenedor_genero label input,
+.contenedor_edad label input {
+  display: none;
+}
+
+.contenedor_genero label {
+  flex: 1;
+  padding: 2px 0;
+  text-align: center;
+  cursor: pointer;
+  background-color: transparent;
+  color: black;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.hembra span {
+  padding: 10px 22px;
+  border-radius: 20px;
+  transition: 0.2s;
+  cursor: pointer;
+  text-align: center;
+}
+
+.meses span {
+  transition: 0.2s;
+}
+
+.hembra input:checked + span {
+  background-color: rgb(250, 197, 234);
+  color: white;
+}
+.macho span {
+  padding: 10px 22px;
+  border-radius: 20px;
+  transition: 0.2s;
+  cursor: pointer;
+  text-align: center;
+}
+
+.macho input:checked + span {
+  background-color: rgb(138, 181, 247);
+  color: white;
+}
+
+.background_transparent_input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--naranja);
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  background-color: transparent;
+}
+
+.background_transparent_input:checked {
+  background-color: transparent;
+  border-color: var(--naranja);
+}
+
+.background_transparent_input:checked::after {
+  content: "✔";
+  color: var(--naranja);
+  font-size: 16px;
+  position: absolute;
+  top: -5px;
+  left: 2px;
+  font-weight: bold;
+}
+
+.fila_imagen {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: antiquewhite;
+}
+
+.btn_subir {
+  background: var(--background-transparent);
+  color: var(--naranja);
+  padding: 6px 12px;
+  border: 1px solid var(--naranja);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn_subir:hover {
+  opacity: 0.8;
+}

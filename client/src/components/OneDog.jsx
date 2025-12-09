@@ -2,7 +2,6 @@ import Carousel from "react-bootstrap/Carousel";
 import "bootstrap/dist/css/bootstrap.min.css";
 import sizeIcon from "../assets/icons/tamanio.svg";
 import Breadcrumbs from "../components/BreadcrumbsAdmin";
-
 import styles from "../css/OneDog.module.css";
 
 const OneDog = ({
@@ -15,6 +14,8 @@ const OneDog = ({
   onToggleAdopted = () => {},
   onDeleteRequest,
   modo = "user",
+  onAdoptClick = () => {},
+  onTransitClick = () => {},
 }) => {
   return (
     <div className={styles.bread}>
@@ -24,10 +25,13 @@ const OneDog = ({
         <div className={styles.gallery}>
           <Carousel interval={4000}>
             <Carousel.Item>
-              <img src={data.imagen} alt={data.nombre} className={styles.mainImg} />
+              <img
+                src={data.imagen}
+                alt={data.nombre}
+                className={styles.mainImg}
+              />
             </Carousel.Item>
           </Carousel>
-
           <div className={styles.thumbRow}>
             <img src={data.imagen} className={styles.thumbnail} />
           </div>
@@ -43,9 +47,7 @@ const OneDog = ({
               onChange={(e) => onChange({ ...data, nombre: e.target.value })}
             />
           )}
-
           <h3 className={styles.sectionTitle}>Historia</h3>
-
           {!editando ? (
             <p className={styles.text}>{data.historia}</p>
           ) : (
@@ -58,11 +60,13 @@ const OneDog = ({
           )}
 
           <h3 className={styles.sectionTitle}>Detalles</h3>
-
           <div className={styles.detailsList}>
             {/* SEXO */}
             <div className={styles.detailItem}>
-              <img src={`/src/assets/icons/${data.sexo}.svg`} className={styles.detailIcon} />
+              <img
+                src={`/src/assets/icons/${data.sexo}.svg`}
+                className={styles.detailIcon}
+              />
               <span className={styles.detailLabel}>Sexo:</span>
               {!editando ? (
                 <span>{data.sexo}</span>
@@ -77,7 +81,6 @@ const OneDog = ({
                 </select>
               )}
             </div>
-
             {/* EDAD */}
             <div className={styles.detailItem}>
               <span className={styles.detailLabel}>🎂 Edad:</span>
@@ -88,11 +91,12 @@ const OneDog = ({
                   type="number"
                   className={styles.number}
                   value={data.edad}
-                  onChange={(e) => onChange({ ...data, edad: Number(e.target.value) })}
+                  onChange={(e) =>
+                    onChange({ ...data, edad: Number(e.target.value) })
+                  }
                 />
               )}
             </div>
-
             {/* PESO */}
             <div className={styles.detailItem}>
               <span className={styles.detailLabel}>⚖ Peso:</span>
@@ -103,11 +107,12 @@ const OneDog = ({
                   type="number"
                   className={styles.number}
                   value={data.peso}
-                  onChange={(e) => onChange({ ...data, peso: Number(e.target.value) })}
+                  onChange={(e) =>
+                    onChange({ ...data, peso: Number(e.target.value) })
+                  }
                 />
               )}
             </div>
-
             {/* TAMAÑO */}
             <div className={styles.detailItem}>
               <img src={sizeIcon} className={styles.sizeIcon} />
@@ -118,7 +123,9 @@ const OneDog = ({
                 <select
                   className={styles.select}
                   value={data.tamaño}
-                  onChange={(e) => onChange({ ...data, tamaño: e.target.value })}
+                  onChange={(e) =>
+                    onChange({ ...data, tamaño: e.target.value })
+                  }
                 >
                   <option value="Pequeño">Pequeño</option>
                   <option value="Mediano">Mediano</option>
@@ -126,7 +133,6 @@ const OneDog = ({
                 </select>
               )}
             </div>
-
             {/* UBICACION */}
             <div className={styles.detailItem}>
               <span className={styles.detailLabel}>📍 Ubicación:</span>
@@ -136,7 +142,9 @@ const OneDog = ({
                 <select
                   className={styles.select}
                   value={data.ubicacion}
-                  onChange={(e) => onChange({ ...data, ubicacion: e.target.value })}
+                  onChange={(e) =>
+                    onChange({ ...data, ubicacion: e.target.value })
+                  }
                 >
                   <option>Garin</option>
                   <option>Jose C. Paz</option>
@@ -147,14 +155,12 @@ const OneDog = ({
             </div>
           </div>
 
-          {/* --------- BOTONES ADMIN --------- */}
           <div className={styles.buttons}>
             {modo === "admin" && !editando && (
               <>
                 <button className={styles.btnEdit} onClick={onEditStart}>
                   Editar
                 </button>
-
                 <div className={styles.adminActions}>
                   {/* POSTULACIONES */}
                   {Array.isArray(data.postulaciones) &&
@@ -168,7 +174,6 @@ const OneDog = ({
                         Ver postulaciones
                       </button>
                     )}
-
                   {/* ADOPCIÓN TOGGLE */}
                   <button
                     className={styles.btnAdopted}
@@ -178,8 +183,6 @@ const OneDog = ({
                       ? "Quitar adopción"
                       : "Fue adoptado"}
                   </button>
-
-                  {/* ELIMINAR DEFINITIVAMENTE */}
                   <button
                     className={styles.btnDelete}
                     onClick={() => onDeleteRequest(data)}
@@ -189,7 +192,6 @@ const OneDog = ({
                 </div>
               </>
             )}
-
             {editando && (
               <div className={styles.editBtns}>
                 <button className={styles.btnCancel} onClick={onCancel}>
@@ -200,11 +202,20 @@ const OneDog = ({
                 </button>
               </div>
             )}
-
             {modo === "user" && (
               <div className={styles.userBtns}>
-                <button className={styles.btnPrimary}>Adoptar</button>
-                <button className={styles.btnSecondary}>Ser hogar de tránsito</button>
+                <button
+                  className={styles.btnPrimary}
+                  onClick={() => onAdoptClick(data)}
+                >
+                  Adoptar
+                </button>
+                <button
+                  className={styles.btnSecondary}
+                  onClick={() => onTransitClick(data)}
+                >
+                  Ser hogar de tránsito
+                </button>
               </div>
             )}
           </div>
