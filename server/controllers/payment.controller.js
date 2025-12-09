@@ -32,11 +32,11 @@ const paymentController = {
                         failure: "http://localhost:5173/donar?status=failure",
                         pending: "http://localhost:5173/donar?status=pending"
                     },
-                    auto_return: "approved",
                     notification_url:
                         "https://unarbitrary-franklin-unperforable.ngrok-free.dev/api/payment/webhook"
                 }
-            });
+        });
+
 
             return res.json({
                 id: result.id,
