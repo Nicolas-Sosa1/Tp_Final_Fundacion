@@ -1,10 +1,7 @@
-// server.js - YA ESTÁ CORRECTO
 import express from 'express'
 import connectToDb from './config/databaseConnect.js';
 import dotenv from 'dotenv'
 import cors from 'cors'
-
-// ✅ Importar rutas
 import usersRoutes from './routes/users.routes.js'
 import paymentRoutes from './routes/payment.routes.js'
 import correoRoutes from './routes/Correo.routes.js'
@@ -35,6 +32,7 @@ app.use("/api/correo", correoRoutes)
 app.use("/api/animals", animalsRoutes)
 app.use("/api/solicitudes", solicitudesRoutes)
 app.use("/api/vacunas", vacunasRoutes)
+app.use("/uploads", express.static("uploads"));
 
 // ... resto del código
 // Ruta de estado general

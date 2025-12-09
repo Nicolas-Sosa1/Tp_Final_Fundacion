@@ -3,10 +3,14 @@ import { Router } from "express";
 import animalsController from '../controllers/animals.controller.js'
 import validateToken from "../middleware/validateToken.js";
 import isAdmin from "../middleware/validateAdmin.js";
+import { upload } from "../config/multer.config.js";
 
 const animalsRoutes = Router();
 
-// Rutas públicas (sin autenticación para ver animales disponibles)
+animalsRoutes.get("/:id", validateToken, animalsController.getOne);
+animalsRoutes.post("/new", validateToken, isAdmin, upload.single("imagen"), animalsController.createOne);
+animalsRoutes.put("/update/:id", validateToken, isAdmin, animalsController.updateOne);
+animalsRoutes.delete("/destroy/:id", validateToken, isAdmin, animalsController.deleteOne);
 animalsRoutes.get("/public/adopcion", animalsController.getAdopcionAlta);
 animalsRoutes.get("/public/transito", animalsController.getTransitoAlta);
 animalsRoutes.get("/public/adopcion/baja", animalsController.getAdopcionBaja);
@@ -23,7 +27,7 @@ animalsRoutes.get("/public/transito/list", animalsController.getTransitoAlta);
 animalsRoutes.get("/:id", validateToken, animalsController.getOne);
 
 // Rutas de administración
-animalsRoutes.post("/new", validateToken, isAdmin, animalsController.createOne);
+animalsRoutes.post("/neww", validateToken, isAdmin, animalsController.createOne1);
 animalsRoutes.put("/update/:id", validateToken, isAdmin, animalsController.updateOne);
 animalsRoutes.delete("/destroy/:id", validateToken, isAdmin, animalsController.deleteOne);
 
