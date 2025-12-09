@@ -1,12 +1,12 @@
+// file: payment.controller.js (CORREGIDO)
 import Payment from "../models/payment.model.js";
-import mercadopago from "mercadopago";
+import { MercadoPagoConfig, Preference } from "mercadopago";
 
-mercadopago.configure({
-    access_token: process.env.MP_ACCESS_TOKEN
+const client = new MercadoPagoConfig({
+    accessToken: process.env.MP_ACCESS_TOKEN
 });
 
 const paymentController = {
-
     createOrden: async (req, res) => {
         try {
             console.log("TOKEN MP:", process.env.MP_ACCESS_TOKEN);
@@ -31,7 +31,6 @@ const paymentController = {
                     failure: "http://localhost:5173/donar?status=failure",
                     pending: "http://localhost:5173/donar?status=pending"
                 },
-                
                 notification_url:
                     "https://unarbitrary-franklin-unperforable.ngrok-free.dev/api/payment/webhook"
             };
@@ -50,6 +49,7 @@ const paymentController = {
             res.status(500).json({ error: "No se pudo crear la orden" });
         }
     },
+    
     webhook: async (req, res) => {
         try {
             console.log("Webhook recibido:", req.query, req.body);
@@ -63,7 +63,6 @@ const paymentController = {
             if (!paymentId) {
                 return res.sendStatus(200);
             }
-
 
             const paymentInfo = await mercadopago.payment.findById(paymentId);
 
@@ -82,7 +81,6 @@ const paymentController = {
                 { upsert: true }
             );
 
-
             res.sendStatus(200);
 
         } catch (error) {
@@ -90,47 +88,69 @@ const paymentController = {
             res.sendStatus(500);
         }
     },
+    
     getAll: async (req, res) => {
-    try {
-        const pagos = await Payment.find().sort({ date: -1 });
+        try {
+            const pagos = await Payment.find().sort({ date: -1 });
 
-        return res.status(200).json({
-            success: true,
-            total: pagos.length,
-            pagos
-        });
+            return res.status(200).json({
+                success: true,
+                total: pagos.length,
+                pagos
+            });
 
-    } catch (error) {
-        console.error("Error al obtener los pagos:", error);
-        return res.status(500).json({
-            success: false,
-            error: "Error al obtener los pagos"
-        });
-    }
-},
+        } catch (error) {
+            console.error("Error al obtener los pagos:", error);
+            return res.status(500).json({
+                success: false,
+                error: "Error al obtener los pagos"
+            });
+        }
+    },
+    
     getMine: async (req, res) => {
-    try {
-        const userEmail = req.user.email;
+        try {
+            console.log("🔍 Buscando pagos para usuario:", {
+                // Opción 1: Usar req.userEmail (del middleware validateToken)
+                userEmail: req.userEmail,
+                // Opción 2: Usar req.infoUser.email (también del middleware)
+                infoUserEmail: req.infoUser?.email,
+                // Opción 3: Usar req.user?.email (si existiera)
+                userEmailAlt: req.user?.email
+            });
+            
+            // CORRECCIÓN: Usa req.userEmail que viene del middleware
+            const userEmail = req.userEmail || req.infoUser?.email;
+            
+            if (!userEmail) {
+                console.error("❌ No se encontró email del usuario en la request");
+                return res.status(400).json({
+                    success: false,
+                    error: "No se pudo identificar al usuario"
+                });
+            }
 
-        const pagos = await Payment.find({ payer_email: userEmail })
-            .sort({ date: -1 });
+            const pagos = await Payment.find({ payer_email: userEmail })
+                .sort({ date: -1 });
 
-        return res.status(200).json({
-            success: true,
-            total: pagos.length,
-            pagos
-        });
+            console.log(`✅ Encontrados ${pagos.length} pagos para ${userEmail}`);
+            
+            return res.status(200).json({
+                success: true,
+                total: pagos.length,
+                pagos
+            });
 
-    } catch (error) {
-        console.error("Error al obtener los pagos del usuario:", error);
-        return res.status(500).json({
-            success: false,
-            error: "Error al obtener pagos del usuario"
-        });
+        } catch (error) {
+            console.error("❌ Error al obtener los pagos del usuario:", error);
+            return res.status(500).json({
+                success: false,
+                error: "Error al obtener pagos del usuario",
+                // Solo en desarrollo mostrar detalles del error
+                ...(process.env.NODE_ENV === 'development' && { details: error.message })
+            });
+        }
     }
-}
-
-
 };
 
 export default paymentController;
