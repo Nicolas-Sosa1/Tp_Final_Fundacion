@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "../../css/admin/PagosAdmin.module.css";
-import axios from "../../../../server/config/Axios"; //
+import axios from "../../../../server/config/Axios";
 
 const PagosAdmin = () => {
     const [pagos, setPagos] = useState([]);

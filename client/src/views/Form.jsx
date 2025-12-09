@@ -4,6 +4,7 @@ import styles from '../css/Form.module.css'
 import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 
+
 const Form = () => {
     const navigate = useNavigate();
     const { tipo } = useParams();
@@ -496,283 +497,370 @@ const Form = () => {
             : "Cuéntanos tu motivación para adoptar...";
         
         return (
-            <div className={styles.section}>
-                <h4 className="title_orange mb-3">
-                    {formType === 'transito' ? 'Sobre el Tránsito' : 'Sobre la Adopción'}
-                </h4>
-                
-                <div className="position-relative mb-4">
-                    <label className="title_orange mx-2 mb-1">{titulo}</label>
-                    
-                    <input
-                        type="text"
-                        name="adoptarA"
-                        value={data.adoptarA}
-                        onChange={(e) => {
-                            updateState(e);
-                            setShowList(true);
-                        }}
-                        onFocus={() => setShowList(true)}
-                        onBlur={() => setTimeout(() => setShowList(false), 200)}
-                        placeholder={placeholderBuscar}
-                        className={`${styles.input} ${errors.adoptarA ? styles.errorInput : ""}`}
-                        autoComplete="off"
-                    />
-                    
-                    {data.animalId && (
-                        <div className="mt-2">
-                            <small className="text-success">
-                                ✅ Seleccionado: {data.adoptarA}
+<div className={styles.section}>
+    <h4 className="title_orange mb-3">
+        {formType === 'transito' ? 'Sobre el Tránsito' : 'Sobre la Adopción'}
+    </h4>
+
+    <div className="position-relative mb-4">
+        <label className="title_orange mx-2 mb-1">{titulo}</label>
+
+        <input
+            type="text"
+            name="adoptarA"
+            value={data.adoptarA}
+            onChange={(e) => {
+                updateState(e);
+                setShowList(true);
+            }}
+            onFocus={() => setShowList(true)}
+            onBlur={() => setTimeout(() => setShowList(false), 200)}
+            placeholder={placeholderBuscar}
+            autoComplete="off"
+            className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-50 ${styles.border_2}`}
+        />
+
+        {data.animalId && (
+            <div className="mt-2">
+                <small className="text-success">
+                    ✅ Seleccionado: {data.adoptarA}
+                </small>
+            </div>
+        )}
+
+        {showList && data.adoptarA.length > 0 && !loadingAnimales && (
+            <div className={styles.autocompleteList}>
+                {filteredList.length > 0 ? (
+                    filteredList.map((animal) => (
+                        <div
+                            key={animal.id}
+                            onClick={() => selectAnimal(animal)}
+                            className={styles.autocompleteItem}
+                            onMouseDown={(e) => e.preventDefault()}
+                        >
+                            <strong>{animal.nombre}</strong>
+                            <small className="text-muted ms-2">
+                                ({animal.tipoIngreso === 'adopcion' ? 'Adopción' : 'Tránsito'})
                             </small>
                         </div>
-                    )}
-                    
-                    {showList && data.adoptarA.length > 0 && !loadingAnimales && (
-                        <div className={styles.autocompleteList}>
-                            {filteredList.length > 0 ? (
-                                filteredList.map((animal) => (
-                                    <div
-                                        key={animal.id}
-                                        onClick={() => selectAnimal(animal)}
-                                        className={styles.autocompleteItem}
-                                        onMouseDown={(e) => e.preventDefault()}
-                                    >
-                                        <strong>{animal.nombre}</strong>
-                                        <small className="text-muted ms-2">
-                                            ({animal.tipoIngreso === 'adopcion' ? 'Adopción' : 'Tránsito'})
-                                        </small>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="p-2 text-center">
-                                    No se encontraron animales para {formType === 'transito' ? 'tránsito' : 'adopción'}
-                                </div>
-                            )}
-                        </div>
-                    )}
-                    {errors.adoptarA && <span className={styles.errorText}>{errors.adoptarA}</span>}
-                    
-                    {loadingAnimales && (
-                        <div className="mt-2">
-                            <small className="text-muted">Cargando animales...</small>
-                        </div>
-                    )}
-                </div>
-                
-                {formType === 'adopcion' && (
-                    <div className="d-flex flex-column mb-4">
-                        <label className="title_orange mx-2 mt-3 mb-1">
-                            Si ya no está disponible, ¿te interesaría adoptar a otro? *
-                        </label>
-                        <input
-                            type="text"
-                            name="adoptarOtro"
-                            value={data.adoptarOtro}
-                            onChange={updateState}
-                            placeholder="Explica si estarías abierto a adoptar otro animal..."
-                            className={`${styles.input} ${errors.adoptarOtro ? styles.errorInput : ""}`}
-                        />
-                        {errors.adoptarOtro && <span className={styles.errorText}>{errors.adoptarOtro}</span>}
+                    ))
+                ) : (
+                    <div className="p-2 text-center">
+                        No se encontraron animales para {formType === 'transito' ? 'tránsito' : 'adopción'}
                     </div>
                 )}
-                
-                <div className="d-flex flex-column mb-4">
-                    <label className="title_orange mx-2 mt-3 mb-1">
-                        ¿Por qué querés {formType === 'transito' ? 'dar tránsito' : 'adoptar'}? *
-                    </label>
-                    <textarea 
-                        name="motivoAdopcion"
-                        value={data.motivoAdopcion}
-                        onChange={updateState} 
-                        placeholder={placeholderMotivo}
-                        rows={3}
-                        className={`${styles.textarea} ${errors.motivoAdopcion ? styles.errorInput : ""}`}
-                    ></textarea>
-                    {errors.motivoAdopcion && <span className={styles.errorText}>{errors.motivoAdopcion}</span>}
-                </div>
             </div>
+        )}
+
+        {errors.adoptarA && <span className={styles.errorText}>{errors.adoptarA}</span>}
+
+        {loadingAnimales && (
+            <div className="mt-2">
+                <small className="text-muted">Cargando animales...</small>
+            </div>
+        )}
+    </div>
+
+    {/* SOLO ADOPCIÓN */}
+    {formType === 'adopcion' && (
+        <div className="d-flex flex-column mb-4">
+            <label className="title_orange mx-2 mt-3 mb-1">
+                Si ya no está disponible, ¿te interesaría adoptar a otro? *
+            </label>
+
+            <input
+                type="text"
+                name="adoptarOtro"
+                value={data.adoptarOtro}
+                onChange={updateState}
+                placeholder="Explica si estarías abierto a adoptar otro animal..."
+                className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 ${styles.border_2}`}
+            />
+
+            {errors.adoptarOtro && (
+                <span className={styles.errorText}>{errors.adoptarOtro}</span>
+            )}
+        </div>
+    )}
+
+    <div className="d-flex flex-column mb-4">
+        <label className="title_orange mx-2 mt-3 mb-1">
+            ¿Por qué querés {formType === 'transito' ? 'dar tránsito' : 'adoptar'}? *
+        </label>
+
+        <textarea
+            name="motivoAdopcion"
+            value={data.motivoAdopcion}
+            onChange={updateState}
+            placeholder={placeholderMotivo}
+            rows={3}
+            className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100
+                ${styles.border_2} 
+                ${styles.textarea} 
+                ${errors.motivoAdopcion ? styles.errorInput : ""}`}
+        ></textarea>
+
+        {errors.motivoAdopcion && (
+            <span className={styles.errorText}>{errors.motivoAdopcion}</span>
+        )}
+    </div>
+                </div>
         );
     };
 
     const renderStep3 = () => (
-        <div className={styles.section}>
-            <h4 className="title_orange mb-3">Hogar y Experiencia</h4>
-            
+<div className={styles.section}>
+    <h4 className="title_orange mb-3">Hogar y Experiencia</h4>
+
+    {/* ¿Con quién vivís? */}
+    <div className="d-flex flex-column mb-4">
+        <label className="title_orange mx-2 mt-1 mb-1">¿Con quién vivís? *</label>
+
+        <textarea
+            name="convivientes"
+            value={data.convivientes}
+            onChange={updateState}
+            placeholder="Ej: Vivo con mi pareja y dos hijos de 8 y 10 años"
+            rows={2}
+            className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 
+                ${styles.border_2} 
+                ${styles.textarea} 
+                ${errors.convivientes ? styles.errorInput : ""}`}
+        ></textarea>
+
+        {errors.convivientes && (
+            <span className={styles.errorText}>{errors.convivientes}</span>
+        )}
+    </div>
+
+    {/* Experiencia con animales */}
+    <div className="d-flex flex-column mb-4">
+        <label className="title_orange mx-2 mt-1 mb-1">¿Tenés experiencia con animales? *</label>
+
+        <textarea
+            name="experienciaConAnimales"
+            value={data.experienciaConAnimales}
+            onChange={updateState}
+            placeholder="Cuéntanos sobre tu experiencia con animales..."
+            rows={2}
+            className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 
+                ${styles.border_2} 
+                ${styles.textarea} 
+                ${errors.experienciaConAnimales ? styles.errorInput : ""}`}
+        ></textarea>
+
+        {errors.experienciaConAnimales && (
+            <span className={styles.errorText}>{errors.experienciaConAnimales}</span>
+        )}
+    </div>
+
+    {/* Otras mascotas */}
+    <div className="d-flex flex-column mb-4">
+        <label className="title_orange mx-2 mt-1 mb-1">¿Tenés otras mascotas? *</label>
+
+        <textarea
+            name="otrasMascotas"
+            value={data.otrasMascotas}
+            onChange={updateState}
+            placeholder="Cuéntanos sobre tus mascotas actuales..."
+            rows={2}
+            className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 
+                ${styles.border_2} 
+                ${styles.textarea} 
+                ${errors.otrasMascotas ? styles.errorInput : ""}`}
+        ></textarea>
+
+        {errors.otrasMascotas && (
+            <span className={styles.errorText}>{errors.otrasMascotas}</span>
+        )}
+    </div>
+
+    {/* Selects */}
+    <div className="row">
+        {/* Tipo de vivienda */}
+        <div className="col-md-6">
             <div className="d-flex flex-column mb-4">
-                <label className="title_orange mx-2 mt-1 mb-1">¿Con quién vivís? *</label>
-                <textarea 
-                    name="convivientes" 
-                    value={data.convivientes} 
-                    onChange={updateState} 
-                    placeholder="Ej: Vivo con mi pareja y dos hijos de 8 y 10 años"
-                    rows={2}
-                    className={`${styles.textarea} ${errors.convivientes ? styles.errorInput : ""}`}
-                ></textarea>
-                {errors.convivientes && <span className={styles.errorText}>{errors.convivientes}</span>}
-            </div>
-            
-            <div className="d-flex flex-column mb-4">
-                <label className="title_orange mx-2 mt-1 mb-1">¿Tenés experiencia con animales? *</label>
-                <textarea 
-                    name="experienciaConAnimales" 
-                    value={data.experienciaConAnimales} 
-                    onChange={updateState} 
-                    placeholder="Cuéntanos sobre tu experiencia con animales..."
-                    rows={2}
-                    className={`${styles.textarea} ${errors.experienciaConAnimales ? styles.errorInput : ""}`}
-                ></textarea>
-                {errors.experienciaConAnimales && <span className={styles.errorText}>{errors.experienciaConAnimales}</span>}
-            </div>
-            
-            <div className="d-flex flex-column mb-4">
-                <label className="title_orange mx-2 mt-1 mb-1">¿Tenés otras mascotas? *</label>
-                <textarea 
-                    name="otrasMascotas" 
-                    value={data.otrasMascotas} 
-                    onChange={updateState} 
-                    placeholder="Cuéntanos sobre tus mascotas actuales..."
-                    rows={2}
-                    className={`${styles.textarea} ${errors.otrasMascotas ? styles.errorInput : ""}`}
-                ></textarea>
-                {errors.otrasMascotas && <span className={styles.errorText}>{errors.otrasMascotas}</span>}
-            </div>
-            
-            <div className="row">
-                <div className="col-md-6">
-                    <div className="d-flex flex-column mb-4">
-                        <label className="title_orange mx-2 mt-1 mb-1">Tipo de vivienda *</label>
-                        <select 
-                            name="viviendaTipo" 
-                            value={data.viviendaTipo} 
-                            onChange={updateState}
-                            className="form-select"
-                        >
-                            <option value="casa">Casa</option>
-                            <option value="departamento">Departamento</option>
-                            <option value="quinta">Quinta</option>
-                            <option value="otro">Otro</option>
-                        </select>
-                    </div>
-                </div>
-                <div className="col-md-6">
-                    <div className="d-flex flex-column mb-4">
-                        <label className="title_orange mx-2 mt-1 mb-1">¿Tenés patio? *</label>
-                        <select 
-                            name="tienePatio" 
-                            value={data.tienePatio} 
-                            onChange={updateState}
-                            className="form-select"
-                        >
-                            <option value="si">Sí</option>
-                            <option value="no">No</option>
-                        </select>
-                    </div>
-                </div>
+                <label className="title_orange mx-2 mt-1 mb-1">Tipo de vivienda *</label>
+
+                <select
+                    name="viviendaTipo"
+                    value={data.viviendaTipo}
+                    onChange={updateState}
+                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 
+                        ${styles.border_2}`}
+                >
+                    <option value="casa">Casa</option>
+                    <option value="departamento">Departamento</option>
+                    <option value="quinta">Quinta</option>
+                    <option value="otro">Otro</option>
+                </select>
             </div>
         </div>
-    );
 
-    const renderStep4 = () => (
-        <div className={styles.section}>
-            <h4 className="title_orange mb-3">Cuidados y Responsabilidad</h4>
-            
+        {/* Tiene patio */}
+        <div className="col-md-6">
             <div className="d-flex flex-column mb-4">
-                <label className="title_orange mx-2 mt-2 mb-1">
-                    ¿Cuántas horas al día estaría solo el animal? *
-                </label>
-                <input
-                    type="number"
-                    name="horasFueraDeCasa"
-                    value={data.horasFueraDeCasa}
+                <label className="title_orange mx-2 mt-1 mb-1">¿Tenés patio? *</label>
+
+                <select
+                    name="tienePatio"
+                    value={data.tienePatio}
                     onChange={updateState}
-                    min="0"
-                    max="24"
-                    placeholder="Ej: 8 horas"
-                    className={`form-control ${errors.horasFueraDeCasa ? styles.errorInput : ""}`}
-                />
-                {errors.horasFueraDeCasa && <span className={styles.errorText}>{errors.horasFueraDeCasa}</span>}
-            </div>
-            
-            <div className="d-flex flex-column mb-4">
-                <label className="title_orange mx-2 mt-2 mb-1">
-                    ¿Cómo serían los paseos diarios? (frecuencia, duración) *
-                </label>
-                <textarea
-                    name="paseos"
-                    value={data.paseos}
-                    onChange={updateState}
-                    placeholder="Describe tu rutina de paseos..."
-                    rows={2}
-                    className={`${styles.textarea} ${errors.paseos ? styles.errorInput : ""}`}
-                ></textarea>
-                {errors.paseos && <span className={styles.errorText}>{errors.paseos}</span>}
-            </div>
-            
-            <div className="d-flex flex-column mb-4">
-                <label className="title_orange mx-2 mt-3 mb-1">
-                    ¿Qué harías con el animal si te vas de vacaciones? *
-                </label>
-                <textarea
-                    name="vacaciones"
-                    value={data.vacaciones}
-                    onChange={updateState}
-                    placeholder="¿Tienes alguien que lo cuide? ¿Lo llevarías contigo?..."
-                    rows={2}
-                    className={`${styles.textarea} ${errors.vacaciones ? styles.errorInput : ""}`}
-                ></textarea>
-                {errors.vacaciones && <span className={styles.errorText}>{errors.vacaciones}</span>}
-            </div>
-            
-            <div className="d-flex flex-column mb-4">
-                <label className="title_orange mx-2 mt-3 mb-1">
-                    ¿Podés cubrir los gastos del animal? *
-                </label>
-                <select 
-                    name="aptoEconomicamente" 
-                    value={data.aptoEconomicamente} 
-                    onChange={updateState}
-                    className="form-select"
+                    className={`bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100 
+                        ${styles.border_2}`}
                 >
                     <option value="si">Sí</option>
                     <option value="no">No</option>
                 </select>
             </div>
         </div>
+    </div>
+</div>
+
     );
 
-    const renderStep5 = () => (
-        <div className={styles.section}>
-            <h4 className="title_orange mb-3">Confirmación Final</h4>
-            
-            <div className="d-flex flex-column mb-4 mt-3">
-                <label className="title_orange mx-2 mt-1 mb-1">
-                    Confirmación de compromiso (opcional)
-                </label>
-                <textarea 
-                    name="compromiso" 
-                    value={data.compromiso} 
-                    onChange={updateState}
-                    placeholder="Puedes confirmar tu compromiso de cuidar responsablemente al animal (opcional)..."
-                    rows={3}
-                    className={`${styles.textarea} ${errors.compromiso ? styles.errorInput : ""}`}
-                ></textarea>
-                {errors.compromiso && <span className={styles.errorText}>{errors.compromiso}</span>}
-            </div>
-            
-            <div className="alert alert-info mt-4">
-                <h5 className="alert-heading">📝 Importante</h5>
-                <p className="mb-0">
-                    Al enviar este formulario, aceptas que:
-                    <ul>
-                        <li>Toda la información proporcionada es verídica</li>
-                        <li>Te comprometes a brindar un hogar responsable</li>
-                        <li>La fundación realizará un seguimiento del proceso</li>
-                        <li>Podrán contactarte para coordinar una entrevista</li>
-                    </ul>
-                </p>
-            </div>
-        </div>
+    const renderStep4 = () => (
+<div className={styles.section}>
+    <h4 className="title_orange mb-3">Cuidados y Responsabilidad</h4>
+
+    {/* Horas solo */}
+    <div className="d-flex flex-column mb-4">
+        <label className="title_orange mx-2 mt-2 mb-1">
+            ¿Cuántas horas al día estaría solo el animal? *
+        </label>
+
+        <input
+            type="number"
+            name="horasFueraDeCasa"
+            value={data.horasFueraDeCasa}
+            onChange={updateState}
+            min="0"
+            max="24"
+            placeholder="Ej: 8 horas"
+            className={`
+                bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100
+                form-control
+                ${errors.horasFueraDeCasa ? styles.errorInput : ""}
+            `}
+        />
+
+        {errors.horasFueraDeCasa && (
+            <span className={styles.errorText}>{errors.horasFueraDeCasa}</span>
+        )}
+    </div>
+
+    {/* Paseos */}
+    <div className="d-flex flex-column mb-4">
+        <label className="title_orange mx-2 mt-2 mb-1">
+            ¿Cómo serían los paseos diarios? (frecuencia, duración) *
+        </label>
+
+        <textarea
+            name="paseos"
+            value={data.paseos}
+            onChange={updateState}
+            placeholder="Describe tu rutina de paseos..."
+            rows={2}
+            className={`
+                ${styles.textarea}
+                bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100
+                ${errors.paseos ? styles.errorInput : ""}
+            `}
+        ></textarea>
+
+        {errors.paseos && (
+            <span className={styles.errorText}>{errors.paseos}</span>
+        )}
+    </div>
+
+    {/* Vacaciones */}
+    <div className="d-flex flex-column mb-4">
+        <label className="title_orange mx-2 mt-3 mb-1">
+            ¿Qué harías con el animal si te vas de vacaciones? *
+        </label>
+
+        <textarea
+            name="vacaciones"
+            value={data.vacaciones}
+            onChange={updateState}
+            placeholder="¿Tienes alguien que lo cuide? ¿Lo llevarías contigo?..."
+            rows={2}
+            className={`
+                ${styles.textarea}
+                bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100
+                ${errors.vacaciones ? styles.errorInput : ""}
+            `}
+        ></textarea>
+
+        {errors.vacaciones && (
+            <span className={styles.errorText}>{errors.vacaciones}</span>
+        )}
+    </div>
+
+    {/* Apto económicamente */}
+    <div className="d-flex flex-column mb-4">
+        <label className="title_orange mx-2 mt-3 mb-1">
+            ¿Podés cubrir los gastos del animal? *
+        </label>
+
+        <select
+            name="aptoEconomicamente"
+            value={data.aptoEconomicamente}
+            onChange={updateState}
+            className={`
+                bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100
+                form-select
+            `}
+        >
+            <option value="si">Sí</option>
+            <option value="no">No</option>
+        </select>
+    </div>
+</div>
+
     );
+const renderStep5 = () => (
+    <div className={styles.section}>
+        <h4 className="title_orange mb-3">Confirmación Final</h4>
+
+        <div className="d-flex flex-column mb-4 mt-3">
+            <label className="title_orange mx-2 mt-1 mb-1">
+                Confirmación de compromiso (opcional)
+            </label>
+
+            <textarea 
+                name="compromiso" 
+                value={data.compromiso} 
+                onChange={updateState}
+                placeholder="Puedes confirmar tu compromiso de cuidar responsablemente al animal (opcional)..."
+                rows={3}
+                className={`
+                    ${styles.textarea}
+                    bg-white text-black-title font-400 font-15 rounded-3 border-orange p-2 w-100
+                    ${errors.compromiso ? styles.errorInput : ""}
+                `}
+            ></textarea>
+
+            {errors.compromiso && (
+                <span className={styles.errorText}>{errors.compromiso}</span>
+            )}
+        </div>
+
+        <div className="alert alert-info mt-4">
+            <h5 className="alert-heading">📝 Importante</h5>
+
+            <p className="mb-0">
+                Al enviar este formulario, aceptas que:
+                <ul>
+                    <li>Toda la información proporcionada es verídica</li>
+                    <li>Te comprometes a brindar un hogar responsable</li>
+                    <li>La fundación realizará un seguimiento del proceso</li>
+                    <li>Podrán contactarte para coordinar una entrevista</li>
+                </ul>
+            </p>
+        </div>
+    </div>
+);
 
     const titulo = formType === 'transito' 
         ? "Formulario de Tránsito" 
