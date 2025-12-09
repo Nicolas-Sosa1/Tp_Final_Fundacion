@@ -21,7 +21,11 @@
   --btn_navbar: linear-gradient(90deg, #FF6200 0%, #E27D87 100%);
   --btn_naranja: linear-gradient(90deg, #FF6200 0%, #E27D87 100%);
   --background-footer: #D9D9D9;
+  --naranja: #FF6200;
+  --background-transparent: rgba(254, 173, 123, 0.28);
+  --gris: #B3B3B3;
 }
+
 
 .title_orange {
   font-family: "Otomanopee One", sans-serif;
@@ -30,43 +34,49 @@
   color: transparent;
 }
 
-.orange{
+.subtitle-orange {
+  background: var(--naranja);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.orange {
   background: var(--titulo_naranja);
   -webkit-background-clip: text;
   color: transparent;
 }
 
-.btn_navbar{
-  background: var(--btn_navbar) ;
+.btn_navbar {
+  background: var(--btn_navbar);
   color: white;
 }
 
-.footer{
+.footer {
   background-color: var(--background-footer);
 }
 
-.pad-10{
+.pad-10 {
   padding: 10px;
 }
 
-.font_title{
+.font_title {
   font-size: 25px;
 }
 
-.font_sm{
+.font_sm {
   font-size: 18px;
 }
 
-.text-black-title{
+.text-black-title {
   color: black;
   font-weight: 600;
 }
 
 .shadow-bottom {
-  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
-.icon_20{
+.icon_20 {
   font-size: 20px;
 }
 
@@ -94,4 +104,58 @@
   transition: width 0.3s ease;
 }
 
+.font-400 {
+  font-weight: 400;
+}
 
+.font-15 {
+  font-size: 15px;
+}
+
+.font-20 {
+  font-size: 20px;
+}
+
+.font-25 {
+  font-size: 25px;
+}
+
+.background-transparent-orange {
+  background-color: var(--background-transparent);
+}
+
+.border-orange {
+  border: 1px solid var(--naranja);
+}
+
+.text-gris {
+  color: var(--gris);
+}
+
+.btn-success {
+  background-color: #16af4e !important;
+}
+
+.btn-orange {
+  background-color: #ff8c42 !important;
+  border-color: #ff8c42 !important;
+  color: white !important;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+
+.btn-orange:hover {
+  background-color: #ff7a24 !important;
+  border-color: #ff7a24 !important;
+}
+
+
+.historia_text {
+  color: #fdb384;
+}
+
+.text-orange {
+  color: #ff7a24;
+}
