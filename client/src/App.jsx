@@ -145,7 +145,7 @@ function App() {
                 requireLogin={true}
                 allowedRoles={["user", "admin"]}
               >
-                <OneDogUser />
+                <AllDogsUser />
               </ProtectedRoute>
             }
           />
@@ -170,7 +170,7 @@ function App() {
                 requireLogin={true}
                 allowedRoles={["user", "admin"]}
               >
-                <OneDogUser />
+                <AllDogsUser />
               </ProtectedRoute>
             }
           />

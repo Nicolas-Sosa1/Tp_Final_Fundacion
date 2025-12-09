@@ -12,4 +12,3 @@ const DogGrid = ({ perros, getLink }) => {
 };
 
 export default DogGrid;
-
