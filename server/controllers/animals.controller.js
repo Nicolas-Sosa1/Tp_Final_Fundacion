@@ -323,7 +323,23 @@ const animalsController = {
         } catch (error) {
             return res.status(500).json({ message: "Error al cambiar estado" });
         }
+    }, 
+    getAdopcionAll: async (req, res) => {
+    try {
+        const lista = await Animals.find({
+            tipoIngreso: "adopcion",
+        })
+        .populate("vacunas")
+        .sort({ createdAt: -1 });
+
+        return res.status(200).json(lista);
+
+    } catch (e) {
+        console.error("Error al obtener adopción ALL:", e.message);
+        return res.status(500).json({ message: "Error al obtener animales de adopción" });
     }
+},
+
 
 
 

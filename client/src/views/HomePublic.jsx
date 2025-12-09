@@ -9,67 +9,87 @@ const HomePublic = () => {
     const [adopcion, setAdopcion] = useState([]);
 
     useEffect(() => {
-        // Solo cargar algunos perros para muestra
-        axios.get("http://localhost:8000/api/animals/public/adopcion")
-            .then(res => {
-                // Limitar a solo 3-4 perros para mostrar
+        axios
+            .get("http://localhost:8000/api/animals/public/adopcion/all")
+            .then((res) => {
                 const limitedData = res.data.slice(0, 4);
                 setAdopcion(limitedData);
             })
-            .catch(err => console.log(err));
-        
-        // No cargar datos de tránsito para público
+            .catch((err) => console.log(err));
     }, []);
 
     return (
         <div className={styles.homeWrapper}>
 
+            {/* HERO */}
             <section className={styles.hero}>
                 <div className={styles.heroText}>
                     <h1>Adoptá un amigo. Salvá una vida.</h1>
                     <p>Más de 100 peluditos esperan un hogar lleno de amor.</p>
-                    <Link to="/login" className={styles.heroButton}>Ingresar para ver</Link>
+                    <Link to="/login" className={styles.heroButton}>
+                        Ingresar para ver
+                    </Link>
                 </div>
                 <img className={styles.heroImg} src={heroImg} alt="Perros felices" />
             </section>
+
+            {/* ABOUT */}
             <section className={styles.about}>
                 <div className={styles.aboutText}>
                     <h2>¿Quiénes somos?</h2>
                     <p>
-                        Somos una organización sin fines de lucro dedicada al rescate, 
-                        recuperación y adopción responsable de animales en situación de calle.  
+                        Somos una organización sin fines de lucro dedicada al rescate,
+                        recuperación y adopción responsable de animales en situación de calle.
                         Trabajamos gracias al amor de voluntarios y personas como vos.
                     </p>
-                    <Link to="/donaciones" className={styles.aboutButton}>Quiero donar</Link>
+                    <Link to="/donaciones" className={styles.aboutButton}>
+                        Quiero donar
+                    </Link>
                 </div>
 
-                <img className={styles.aboutImg} src={aboutImg} alt="Rescate animal"/>
+                <img className={styles.aboutImg} src={aboutImg} alt="Rescate animal" />
             </section>
+
+            {/* RESCATADOS */}
             <section className={styles.section}>
                 <h2>Algunos de nuestros rescatados</h2>
-                <p className="text-center mb-4">Regístrate o inicia sesión para ver todos los animales disponibles.</p>
+                <p className="text-center mb-4">
+                    Regístrate o inicia sesión para ver todos los animales disponibles.
+                </p>
 
                 <div className={styles.carousel}>
-                    {adopcion.map((dog) => (
-                        <div key={dog._id} className={styles.card}>
-                            <img 
-                                src={dog.imagen} 
-                                alt={dog.nombre} 
-                                onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = aboutImg; // Fallback image
-                                }}
-                            />
-                            <h4>{dog.nombre}</h4>
-                            <p>{dog.edad} años — {dog.sexo}</p>
-                        </div>
-                    ))}
+                    {adopcion.map((dog) => {
+
+                        // 🔥 FIX DEFINITIVO PARA IMÁGENES
+                        const imageSrc =
+                            dog.imagen?.includes("uploads") || dog.imagen?.startsWith("http")
+                                ? dog.imagen
+                                : dog.imagen
+                                ? `http://localhost:8000/uploads/${dog.imagen}`
+                                : aboutImg;
+
+                        return (
+                            <div key={dog._id} className={styles.card}>
+                                <img
+                                    src={imageSrc}
+                                    alt={dog.nombre}
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = aboutImg; // fallback
+                                    }}
+                                />
+
+                                <h4>{dog.nombre}</h4>
+                                <p>{dog.edad} años — {dog.sexo}</p>
+                            </div>
+                        );
+                    })}
                 </div>
 
-                <Link to="/login" className={styles.verMas}>Ingresar para ver más perros</Link>
+                <Link to="/login" className={styles.verMas}>
+                    Ingresar para ver más perros
+                </Link>
             </section>
-
-            {/* Sección de tránsito ELIMINADA para público */}
         </div>
     );
 };
