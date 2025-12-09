@@ -1,24 +1,21 @@
 import { useState, useEffect } from "react";
-import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route, Link, useNavigate, Navigate, useLocation } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
-// ========== VIEWS ==========
-// Public Views
-import HomePublic from "./views/HomePublic.jsx";
-import Donaciones from "./views/Donaciones.jsx";
-import Login_Registro from "./views/Login_Registro.jsx";
+import UpdateAnimal from "./views/admin/UpdateAnimal.jsx";
+// import PagosAdmin from "./views/PagosAdmin";
+// import HomeAdmin from "./views/HomeAdmin";
 
-// User Views
-import HomeUser from "./views/HomeUser.jsx";
-import Donar from "./views/Donaciones.jsx";
-import CorreoArgentino from "./views/user/CorreoArgentino.jsx";
-import Form from "./views/Form.jsx";
-import FormTransit from "./views/FormTransit.jsx"; // Importar FormTransit
+// import Login from "./views/Login";
+// import Register from "./views/Register";
 
-// Admin Views
+
+// import Home from "./views/user/Home";
+import CorreoArgentino from "./views/user/CorreoArgentino";
+
 import AllDogs from "./views/admin/AllDogs.jsx";
 import OneDogAdmin from "./views/admin/OneDogAdmin.jsx";
 import AllDogsAdoptados from "./views/admin/AllDogsAdoptados.jsx";
@@ -26,20 +23,20 @@ import AddDog from "./views/admin/AddDog.jsx";
 import AllDogsPostulaciones from "./views/admin/AllDogsPostulaciones.jsx";
 import OneDogPostulaciones from "./views/admin/OneDogPostulaciones.jsx";
 import OnePostulacion from "./views/admin/OnePostulacion.jsx";
-import PagosAdmin from "./views/admin/PagosAdmin.jsx";
-import VerPerrito from "./views/VerPerrito.jsx";
 
-// Vista de Animales (solo para usuarios autenticados)
-import Animales from "./views/user/Animales.jsx";
+import PagosAdmin from "./views/admin/PagosAdmin";
 
-// Vista de Actividades (nueva)
-import Actividades from "./views/Actividades.jsx";
+import NavbarAdmin from "./components/NavbarAdmin";
+import NavbarPublic from "./components/NavbarPublic";
+import NavbarUser from "./components/NavbarUser";
+import Footer from "./components/Footer";
 
-// ========== COMPONENTS ==========
-import NavbarAdmin from "./components/NavbarAdmin.jsx";
-import NavbarPublic from "./components/NavbarPublic.jsx";
-import NavbarUser from "./components/NavbarUser.jsx";
-import Footer from "./components/Footer.jsx";
+import VerPerrito from "./views/VerPerrito";
+import Login_Registro from "./views/Login_Registro";
+import OneDog from "./views/OneDog";
+
+import Donaciones from "./views/Donaciones";
+import Form from "./views/Form";
 
 function App() {
   const [listaPerros, setListaPerros] = useState([]);
@@ -48,18 +45,12 @@ function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const isLoginPage = location.pathname === "/login";
-
   useEffect(() => {
     const token = localStorage.getItem("token_user");
     if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        setMe(decoded);
-        setLogin(true);
-      } catch (error) {
-        console.error("Token inválido:", error);
-        logOut();
-      }
+      const decoded = jwtDecode(token);
+      setMe(decoded);
+      setLogin(true);
     }
   }, []);
 
@@ -68,34 +59,6 @@ function App() {
     setLogin(false);
     setMe({});
     navigate("/login");
-  };
-
-  // ========== FUNCIÓN PARA RUTA HOME ==========
-  const HomeRoute = () => {
-    if (!login) {
-      return <HomePublic />;
-    }
-    
-    if (me.role === "admin") {
-      return <Navigate to="/homeadmin" />;
-    }
-    
-    return <HomeUser />;
-  };
-
-  // ========== COMPONENTE PARA RUTAS PROTEGIDAS ==========
-  const ProtectedRoute = ({ children, requireLogin = true, allowedRoles = [] }) => {
-    if (requireLogin && !login) {
-      // Guardar la ruta actual para redirigir después del login
-      return <Navigate to="/login" state={{ from: location }} replace />;
-    }
-    
-    if (requireLogin && login && allowedRoles.length > 0 && !allowedRoles.includes(me.role)) {
-      // Usuario logueado pero sin el rol necesario
-      return <Navigate to="/home" />;
-    }
-    
-    return children;
   };
 
   return (
@@ -112,229 +75,146 @@ function App() {
           )}
         </>
       )}
-      
       <main>
+
         <Routes>
-          {/* ========== RUTAS PÚBLICAS (sin login requerido) ========== */}
-          <Route path="/" element={<Navigate to="/home" />} />
-          <Route path="/home" element={<HomeRoute />} />
+          <Route path="formulario" element={<Form/>}/>
           <Route path="/login" element={<Login_Registro setLogin={setLogin} setMe={setMe} />} />
+          {/* <Route path="/login" element={<Login setLogin={setLogin} setMe={setMe} />} />
+          <Route path="/register" element={<Register setLogin={setLogin} />} /> */}
           <Route path="/donaciones" element={<Donaciones />} />
-          
-          {/* ========== RUTAS DE ANIMALES (PROTEGIDAS - solo para usuarios autenticados) ========== */}
-          <Route 
-            path="/animales" 
+          <Route
+            path="/correo"
+            element={ <CorreoArgentino />}
+          />
+
+          <Route
+            path="/agregarPerro"
             element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["user", "admin"]}>
-                <Animales />
-              </ProtectedRoute>
+              login && me.role === "admin" ? (
+                <AddDog
+                  listaPerros={listaPerros}
+                  setListaPerros={setListaPerros}
+                  me={me}
+                  logOut={logOut}
+                />
+              ) : (
+                <Navigate to="/home" />
+              )
             }
           />
-          
-          <Route 
-            path="/animales/:id" 
+          <Route path="/oneDog" element={<OneDog />} />
+          <Route
+            path="/pagos"
             element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["user", "admin"]}>
-                <Animales />
-              </ProtectedRoute>
-            }
-          />
-          
-          {/* Alias para compatibilidad - también protegidos */}
-          <Route 
-            path="/perros" 
-            element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["user", "admin"]}>
-                <Animales />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route 
-            path="/perro/:id" 
-            element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["user", "admin"]}>
-                <Animales />
-              </ProtectedRoute>
-            }
-          />
-          
-          {/* ========== RUTAS DE FORMULARIOS (requieren login y rol user) ========== */}
-          
-          {/* RUTA ESPECÍFICA PARA ADOPCIÓN - Usando Form.jsx */}
-          <Route 
-            path="/formulario/adopcion" 
-            element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["user"]}>
-                <Form />
-              </ProtectedRoute>
-            }
-          />
-          
-          {/* RUTA ESPECÍFICA PARA TRÁNSITO - Usando FormTransit.jsx */}
-          <Route 
-            path="/formulario/transito" 
-            element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["user"]}>
-                <FormTransit />
-              </ProtectedRoute>
-            }
-          />
-          
-          {/* ========== RUTA DE ACTIVIDADES (nueva) ========== */}
-          <Route 
-            path="/actividades" 
-            element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["user", "admin"]}>
-                <Actividades />
-              </ProtectedRoute>
-            }
-          />
-          
-          {/* Rutas de compatibilidad */}
-          <Route 
-            path="/formulario" 
-            element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["user"]}>
-                <Navigate to="/formulario/adopcion" replace />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route 
-            path="/transito" 
-            element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["user"]}>
-                <Navigate to="/formulario/transito" replace />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route 
-            path="/adoptar" 
-            element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["user"]}>
-                <Navigate to="/formulario/adopcion" replace />
-              </ProtectedRoute>
-            }
-          />
-          
-          {/* ========== OTRAS RUTAS DE USUARIO ========== */}
-          <Route 
-            path="/donar" 
-            element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["user"]}>
-                <Donar />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route 
-            path="/correo" 
-            element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["user"]}>
-                <CorreoArgentino />
-              </ProtectedRoute>
-            }
-          />
-          
-          {/* ========== RUTAS DE ADMIN (requieren login y rol admin) ========== */}
-          <Route 
-            path="/homeadmin" 
-            element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["admin"]}>
-                <AllDogs />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route 
-            path="/homeadmin/todos" 
-            element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["admin"]}>
-                <AllDogs />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route 
-            path="/homeadmin/postulaciones" 
-            element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["admin"]}>
-                <AllDogsPostulaciones />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route 
-            path="/homeadmin/adoptados" 
-            element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["admin"]}>
-                <AllDogsAdoptados />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route 
-            path="/homeadmin/perro/:id" 
-            element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["admin"]}>
-                <OneDogAdmin />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route 
-            path="/homeadmin/perro/:id/postulaciones" 
-            element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["admin"]}>
-                <OneDogPostulaciones />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route 
-            path="/homeadmin/perro/:id/postulacion/:postulacionId" 
-            element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["admin"]}>
-                <OnePostulacion />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route 
-            path="/agregarPerro" 
-            element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["admin"]}>
-                <AddDog listaPerros={listaPerros} setListaPerros={setListaPerros} me={me} logOut={logOut} />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route 
-            path="/pagos" 
-            element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["admin"]}>
+              login && me.role === "admin" ? (
                 <PagosAdmin />
-              </ProtectedRoute>
+              ) : (
+                <Navigate to="/home" />
+              )
             }
           />
-          
-          <Route 
-            path="/verPerrito" 
+
+          <Route path="/verPerrito" element={<VerPerrito />} />
+
+          <Route
+            path="/homeadmin"
             element={
-              <ProtectedRoute requireLogin={true} allowedRoles={["admin"]}>
-                <VerPerrito />
-              </ProtectedRoute>
+              // login && me.role === "admin" ? (
+              <AllDogs />
+              // ) : (
+              //   <Navigate to="/home" />
+              // )
             }
           />
-          
-          {/* ========== RUTA PARA 404 ========== */}
-          <Route path="*" element={<Navigate to="/home" />} />
+
+          {/* Todos los perritos */}
+          <Route
+            path="/homeadmin/todos"
+            element={
+              // login && me.role === "admin" ? (
+              <AllDogs />
+              // ) : (
+              //   <Navigate to="/home" />
+              // )
+            }
+          />
+
+          {/* Perritos con postulaciones */}
+          <Route
+            path="/homeadmin/postulaciones"
+            element={
+              // login && me.role === "admin" ? (
+              <AllDogsPostulaciones />
+              // ) : (
+              //   <Navigate to="/home" />
+              // )
+            }
+          />
+
+          {/* Perritos adoptados */}
+          <Route
+            path="/homeadmin/adoptados"
+            element={
+              // login && me.role === "admin" ? (
+              <AllDogsAdoptados />
+              // ) : (
+              //   <Navigate to="/home" />
+              // )
+            }
+          />
+
+          {/* Pantalla de un perro individual */}
+          <Route
+            path="/homeadmin/perro/:id"
+            element={
+              // login && me.role === "admin" ? (
+              <OneDogAdmin />
+              // ) : (
+              //   <Navigate to="/home" />
+              // )
+            }
+          />
+
+          {/* OneDogPostulaciones: SOLO para perros con postulaciones */}
+          <Route
+            path="/homeadmin/perro/:id/postulaciones"
+            element={
+              // login && me.role === "admin" ? (
+              <OneDogPostulaciones />
+              // ) : (
+              //   <Navigate to="/home" />
+              // )
+            }
+          />
+
+          {/* Detalle de una postulación */}
+          <Route
+            path="/homeadmin/perro/:id/postulacion/:postulacionId"
+            element={
+              // login && me.role === "admin" ? (
+              <OnePostulacion />
+              // ) : (
+              //   <Navigate to="/home" />
+              // )
+            }
+          />
+
+          <Route
+            path="/pagos"
+            element={
+              login && me.role === "admin" ? (
+                <PagosAdmin />
+              ) : (
+                <Navigate to="/home" />
+              )
+            }
+          />
+
+          {/* <Route path="/homeadmin" element={<HomeAdmin />} /> */}
         </Routes>
       </main>
-      
-      {!isLoginPage && <Footer />}
+      {!isLoginPage && <Footer />}  
     </>
   );
 }

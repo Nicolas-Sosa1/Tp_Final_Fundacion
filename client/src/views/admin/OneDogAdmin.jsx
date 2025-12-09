@@ -1,75 +1,114 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import axios from "axios";
 import OneDog from "../../components/OneDog";
-import axios from "../../../../server/config/Axios"; // ✅ Importar axios configurado
 
 const OneDogAdmin = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [tempData, setTempData] = useState(null);
+  const [editando, setEditando] = useState(false);
 
-  // Cargar animal
   useEffect(() => {
     const fetchDog = async () => {
       try {
-        setLoading(true);
-        const res = await axios.get(`/api/animals/${id}`);
+        const token = localStorage.getItem("token_user");
+        const res = await axios.get(
+          `http://localhost:8000/api/animals/${id}`,
+          { headers: { token_user: token } }
+        );
+
         setData(res.data.animal);
-        setError(null);
-      } catch (err) {
-        console.error("Error cargando perro:", err);
-        setError("Error al cargar el animal");
-      } finally {
-        setLoading(false);
+        setTempData(res.data.animal);
+      } catch (e) {
+        console.log("Error cargando perro:", e);
       }
     };
 
     fetchDog();
   }, [id]);
 
-  // Guardar cambios
+  if (!data) return <p>Cargando perro...</p>;
+
   const guardarEnBD = async (nuevo) => {
     try {
-      const res = await axios.put(`/api/animals/update/${id}`, nuevo);
-      setData(res.data);
+      const token = localStorage.getItem("token_user");
+      const res = await axios.put(
+        `http://localhost:8000/api/animals/update/${id}`,
+        nuevo,
+        { headers: { token_user: token } }
+      );
+
       alert("Cambios guardados correctamente");
-      return true;
-    } catch (err) {
-      console.error("Error guardando:", err);
-      alert("Error al guardar cambios: " + (err.response?.data?.message || err.message));
-      return false;
+      setData(res.data);
+    } catch (e) {
+      alert("Error al guardar cambios");
     }
   };
 
-  // Eliminar (marcar como no disponible)
-  const eliminarDeBD = async () => {
+
+const toggleAdoptado = async () => {
+  try {
+    const token = localStorage.getItem("token_user");
+
+    const res = await axios.patch(
+      `http://localhost:8000/api/animals/adoptado/${id}`,
+      {},
+      { headers: { token_user: token } }
+    );
+
+    alert(res.data.message);
+    setData(res.data.animal);
+
+  } catch (e) {
+    alert("Error al actualizar estado");
+  }
+};
+
+
+
+  const eliminarPermanentemente = async () => {
     const seguro = window.confirm(
-      `¿Marcar a ${data?.nombre} como no disponible? Esta acción se puede revertir editando el animal.`
+      `⚠ ¿Eliminar DEFINITIVAMENTE a ${data.nombre}? ESTA ACCIÓN NO SE PUEDE DESHACER.`
     );
     if (!seguro) return;
 
     try {
-      await axios.delete(`/api/animals/destroy/${id}`);
-      alert("Animal marcado como no disponible");
+      const token = localStorage.getItem("token_user");
+
+      await axios.delete(
+        `http://localhost:8000/api/animals/delete-permanent/${id}`,
+        { headers: { token_user: token } }
+      );
+
+      alert("Animal eliminado PERMANENTEMENTE");
       navigate("/homeadmin");
-    } catch (err) {
-      console.error("Error eliminando:", err);
-      alert("Error al eliminar: " + (err.response?.data?.message || err.message));
+    } catch (e) {
+      alert("Error al eliminar definitivamente");
     }
   };
-
-  if (loading) return <div className="text-center mt-5">Cargando perro...</div>;
-  if (error) return <div className="text-center mt-5 text-danger">{error}</div>;
-  if (!data) return <div className="text-center mt-5">No se encontró el animal</div>;
 
   return (
     <OneDog
       data={data}
-      onSave={guardarEnBD}
-      onDeleteRequest={eliminarDeBD}
+      editando={editando}
+      onChange={(nuevo) => setData(nuevo)}
+      onEditStart={() => {
+        setTempData(data);
+        setEditando(true);
+      }}
+      onCancel={() => {
+        setData(tempData);
+        setEditando(false);
+      }}
+      onSave={() => {
+        guardarEnBD(data);
+        setEditando(false);
+      }}
+      onToggleAdopted={toggleAdoptado}
+      onDeleteRequest={eliminarPermanentemente}
       modo="admin"
     />
   );
