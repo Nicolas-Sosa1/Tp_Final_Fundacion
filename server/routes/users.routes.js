@@ -1,9 +1,15 @@
-import {Router} from "express"
-import userController from "../controllers/users.controller.js"
+import { Router } from "express";
+import userController from "../controllers/users.controller.js";
+import validateToken from "../middleware/validateToken.js";
 
 const usersRoutes = Router();
 
-usersRoutes.post('/register', userController.createOne);
-usersRoutes.post('/login', userController.login);
+// Rutas públicas
+usersRoutes.post("/register", userController.createOne);
+usersRoutes.post("/login", userController.login);
 
-export default usersRoutes
+// Rutas protegidas
+usersRoutes.get("/profile", validateToken, userController.getProfile);
+usersRoutes.put("/profile", validateToken, userController.updateProfile);
+
+export default usersRoutes;
